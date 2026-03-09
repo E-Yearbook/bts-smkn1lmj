@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->integer('nis')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['superadmin', 'admin']);
+            $table->enum('role', ['superadmin', 'admin', 'user']);
+            $table->integer('year_generation')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
