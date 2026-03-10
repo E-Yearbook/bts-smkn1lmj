@@ -2,6 +2,13 @@
 
 namespace App\Models;
 
+// ini tinker debug
+// $user = User::create([
+// 'name' => 'Aku user keren',
+// 'email' => 'tseseest@admin.com',
+// 'password' => bcrypt('password')
+// ]);
+
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -44,5 +51,9 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function books() {
+        return $this->hasMany(TableBook::class);
     }
 }
