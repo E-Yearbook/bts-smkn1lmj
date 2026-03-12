@@ -25,34 +25,37 @@ class AuthController extends Controller
 
         $throttleKey = Str::lower($request->input('email')) . '|' . $request->ip();
 
-        // Rate Limiter: Maksimal 5 kali percobaan
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
-            return back()->with('error', "Terlalu banyak percobaan login. Silakan coba lagi dalam $seconds detik.");
+
+            return back()->with([
+                'error' => "Terlalu banyak percobaan login. Silakan coba lagi dalam $seconds detik.",
+                'seconds_left' => $seconds
+            ]);
         }
 
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
-            RateLimiter::hit($throttleKey);
+            RateLimiter::hit($throttleKey, 60);
             return back()->with('error', 'Email tidak terdaftar.');
         }
 
-        // Logic login berdasarkan role
-        // 'password' di form akan diisi NIS jika role user, dan password biasa jika admin
-        $credentials = [
-            'email' => $request->email,
-            'password' => $request->password
-        ];
-
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $request->session()->regenerate();
             RateLimiter::clear($throttleKey);
-
-            return redirect()->intended('/dashboard'); // Sesuaikan route dashboardmu
+            return redirect()->intended('/dashboard');
         }
 
-        RateLimiter::hit($throttleKey);
+        RateLimiter::hit($throttleKey, 60);
         return back()->with('error', 'Login gagal! Periksa kembali Email dan Password/NIS anda.');
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('login');
     }
 }

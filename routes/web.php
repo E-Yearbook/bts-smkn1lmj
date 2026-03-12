@@ -9,7 +9,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
-        return view('admin.app'); 
+        return view('admin.dashboard.dashboard'); 
     })->name('dashboard');
 
     // Tambahkan route logout
@@ -18,3 +18,4 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login-post');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
