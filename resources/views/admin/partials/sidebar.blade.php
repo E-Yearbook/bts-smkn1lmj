@@ -3,7 +3,7 @@
     <!-- SIDEBAR HEADER -->
     <div :class="sidebarToggle ? 'justify-center' : 'justify-between'"
         class="flex items-center gap-2 pt-8 sidebar-header pb-7">
-        <a href="index.html">
+        <a href="{{ route('home') }}">
             <span class="logo" :class="sidebarToggle ? 'hidden' : ''">
                 <img class="dark:hidden" src="./images/logo/logo.svg" alt="Logo" />
                 <img class="hidden dark:block" src="./images/logo/logo-dark.svg" alt="Logo" />
@@ -37,7 +37,7 @@
                 <ul class="flex flex-col gap-4">
                     <!-- Menu Item Dashboard -->
                     <li>
-                        <a href="index.html" class="menu-item group"
+                        <a href="{{ route('dashboard') }}" class="menu-item group"
                             :class="page === 'dashboard' ? 'menu-item-active' : 'menu-item-inactive'">
                             <svg :class="page === 'dashboard' ? 'menu-item-icon-active' : 'menu-item-icon-inactive'"
                                 width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -97,7 +97,7 @@
 
                     <!-- Menu Item Categories -->
                     <li>
-                        <a href="categories.html" class="menu-item group"
+                        <a href="{{ route('categories') }}" class="menu-item group"
                             :class="page === 'categories' ? 'menu-item-active' : 'menu-item-inactive'">
                             <svg :class="page === 'categories' ? 'menu-item-icon-active' : 'menu-item-icon-inactive'"
                                 width="24" height="24" viewBox="0 0 24 24" fill="none"
