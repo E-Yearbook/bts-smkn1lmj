@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\BookCategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController;
 
