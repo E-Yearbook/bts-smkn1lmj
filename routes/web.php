@@ -2,14 +2,16 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BookController;
 
 Route::get('/', function () {
     return view('home');
 });
+Route::get('/book', [BookController::class, 'ViewBook'])->name('book');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
-        return view('admin.dashboard.dashboard'); 
+        return view('admin.dashboard.dashboard');
     })->name('dashboard');
 
     // Tambahkan route logout
