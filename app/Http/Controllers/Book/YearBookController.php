@@ -125,4 +125,18 @@ class YearBookController extends Controller
             'message' => 'Cover tahun ' . $year . ' berhasil dihapus!',
         ]);
     }
+
+    public function home()
+{
+    $covers = YearCover::orderBy('year', 'desc')->get();
+
+    $currentYear = now()->year;
+
+    // Cari tahun sekarang, jika tidak ada ambil yang terbaru
+    $activeYear = $covers->firstWhere('year', $currentYear)
+                    ? $currentYear
+                    : ($covers->first()->year ?? $currentYear);
+
+    return view('home', compact('covers', 'activeYear'));
+}
 }

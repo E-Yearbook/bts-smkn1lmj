@@ -6,9 +6,8 @@ use App\Http\Controllers\Book\YearBookController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController;
 
-Route::get('/', function () {
-    return view('home');
-});
+Route::get('/', [YearBookController::class, 'home']);
+
 Route::get('/book', [BookController::class, 'ViewBook'])->name('book');
 
 Route::middleware(['auth'])->group(function () {
