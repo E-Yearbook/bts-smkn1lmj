@@ -22,8 +22,8 @@
 {{-- Header --}}
 <div class="mb-8 flex items-center justify-between">
     <div>
-        <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Detail Cover {{ $yearcover->year }}</h1>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Informasi lengkap cover dan video tahunan</p>
+        <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Year Cover {{ $yearcover->year }}</h1>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Complete information about the annual cover and video</p>
     </div>
     <div class="flex items-center gap-3">
         <a href="{{ route('yearcover.edit', $yearcover->id) }}"
@@ -38,7 +38,7 @@
             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
             </svg>
-            Kembali
+            Back
         </a>
     </div>
 </div>
@@ -55,15 +55,15 @@
             </div>
             <div class="p-4 border-t border-gray-100 dark:border-gray-700">
                 <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-500 dark:text-gray-400">Tahun</span>
+                    <span class="text-sm text-gray-500 dark:text-gray-400">Year</span>
                     <span class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $yearcover->year }}</span>
                 </div>
                 <div class="mt-2 flex items-center justify-between">
-                    <span class="text-xs text-gray-400">Ditambahkan</span>
+                    <span class="text-xs text-gray-400">Added</span>
                     <span class="text-xs text-gray-600 dark:text-gray-400">{{ $yearcover->created_at->format('d M Y') }}</span>
                 </div>
                 <div class="mt-1 flex items-center justify-between">
-                    <span class="text-xs text-gray-400">Diperbarui</span>
+                    <span class="text-xs text-gray-400">Updated</span>
                     <span class="text-xs text-gray-600 dark:text-gray-400">{{ $yearcover->updated_at->format('d M Y') }}</span>
                 </div>
             </div>
@@ -83,7 +83,7 @@
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                 </svg>
-                Hapus
+                Delete
             </button>
         </div>
     </div>
@@ -98,8 +98,8 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="text-base font-semibold text-gray-800 dark:text-white">Video Tahun {{ $yearcover->year }}</h3>
-                    <p class="text-xs text-gray-400">Klik play untuk menonton video</p>
+                    <h3 class="text-base font-semibold text-gray-800 dark:text-white">Year {{ $yearcover->year }} Video</h3>
+                    <p class="text-xs text-gray-400">Click play to watch the video</p>
                 </div>
             </div>
 
@@ -121,7 +121,7 @@
                      alt="Thumbnail"
                      class="h-14 w-24 rounded-lg object-cover flex-shrink-0">
                 <div class="min-w-0">
-                    <p class="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Link YouTube:</p>
+                    <p class="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">YouTube Link:</p>
                     <a href="{{ $yearcover->youtube_link }}" target="_blank"
                        class="text-xs text-blue-500 hover:text-blue-600 hover:underline break-all">
                         {{ $yearcover->youtube_link }}
@@ -132,7 +132,7 @@
                     <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                     </svg>
-                    Buka YouTube
+                    Open YouTube
                 </a>
             </div>
             @else
@@ -140,7 +140,7 @@
                 <svg class="h-12 w-12 text-gray-300 mb-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"/>
                 </svg>
-                <p class="text-sm text-gray-400">Link YouTube tidak valid</p>
+                <p class="text-sm text-gray-400">Invalid YouTube link</p>
             </div>
             @endif
         </div>
@@ -158,14 +158,14 @@
 <script>
     function confirmDelete(id, year) {
         Swal.fire({
-            title: 'Hapus Cover?',
-            html: `Cover tahun <strong>${year}</strong> akan dihapus permanen.<br>Aksi ini tidak dapat dibatalkan.`,
+            title: 'Delete Cover?',
+            html: `Year <strong>${year}</strong> cover will be permanently deleted.<br>This action cannot be undone.`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#ef4444',
             cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Ya, Hapus!',
-            cancelButtonText: 'Batal',
+            confirmButtonText: 'Yes, Delete!',
+            cancelButtonText: 'Cancel',
             reverseButtons: true,
             focusCancel: true,
         }).then((result) => {

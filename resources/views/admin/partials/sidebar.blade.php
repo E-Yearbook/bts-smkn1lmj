@@ -97,7 +97,7 @@
 
                     <!-- Menu Item Categories -->
                     <li>
-                        <a href="{{ route('categories') }}" class="menu-item group"
+                        <a href="{{ route('categories.index') }}" class="menu-item group"
                             :class="page === 'categories' ? 'menu-item-active' : 'menu-item-inactive'">
                             <svg :class="page === 'categories' ? 'menu-item-icon-active' : 'menu-item-icon-inactive'"
                                 width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -165,18 +165,18 @@
 @push('scripts')
     <script>
         function confirmLogout() {
-            // Blur konten halaman saat alert muncul
+            // Blur page content when alert appears
             document.querySelector('.flex.h-screen').style.filter = 'blur(4px)';
 
             Swal.fire({
-                title: 'Yakin ingin logout?',
-                text: 'Kamu akan keluar dari sesi admin.',
+                title: 'Are you sure you want to logout?',
+                text: 'You will exit the admin session.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#ef4444',
+                confirmButtonColor: '#f04438',
                 cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Ya, Logout',
-                cancelButtonText: 'Batal',
+                confirmButtonText: 'Yes, Logout',
+                cancelButtonText: 'Cancel',
                 backdrop: 'rgba(0,0,0,0.15)',
                 customClass: {
                     popup: 'rounded-2xl',
@@ -184,7 +184,7 @@
                     cancelButton: 'rounded-lg px-5 py-2 text-sm font-medium',
                 }
             }).then((result) => {
-                // Hapus blur setelah alert ditutup
+                // Remove blur after alert is closed
                 document.querySelector('.flex.h-screen').style.filter = '';
 
                 if (result.isConfirmed) {

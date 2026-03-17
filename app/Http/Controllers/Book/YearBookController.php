@@ -28,16 +28,16 @@ class YearBookController extends Controller
             'cover'        => 'required|file|mimes:jpg,jpeg,png|max:5120',
             'youtube_link' => 'required|url',
         ], [
-            'year.required'         => 'Tahun wajib diisi.',
-            'year.integer'          => 'Tahun harus berupa angka.',
-            'year.min'              => 'Tahun minimal 2000.',
-            'year.max'              => 'Tahun maksimal 2100.',
-            'year.unique'           => 'Cover untuk tahun ini sudah ada.',
-            'cover.required'        => 'Cover wajib diunggah.',
-            'cover.mimes'           => 'Cover harus berformat JPG atau PNG.',
-            'cover.max'             => 'Ukuran cover maksimal 5MB.',
-            'youtube_link.required' => 'Link YouTube wajib diisi.',
-            'youtube_link.url'      => 'Link YouTube tidak valid.',
+            'year.required'         => 'Year is required.',
+            'year.integer'          => 'Year must be a number.',
+            'year.min'              => 'Year must be at least 2000.',
+            'year.max'              => 'Year must be at most 2100.',
+            'year.unique'           => 'A cover for this year already exists.',
+            'cover.required'        => 'Cover is required.',
+            'cover.mimes'           => 'Cover must be in JPG or PNG format.',
+            'cover.max'             => 'Cover size must not exceed 5MB.',
+            'youtube_link.required' => 'YouTube link is required.',
+            'youtube_link.url'      => 'YouTube link is invalid.',
         ]);
 
         // Secure file upload
@@ -52,11 +52,7 @@ class YearBookController extends Controller
             'youtube_link' => $request->youtube_link,
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Cover tahun ' . $request->year . ' berhasil ditambahkan!',
-            'redirect' => route('yearcover'),
-        ]);
+        return redirect()->route('yearcover')->with('success', 'Cover for year ' . $request->year . ' added successfully!');
     }
 
     public function show(YearCover $yearcover)
@@ -76,13 +72,13 @@ class YearBookController extends Controller
             'cover'        => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
             'youtube_link' => 'required|url',
         ], [
-            'year.required'         => 'Tahun wajib diisi.',
-            'year.integer'          => 'Tahun harus berupa angka.',
-            'year.unique'           => 'Cover untuk tahun ini sudah ada.',
-            'cover.mimes'           => 'Cover harus berformat JPG atau PNG.',
-            'cover.max'             => 'Ukuran cover maksimal 5MB.',
-            'youtube_link.required' => 'Link YouTube wajib diisi.',
-            'youtube_link.url'      => 'Link YouTube tidak valid.',
+            'year.required'         => 'Year is required.',
+            'year.integer'          => 'Year must be a number.',
+            'year.unique'           => 'A cover for this year already exists.',
+            'cover.mimes'           => 'Cover must be in JPG or PNG format.',
+            'cover.max'             => 'Cover size must not exceed 5MB.',
+            'youtube_link.required' => 'YouTube link is required.',
+            'youtube_link.url'      => 'YouTube link is invalid.',
         ]);
 
         $data = [
@@ -104,11 +100,7 @@ class YearBookController extends Controller
 
         $yearcover->update($data);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Cover tahun ' . $request->year . ' berhasil diperbarui!',
-            'redirect' => route('yearcover'),
-        ]);
+        return redirect()->route('yearcover')->with('success', 'Cover for year ' . $request->year . ' updated successfully!');
     }
 
     public function destroy(YearCover $yearcover)
@@ -120,10 +112,7 @@ class YearBookController extends Controller
         $year = $yearcover->year;
         $yearcover->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Cover tahun ' . $year . ' berhasil dihapus!',
-        ]);
+        return redirect()->route('yearcover')->with('success', 'Cover for year ' . $year . ' deleted successfully!');
     }
 
     public function home()

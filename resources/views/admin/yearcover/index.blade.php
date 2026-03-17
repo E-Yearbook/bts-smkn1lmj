@@ -21,15 +21,15 @@
     {{-- Header --}}
     <div class="mb-8 flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Year Cover</h1>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Kelola cover dan video tahunan sekolah</p>
+            <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Year Covers</h1>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage school annual covers and videos</p>
         </div>
         <a href="{{ route('yearcover.create') }}"
-            class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700 active:scale-95 transition-all duration-150 bg-brand-500 shadow-theme-xs hover:bg-brand-600">
+            class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-medium text-white shadow-theme-xs hover:bg-brand-600 transition-all">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
             </svg>
-            Tambah Cover
+            Add Cover
         </a>
     </div>
 
@@ -41,8 +41,8 @@
                 <path stroke-linecap="round" stroke-linejoin="round"
                     d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5M21 3.75H3M6.75 7.5h.008v.008H6.75V7.5z" />
             </svg>
-            <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300">Belum ada cover</h3>
-            <p class="mt-1 text-sm text-gray-400">Klik "Tambah Cover" untuk menambahkan cover tahunan pertama.</p>
+            <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300">No covers yet</h3>
+            <p class="mt-1 text-sm text-gray-400">Click "Add Cover" to create the first annual cover.</p>
         </div>
     @else
         {{-- Grid Cards --}}
@@ -51,7 +51,7 @@
                 @php $ytId = getYoutubeId($cover->youtube_link); @endphp
 
                 <div
-                    class="group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-200 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-500">
+                    class="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:border-brand-200 hover:shadow-lg hover:shadow-brand-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-brand-500">
 
                     {{-- Cover Image --}}
                     <div
@@ -62,62 +62,46 @@
 
                         {{-- Year Badge --}}
                         <span
-                            class="absolute top-2 right-2 rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-bold text-white shadow">
+                            class="absolute top-2 right-2 rounded-lg bg-brand-500 px-2.5 py-1 text-xs font-bold text-white shadow">
                             {{ $cover->year }}
                         </span>
                     </div>
 
                     {{-- Card Body --}}
-                    <div class="flex flex-col gap-2 p-3 border-t border-gray-100 dark:border-gray-700">
+                    <div class="flex flex-col gap-3 p-4 border-t border-gray-100 dark:border-gray-700">
                         <p class="text-sm font-semibold text-center text-gray-900 dark:text-white">
-                            Cover Tahun {{ $cover->year }}
+                            Year Cover {{ $cover->year }}
                         </p>
 
                         {{-- Buttons --}}
-                        <div class="flex gap-1.5">
+                        <div class="grid grid-cols-3 gap-2">
 
                             {{-- Detail (Primary) --}}
                             <a href="{{ route('yearcover.show', $cover->id) }}"
-                                class="flex-1 inline-flex items-center justify-center gap-1 rounded-lg 
-                                bg-brand-500 hover:bg-brand-600 px-2 py-1.5 text-xs font-medium text-white 
-                                transition-colors shadow-theme-xs leading-none">
-
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24">
+                                class="inline-flex items-center justify-center gap-1 rounded-lg bg-brand-500 hover:bg-brand-600 px-2.5 py-2 text-xs font-medium text-white transition-colors shadow-theme-xs whitespace-nowrap">
+                                <svg class="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0" />
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M2.458 12C3.732 7.943 7.523 5 12 5" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5" />
                                 </svg>
-
-                                Detail
+                                <span>Detail</span>
                             </a>
 
                             {{-- Edit (Warning) --}}
                             <a href="{{ route('yearcover.edit', $cover->id) }}"
-                                class="flex-1 inline-flex items-center justify-center gap-1 rounded-lg 
-                                bg-warning-500 hover:bg-warning-600 px-2 py-1.5 text-xs font-medium text-white 
-                                transition-colors shadow-theme-xs leading-none">
-
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2" />
+                                class="inline-flex items-center justify-center gap-1 rounded-lg bg-warning-500 hover:bg-warning-600 px-2.5 py-2 text-xs font-medium text-white transition-colors shadow-theme-xs whitespace-nowrap">
+                                <svg class="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                 </svg>
-
-                                Edit
+                                <span>Edit</span>
                             </a>
 
-                            {{-- Hapus (Danger) --}}
+                            {{-- Delete (Danger) --}}
                             <button onclick="confirmDelete({{ $cover->id }}, {{ $cover->year }})"
-                                class="flex-1 inline-flex items-center justify-center gap-1 rounded-lg 
-                                bg-error-500 hover:bg-error-600 px-2 py-1.5 text-xs font-medium text-white 
-                                transition-colors shadow-theme-xs leading-none">
-
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142" />
+                                class="inline-flex items-center justify-center gap-1 rounded-lg bg-error-500 hover:bg-error-600 px-2.5 py-2 text-xs font-medium text-white transition-colors shadow-theme-xs whitespace-nowrap">
+                                <svg class="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                 </svg>
-
-                                Hapus
+                                <span>Delete</span>
                             </button>
 
                         </div>
@@ -139,14 +123,14 @@
         <script>
             function confirmDelete(id, year) {
                 Swal.fire({
-                    title: 'Hapus Cover?',
-                    html: `Cover tahun <strong>${year}</strong> akan dihapus permanen.<br>Aksi ini tidak dapat dibatalkan.`,
+                    title: 'Delete Cover?',
+                    html: `Year <strong>${year}</strong> cover will be permanently deleted.<br>This action cannot be undone.`,
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#ef4444',
+                    confirmButtonColor: '#f04438',
                     cancelButtonColor: '#6b7280',
-                    confirmButtonText: '<i class="fa fa-trash"></i> Ya, Hapus!',
-                    cancelButtonText: 'Batal',
+                    confirmButtonText: '<i class="fa fa-trash"></i> Yes, Delete!',
+                    cancelButtonText: 'Cancel',
                     reverseButtons: true,
                     focusCancel: true,
                 }).then((result) => {
@@ -162,7 +146,7 @@
             @if (session('success'))
                 Swal.fire({
                     icon: 'success',
-                    title: 'Berhasil!',
+                    title: 'Success!',
                     text: '{{ session('success') }}',
                     timer: 2500,
                     showConfirmButton: false,
@@ -174,7 +158,7 @@
             @if (session('error'))
                 Swal.fire({
                     icon: 'error',
-                    title: 'Gagal!',
+                    title: 'Failed!',
                     text: '{{ session('error') }}',
                     timer: 3000,
                     showConfirmButton: false,

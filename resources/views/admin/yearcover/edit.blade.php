@@ -5,27 +5,34 @@
 @php $page = 'yearcover'; @endphp
 
 @push('styles')
-<link rel="stylesheet" href="https://unpkg.com/dropzone@6/dist/dropzone.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dropzone@5.9.3/dist/dropzone.min.css" />
 <style>
     .dropzone {
-        border: 2px dashed #d1d5db !important;
-        border-radius: 12px !important;
-        background: #f9fafb !important;
-        min-height: 160px !important;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: border-color 0.2s, background 0.2s;
-        cursor: pointer;
+        border: 2px dashed #d1d5db;
+        border-radius: 12px;
+        background: #f9fafb;
+        min-height: 180px;
+        padding: 20px;
+        transition: border-color 0.2s ease, background 0.2s ease;
     }
-    .dropzone:hover, .dropzone.dz-drag-hover {
-        border-color: #3b82f6 !important;
-        background: #eff6ff !important;
+    .dropzone.dz-drag-hover { border-color: #3b82f6; background: #eff6ff; }
+    .dropzone .dz-message { margin: 0; }
+    .dark .dropzone { border-color: #374151; background: #111827; }
+    .dark .dropzone.dz-drag-hover { border-color: #3b82f6; background: #1e3a5f; }
+    .dark input[type="number"],
+    .dark input[type="text"] {
+        background-color: #111827;
+        color: #fff;
+        border-color: #374151;
     }
-    .dropzone .dz-message { margin: 0 !important; }
-    .dropzone .dz-preview .dz-image { border-radius: 8px; }
-    .dark .dropzone { border-color: #374151 !important; background: #111827 !important; }
-    .dark .dropzone:hover { border-color: #3b82f6 !important; background: #1e3a5f !important; }
+    .dark input[type="number"]::placeholder,
+    .dark input[type="text"]::placeholder {
+        color: #6b7280;
+        opacity: 1;
+    }
+    .dark label {
+        color: #d1d5db !important;
+    }
 </style>
 @endpush
 
@@ -33,15 +40,15 @@
 
 <div class="mb-8 flex items-center justify-between">
     <div>
-        <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Edit Cover {{ $yearcover->year }}</h1>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Perbarui cover dan video tahunan sekolah</p>
+        <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Edit Year Cover {{ $yearcover->year }}</h1>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Update school annual covers and videos</p>
     </div>
     <a href="{{ route('yearcover') }}"
-       class="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300">
+       class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300">
         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
         </svg>
-        Kembali
+        Back
     </a>
 </div>
 
@@ -51,228 +58,189 @@
 
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
 
-        {{-- LEFT --}}
+        {{-- LEFT: Tahun & YouTube --}}
         <div class="space-y-6">
             <div class="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-                <h3 class="mb-4 text-base font-semibold text-gray-800 dark:text-white">Informasi Cover</h3>
+                <h3 class="mb-4 text-base font-semibold text-gray-800 dark:text-white">Cover Information</h3>
                 <div class="space-y-4">
+
                     <div>
-                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Tahun <span class="text-red-500">*</span>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-white">
+                            Year <span style="color: var(--color-error-500);">*</span>
                         </label>
                         <input type="number" name="year" id="year"
-                            value="{{ old('year', $yearcover->year) }}"
-                            min="2000" max="2100"
-                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-white"/>
+                            value="{{ old('year', $yearcover->year) }}" min="2000" max="2100"
+                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500" />
                     </div>
-                    <div>
-                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Link YouTube <span class="text-red-500">*</span>
+
+                    <div class="mt-3">
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-white">
+                            YouTube Link <span style="color: var(--color-error-500);">*</span>
                         </label>
                         <input type="text" name="youtube_link" id="youtube_link"
                             value="{{ old('youtube_link', $yearcover->youtube_link) }}"
                             placeholder="https://youtu.be/xxxxxx"
-                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-white"/>
+                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500" />
+                        <p class="mt-1 text-xs text-gray-400">Video preview appears automatically after entering the link.</p>
                     </div>
+
                 </div>
             </div>
 
             {{-- YouTube Preview --}}
             <div id="yt-preview" class="{{ $yearcover->youtube_link ? '' : 'hidden' }} rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
-                <h3 class="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">Preview Video YouTube</h3>
+                <h3 class="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">YouTube Video Preview</h3>
                 <div class="overflow-hidden rounded-xl bg-black">
-                    <iframe id="yt-iframe"
-                        src="{{ $yearcover->youtube_link ? 'https://www.youtube.com/embed/' . preg_replace('/.*(?:youtu\.be\/|v=)([a-zA-Z0-9_-]{11}).*/','$1',$yearcover->youtube_link) : '' }}"
-                        width="100%" frameborder="0"
+                    <iframe id="yt-iframe" src="{{ $yearcover->youtube_link ? 'https://www.youtube.com/embed/' . preg_replace('/.*(?:youtu\.be\/|v=)([a-zA-Z0-9_-]{11}).*/','$1',$yearcover->youtube_link) : '' }}" width="100%" frameborder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen style="aspect-ratio:16/9;"></iframe>
+                        allowfullscreen style="aspect-ratio:16/9; display:block;"></iframe>
                 </div>
             </div>
         </div>
 
-        {{-- RIGHT --}}
+        {{-- RIGHT: Upload Cover --}}
         <div class="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-            <h3 class="mb-1 text-base font-semibold text-gray-800 dark:text-white">Cover Buku</h3>
-            <p class="mb-4 text-xs text-gray-400">Kosongkan jika tidak ingin mengganti cover. Format: JPG, PNG • Maks: 5MB</p>
+            <h3 class="mb-1 text-base font-semibold text-gray-800 dark:text-white">Book Cover</h3>
+            <p class="mb-4 text-xs text-gray-400">Format: JPG, PNG • Maks: 5MB</p>
 
             {{-- Current Cover --}}
             <div class="mb-4 rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-900">
-                <p class="mb-2 text-xs font-medium text-gray-500 dark:text-gray-400">Cover Saat Ini:</p>
+                <p class="mb-2 text-xs font-medium text-gray-500 dark:text-gray-400">Current Cover:</p>
                 <img src="{{ Storage::url($yearcover->cover_path) }}" alt="Current Cover"
                      class="h-28 w-full object-contain rounded-lg">
             </div>
 
-            <div class="dropzone" id="coverDropzone">
-                <div class="dz-message text-center px-4">
-                    <div class="mb-3 flex justify-center">
-                        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/30">
-                            <svg class="h-6 w-6 text-blue-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            {{-- INPUT FILE --}}
+            <input type="file" name="cover" id="coverInput"
+                   accept="image/jpeg,image/png"
+                   class="hidden" />
+
+            {{-- Dropzone --}}
+            <div id="coverDropzone" class="dropzone rounded-xl">
+                <div class="dz-message needsclick">
+                    <div class="mb-4 flex justify-center">
+                        <div class="flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/30">
+                            <svg class="h-7 w-7 text-blue-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
                             </svg>
                         </div>
                     </div>
-                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1">Drag & Drop file baru</h4>
-                    <p class="text-xs text-gray-400 mb-3">atau klik untuk memilih file pengganti</p>
-                    <span class="inline-block rounded-lg bg-blue-500 px-3 py-1.5 text-xs font-medium text-white">Browse File</span>
+                    <p class="text-sm font-semibold text-gray-700 dark:text-white mb-1">Drag & Drop new file</p>
+                    <p class="text-xs text-gray-400 dark:text-gray-300">or click to select a replacement file</p>
                 </div>
             </div>
 
-            <input type="file" name="cover" id="coverInput" accept=".jpg,.jpeg,.png" class="hidden"/>
-
-            <div id="fileInfo" class="hidden mt-3 flex items-center gap-3 rounded-lg bg-green-50 border border-green-200 p-3 dark:bg-green-900/20 dark:border-green-700">
-                <svg class="h-5 w-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <div class="min-w-0">
-                    <p class="text-xs font-medium text-green-700 truncate" id="fileName"></p>
-                    <p class="text-xs text-green-500" id="fileSize"></p>
-                </div>
-                <button type="button" onclick="removeFile()" class="ml-auto text-green-400 hover:text-red-500">
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
         </div>
-    </div>
+    </div>{{-- end grid --}}
 
+    {{-- Submit Buttons --}}
     <div class="mt-6 flex items-center justify-end gap-3">
         <a href="{{ route('yearcover') }}"
-           class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300">
-            Batal
+           class="inline-flex items-center gap-2 rounded-lg rounded-xl bg-white px-5 py-3.5 text-sm font-medium text-gray-700 shadow-theme-xs ring-1 ring-inset ring-gray-300 transition hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03]">
+            Cancel
         </a>
         <button type="submit" id="submitBtn"
-            class="inline-flex items-center gap-2 rounded-lg bg-amber-500 px-6 py-2.5 text-sm font-medium text-white hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all">
+            class="inline-flex items-center gap-2 rounded-lg bg-warning-500 px-6 py-2.5 text-sm font-medium text-white hover:bg-warning-600 focus:outline-none focus:ring-2 focus:ring-warning-500 focus:ring-offset-2 transition-all shadow-theme-xs">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
             </svg>
             Update Cover
         </button>
     </div>
+
 </form>
 
 @push('scripts')
-<script src="https://unpkg.com/dropzone@6/dist/dropzone.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/dropzone@5.9.3/dist/dropzone.min.js"></script>
 <script>
-    Dropzone.autoDiscover = false;
+Dropzone.autoDiscover = false;
 
-    const dz = new Dropzone('#coverDropzone', {
-        url: '/',
-        autoProcessQueue: false,
-        maxFiles: 1,
-        maxFilesize: 5,
-        acceptedFiles: 'image/jpeg,image/png',
-        addRemoveLinks: false,
-        init: function () {
-            this.on('addedfile', function (file) {
-                const allowed = ['image/jpeg', 'image/png'];
-                if (!allowed.includes(file.type)) {
-                    this.removeFile(file);
-                    return Swal.fire({ icon: 'error', title: 'Format Tidak Valid!', text: 'Hanya JPG dan PNG.', confirmButtonColor: '#3b82f6' });
-                }
-                if (file.size > 5 * 1024 * 1024) {
-                    this.removeFile(file);
-                    return Swal.fire({ icon: 'error', title: 'File Terlalu Besar!', text: 'Maksimal 5MB.', confirmButtonColor: '#3b82f6' });
-                }
-                if (this.files.length > 1) this.removeFile(this.files[0]);
+let droppedFile = null;
 
+const myDropzone = new Dropzone('#coverDropzone', {
+    url: '/',
+    autoProcessQueue: false,
+    maxFiles: 1,
+    maxFilesize: 5,
+    acceptedFiles: 'image/jpeg,image/png',
+    addRemoveLinks: true,
+    dictDefaultMessage: '',
+    init: function () {
+        this.on('addedfile', function (file) {
+            if (this.files.length > 1) this.removeFile(this.files[0]);
+            droppedFile = file;
+        });
+        this.on('removedfile', function () {
+            droppedFile = null;
+        });
+        this.on('error', function (file, message) {
+            Swal.fire({ icon: 'error', title: 'Oops!', text: message, confirmButtonColor: '#465fff' });
+            this.removeFile(file);
+        });
+    }
+});
+
+function extractYoutubeId(url) {
+    const m = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    return m ? m[1] : null;
+}
+
+let ytTimer;
+document.getElementById('youtube_link').addEventListener('input', function () {
+    clearTimeout(ytTimer);
+    const val = this.value.trim();
+    ytTimer = setTimeout(() => {
+        const ytId    = extractYoutubeId(val);
+        const preview = document.getElementById('yt-preview');
+        const iframe  = document.getElementById('yt-iframe');
+        if (ytId) {
+            iframe.src = 'https://www.youtube.com/embed/' + ytId;
+            preview.classList.remove('hidden');
+        } else {
+            iframe.src = '';
+            preview.classList.add('hidden');
+        }
+    }, 600);
+});
+
+document.getElementById('editForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const year   = document.getElementById('year').value.trim();
+    const ytLink = document.getElementById('youtube_link').value.trim();
+
+    if (!year) return Swal.fire({ icon: 'warning', title: 'Attention!', text: 'Year is required.', confirmButtonColor: '#465fff' });
+    if (year < 2000 || year > 2100) return Swal.fire({ icon: 'warning', title: 'Attention!', text: 'Year must be between 2000 – 2100.', confirmButtonColor: '#465fff' });
+    if (!ytLink) return Swal.fire({ icon: 'warning', title: 'Attention!', text: 'YouTube link is required.', confirmButtonColor: '#465fff' });
+    if (!extractYoutubeId(ytLink)) return Swal.fire({ icon: 'warning', title: 'Invalid Link!', text: 'Enter a valid YouTube link.', confirmButtonColor: '#465fff' });
+
+    Swal.fire({
+        title: 'Update Cover?',
+        html: `Year <strong>${year}</strong> cover will be updated.`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#f79009',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Yes, Update!',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true,
+    }).then(result => {
+        if (result.isConfirmed) {
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = `<svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Updating...`;
+
+            if (droppedFile) {
                 const dt = new DataTransfer();
-                dt.items.add(file);
+                dt.items.add(droppedFile);
                 document.getElementById('coverInput').files = dt.files;
-                document.getElementById('fileName').textContent = file.name;
-                document.getElementById('fileSize').textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
-                document.getElementById('fileInfo').classList.remove('hidden');
-            });
-            this.on('removedfile', function () {
-                document.getElementById('coverInput').value = '';
-                document.getElementById('fileInfo').classList.add('hidden');
-            });
+            }
+
+            document.getElementById('editForm').submit();
         }
     });
-
-    function removeFile() {
-        dz.removeAllFiles();
-        document.getElementById('coverInput').value = '';
-        document.getElementById('fileInfo').classList.add('hidden');
-    }
-
-    function extractYoutubeId(url) {
-        const match = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-        return match ? match[1] : null;
-    }
-
-    let ytDebounce;
-    document.getElementById('youtube_link').addEventListener('input', function () {
-        clearTimeout(ytDebounce);
-        const val = this.value.trim();
-        ytDebounce = setTimeout(() => {
-            const ytId = extractYoutubeId(val);
-            const preview = document.getElementById('yt-preview');
-            const iframe = document.getElementById('yt-iframe');
-            if (ytId) {
-                iframe.src = `https://www.youtube.com/embed/${ytId}`;
-                preview.classList.remove('hidden');
-            } else {
-                iframe.src = '';
-                preview.classList.add('hidden');
-            }
-        }, 600);
-    });
-
-    document.getElementById('editForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const year   = document.getElementById('year').value.trim();
-        const ytLink = document.getElementById('youtube_link').value.trim();
-
-        if (!year) return Swal.fire({ icon: 'warning', title: 'Perhatian!', text: 'Tahun wajib diisi.', confirmButtonColor: '#3b82f6' });
-        if (year < 2000 || year > 2100) return Swal.fire({ icon: 'warning', title: 'Perhatian!', text: 'Tahun harus antara 2000 – 2100.', confirmButtonColor: '#3b82f6' });
-        if (!ytLink) return Swal.fire({ icon: 'warning', title: 'Perhatian!', text: 'Link YouTube wajib diisi.', confirmButtonColor: '#3b82f6' });
-        if (!extractYoutubeId(ytLink)) return Swal.fire({ icon: 'warning', title: 'Link Tidak Valid!', text: 'Masukkan link YouTube yang valid.', confirmButtonColor: '#3b82f6' });
-
-        Swal.fire({
-            title: 'Update Cover?',
-            html: `Cover tahun <strong>${year}</strong> akan diperbarui.`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#f59e0b',
-            cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Ya, Update!',
-            cancelButtonText: 'Batal',
-            reverseButtons: true,
-        }).then(result => {
-            if (result.isConfirmed) {
-                const btn = document.getElementById('submitBtn');
-                btn.disabled = true;
-                btn.innerHTML = `<svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Memperbarui...`;
-
-                const formData = new FormData(this);
-
-                fetch(this.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                })
-                .then(r => r.json())
-                .then(data => {
-                    if (data.success) {
-                        Swal.fire({ icon: 'success', title: 'Berhasil!', text: data.message, confirmButtonColor: '#3b82f6' })
-                            .then(() => window.location.href = data.redirect);
-                    } else {
-                        btn.disabled = false;
-                        btn.innerHTML = `<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Update Cover`;
-                        const errors = data.errors ? Object.values(data.errors).flat().join('\n') : data.message;
-                        Swal.fire({ icon: 'error', title: 'Gagal!', text: errors, confirmButtonColor: '#3b82f6' });
-                    }
-                })
-                .catch(() => {
-                    btn.disabled = false;
-                    Swal.fire({ icon: 'error', title: 'Error!', text: 'Terjadi kesalahan.', confirmButtonColor: '#3b82f6' });
-                });
-            }
-        }.bind(this));
-    });
+});
 </script>
 @endpush
 
