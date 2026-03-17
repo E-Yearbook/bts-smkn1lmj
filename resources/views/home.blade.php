@@ -1,9 +1,13 @@
 @extends('layouts.index')
 @section('content')
     @php
-        $years = $covers->pluck('year')->sortDesc()->values();
-        $tripled = array_merge($years->toArray(), $years->toArray(), $years->toArray());
-    @endphp
+    $years = $covers->pluck('year')->sort()->values();
+    $count = $years->count();
+    $useLoop = $count >= 3;
+    $slideItems = $useLoop
+        ? array_merge($years->toArray(), $years->toArray(), $years->toArray())
+        : $years->toArray();
+@endphp
 
     <section class="relative min-h-screen flex items-center bg-[#fafaf9] overflow-hidden font-serif">
 
@@ -28,10 +32,10 @@
             </div>
         </div>
 
-        <div class="relative z-10 w-full max-w-4xl mx-auto px-8 py-[72px]">
+        <div class="relative z-10 w-full py-[72px]">
 
             {{-- ── Header ── --}}
-            <header class="text-center mb-16" data-aos="fade-down" data-aos-duration="600">
+            <header class="text-center mb-16 max-w-4xl mx-auto px-8" data-aos="fade-down" data-aos-duration="600">
                 <div
                     class="inline-flex items-center gap-2.5 font-mono text-[10px] font-bold tracking-[0.32em] uppercase text-indigo-500 mb-5">
                     <span class="w-[3px] h-[3px] rounded-full bg-indigo-500"></span>
@@ -49,31 +53,26 @@
             </header>
 
             {{-- ── Stage ── --}}
-            <div class="relative pt-6 pb-14" data-aos="fade-up" data-aos-duration="700" data-aos-delay="120">
-                {{-- Arrow PREV --}}
-                <button
-                    class="ybk-arrow-prev absolute z-20 left-0 w-[42px] h-[42px] rounded-full bg-white border border-black/[0.08] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.06)] flex items-center justify-center text-[#737373] cursor-pointer transition-all duration-200 hover:bg-indigo-500 hover:text-white hover:border-indigo-500 hover:shadow-[0_4px_20px_rgba(99,102,241,0.35)] hover:scale-[1.08] active:scale-[0.96]"
-                    style="top: calc(1.5rem + 130px); transform: translateY(-50%);">
-                    <svg class="w-[15px] h-[15px] pointer-events-none" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="15 18 9 12 15 6" />
-                    </svg>
-                </button>
+            <div class="pt-6 pb-14" data-aos="fade-up" data-aos-duration="700" data-aos-delay="120">
 
-                {{-- Arrow NEXT --}}
-                <button
-                    class="ybk-arrow-next absolute z-20 right-0 w-[42px] h-[42px] rounded-full bg-white border border-black/[0.08] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.06)] flex items-center justify-center text-[#737373] cursor-pointer transition-all duration-200 hover:bg-indigo-500 hover:text-white hover:border-indigo-500 hover:shadow-[0_4px_20px_rgba(99,102,241,0.35)] hover:scale-[1.08] active:scale-[0.96]"
-                    style="top: calc(1.5rem + 130px); transform: translateY(-50%);">
-                    <svg class="w-[15px] h-[15px] pointer-events-none" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="9 6 15 12 9 18" />
-                    </svg>
-                </button>
+                {{-- Row: [prev] [swiper] [next] --}}
+                <div class="ybk-row">
 
-                {{-- Swiper --}}
-                <div class="swiper yearbookSwiper">
+                    {{-- Arrow PREV --}}
+                    <div class="ybk-arrow-col">
+                        <button class="ybk-arrow-prev ybk-btn-arrow">
+                            <svg class="w-[15px] h-[15px] pointer-events-none" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="15 18 9 12 15 6" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    {{-- Swiper col --}}
+                    <div class="ybk-stage">
+                    <div class="swiper yearbookSwiper">
                     <div class="swiper-wrapper">
-                        @foreach ($tripled as $year)
+                        @foreach ($slideItems as $year)
                             <div
                                 class="swiper-slide ybk-slide flex justify-center transition-[opacity,transform] duration-[400ms] ease-[cubic-bezier(0.25,1,0.5,1)]">
 
@@ -152,13 +151,26 @@
                         @endforeach
                     </div>
                 </div>
+                </div>
+
+                    {{-- Arrow NEXT --}}
+                    <div class="ybk-arrow-col">
+                        <button class="ybk-arrow-next ybk-btn-arrow">
+                            <svg class="w-[15px] h-[15px] pointer-events-none" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 6 15 12 9 18" />
+                            </svg>
+                        </button>
+                    </div>
+
+                </div>{{-- end ybk-row --}}
 
                 {{-- Pagination --}}
                 <div class="ybk-dots swiper-pagination !relative !bottom-auto flex justify-center mt-0"></div>
             </div>
 
             {{-- ── Footer deco ── --}}
-            <footer class="flex items-center justify-center gap-5 mt-[52px]" data-aos="fade-up" data-aos-duration="500"
+            <footer class="flex items-center justify-center gap-5 mt-[52px] max-w-4xl mx-auto px-8" data-aos="fade-up" data-aos-duration="500"
                 data-aos-delay="200">
                 <div class="h-px w-14 bg-gradient-to-r from-transparent to-[#d4d4d4]"></div>
                 <span class="font-mono text-[9.5px] tracking-[0.28em] uppercase text-[#c4c4c4]">
@@ -172,10 +184,64 @@
 
     <style>
         /* ── Unavoidable Swiper overrides (cannot be done in Tailwind) ── */
+
+        /* Row layout: arrow | swiper | arrow — full viewport width */
+        .ybk-row {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* Arrow columns: fixed width, centered button */
+        .ybk-arrow-col {
+            flex: 0 0 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ybk-btn-arrow {
+            width: 42px;
+            height: 42px;
+            border-radius: 99px;
+            background: white;
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #737373;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .ybk-btn-arrow:hover {
+            background: #6366f1;
+            color: white;
+            border-color: #6366f1;
+            box-shadow: 0 4px 20px rgba(99,102,241,0.35);
+            transform: scale(1.08);
+        }
+
+        .ybk-btn-arrow:active {
+            transform: scale(0.96);
+        }
+
+        /* Swiper col: takes remaining space, clips overflow */
+        .ybk-stage {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+        }
+
         .yearbookSwiper {
-            overflow: hidden !important;
-            margin: 0 56px !important;
-            padding: 4px 0 !important;
+            overflow: visible !important;
+            padding: 8px 0 !important;
+        }
+
+        .yearbookSwiper .swiper-slide {
+            width: auto !important;
         }
 
         .ybk-slide:not(.swiper-slide-active) {
@@ -215,80 +281,64 @@
         }
 
         @media (max-width: 540px) {
-            .yearbookSwiper {
-                margin: 0 44px !important;
+            .ybk-arrow-col {
+                flex: 0 0 48px;
             }
         }
     </style>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const years = @json($years->values());
-            const activeYear = {{ $activeYear }};
+document.addEventListener("DOMContentLoaded", function () {
+    const years      = @json($years->values());
+    const activeYear = {{ $activeYear }};
+    const useLoop    = {{ $useLoop ? 'true' : 'false' }};
+    const count      = years.length;
 
-            // Cari index activeYear, fallback ke index 0 (terbaru)
-            const activeIdx = years.indexOf(activeYear);
-            const latestIndex = years.length + (activeIdx !== -1 ? activeIdx : 0);
-            const swiper = new Swiper(".yearbookSwiper", {
-                slidesPerView: 3,
-                centeredSlides: true,
-                spaceBetween: 28,
-                loop: true,
-                loopedSlides: 9,
-                grabCursor: true,
-                speed: 680,
-                initialSlide: latestIndex,
-                autoplay: {
-                    delay: 3200,
-                    disableOnInteraction: false,
-                    pauseOnMouseEnter: true
-                },
-                navigation: {
-                    prevEl: ".ybk-arrow-prev",
-                    nextEl: ".ybk-arrow-next"
-                },
-                pagination: {
-                    el: ".ybk-dots",
-                    clickable: true
-                },
-                breakpoints: {
-                    0: {
-                        slidesPerView: 1,
-                        spaceBetween: 20,
-                        loopedSlides: 9
-                    },
-                    540: {
-                        slidesPerView: 2,
-                        spaceBetween: 24,
-                        loopedSlides: 9
-                    },
-                    768: {
-                        slidesPerView: 3,
-                        spaceBetween: 28,
-                        loopedSlides: 9
-                    },
-                },
-            });
+    const activeIdx  = years.indexOf(activeYear);
+    const safeIdx    = activeIdx !== -1 ? activeIdx : years.length - 1;
+    const initialSlide = useLoop ? (count + safeIdx) : safeIdx;
 
-            // Drag vs click
-            const wrapper = document.querySelector(".yearbookSwiper");
-            let startX = 0,
-                dragged = false;
-            wrapper.addEventListener("pointerdown", e => {
-                startX = e.clientX;
-                dragged = false;
-            });
-            wrapper.addEventListener("pointermove", e => {
-                if (Math.abs(e.clientX - startX) > 6) dragged = true;
-            });
-            wrapper.addEventListener("pointerup", e => {
-                if (dragged) return;
-                const card = e.target.closest(".yearbook-card");
-                if (!card) return;
-                if (card.closest(".swiper-slide")?.classList.contains("swiper-slide-active")) {
-                    window.location.href = card.getAttribute("href") || card.dataset.url;
-                }
-            });
-        });
-    </script>
+    const swiper = new Swiper(".yearbookSwiper", {
+        centeredSlides: true,
+        spaceBetween: 28,
+        grabCursor: true,
+        speed: 680,
+        initialSlide: initialSlide,
+
+        // Loop hanya jika data >= 3
+        loop: useLoop,
+        loopedSlides: useLoop ? count * 3 : undefined,
+
+        autoplay: useLoop
+            ? { delay: 3200, disableOnInteraction: false, pauseOnMouseEnter: true }
+            : false,
+
+        navigation: { prevEl: ".ybk-arrow-prev", nextEl: ".ybk-arrow-next" },
+        pagination: { el: ".ybk-dots", clickable: true },
+
+        breakpoints: {
+            0:   { slidesPerView: 'auto', spaceBetween: 20 },
+            540: { slidesPerView: 'auto', spaceBetween: 24 },
+            768: { slidesPerView: 'auto', spaceBetween: 28 },
+        },
+    });
+
+    // Drag vs click
+    const wrapper = document.querySelector(".yearbookSwiper");
+    let startX = 0, dragged = false;
+    wrapper.addEventListener("pointerdown", e => { startX = e.clientX; dragged = false; });
+    wrapper.addEventListener("pointermove", e => { if (Math.abs(e.clientX - startX) > 6) dragged = true; });
+    wrapper.addEventListener("pointerup", e => {
+        if (dragged) return;
+        const card = e.target.closest(".yearbook-card");
+        if (!card) return;
+        const slide = card.closest(".swiper-slide");
+        const isActive = slide?.classList.contains("swiper-slide-active");
+        // Jika tidak loop (data < 3), semua slide bisa diklik langsung
+        if (isActive || !useLoop) {
+            window.location.href = card.getAttribute("href") || card.dataset.url;
+        }
+    });
+});
+</script>
 @endsection
