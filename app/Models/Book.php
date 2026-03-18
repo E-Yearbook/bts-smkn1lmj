@@ -13,9 +13,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TableBook extends Model
+class Book extends Model
 {
-    protected $table = 'table_books';
+    protected $table = 'books';
 
     protected $fillable = [
         'book_category_id',

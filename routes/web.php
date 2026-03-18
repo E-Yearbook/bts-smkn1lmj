@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Book\BookCategoryController;
+use App\Http\Controllers\Book\BookController;
 use App\Http\Controllers\Book\YearBookController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\View\ViewBookController;
@@ -25,6 +26,15 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/yearcover/{yearcover}', [YearBookController::class, 'destroy'])->name('yearcover.destroy');
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Books CRUD
+    Route::get('/books',              [BookController::class, 'index'])->name('books.index');
+    Route::get('/books/create',       [BookController::class, 'create'])->name('books.create');
+    Route::post('/books',             [BookController::class, 'store'])->name('books.store');
+    Route::get('/books/{book}',       [BookController::class, 'show'])->name('books.show');
+    Route::get('/books/{book}/edit',  [BookController::class, 'edit'])->name('books.edit');
+    Route::put('/books/{book}',       [BookController::class, 'update'])->name('books.update');
+    Route::delete('/books/{book}',    [BookController::class, 'destroy'])->name('books.destroy');
 
     Route::get('/categories',            [BookCategoryController::class, 'index'])->name('categories.index');
     Route::get('/categories/create',     [BookCategoryController::class, 'create'])->name('categories.create');

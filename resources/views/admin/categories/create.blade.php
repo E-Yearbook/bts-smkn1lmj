@@ -33,7 +33,7 @@
         type="text"
         name="name"
         id="name"
-        placeholder="Example: Fiction, Science"
+        placeholder="Example: Siswa, Guru"
         value="{{ old('name') }}"
         class="w-full rounded-lg border border-gray-200 bg-white px-5 py-3 text-black outline-none transition focus:border-brand-500 active:border-brand-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-brand-500
           @error('name') !border-error-500 @enderror"
