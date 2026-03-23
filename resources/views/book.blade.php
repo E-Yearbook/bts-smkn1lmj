@@ -29,10 +29,10 @@
             'icon'    => 'star',
             'color'   => 'violet',
             'books'   => [
-                ['title' => 'OSIS',      'cover' => null],
-                ['title' => 'Pramuka',   'cover' => null],
-                ['title' => 'PMR',       'cover' => null],
-                ['title' => 'Basket',    'cover' => null],
+                ['title' => 'OSIS',      'cover' => 'storage/cover1.png'],
+                ['title' => 'Pramuka',   'cover' => 'storage/cover1.png'],
+                ['title' => 'PMR',       'cover' => 'storage/cover1.png'],
+                ['title' => 'Basket',    'cover' => 'storage/cover1.png'],
             ],
         ],
         [
