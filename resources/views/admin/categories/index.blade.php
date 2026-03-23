@@ -84,7 +84,7 @@
                                         {{ $category->name }}
                                     </td>
 
-                                    <td class="px-4 py-3 text-gray-500">
+                                    <td class="px-4 py-3 text-gray-500 dark:text-white">
                                         {{ $category->created_at->format('d M Y') }}
                                     </td>
 

@@ -29,6 +29,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Books CRUD
     Route::get('/books',              [BookController::class, 'index'])->name('books.index');
+    Route::get('/books/search',       [BookController::class, 'search'])->name('books.search');
+    Route::get('/api/books/search',   [BookController::class, 'searchApi'])->name('books.search-api');
     Route::get('/books/create',       [BookController::class, 'create'])->name('books.create');
     Route::post('/books',             [BookController::class, 'store'])->name('books.store');
     Route::get('/books/{book}',       [BookController::class, 'show'])->name('books.show');

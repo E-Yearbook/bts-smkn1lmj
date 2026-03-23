@@ -32,9 +32,9 @@
             </button>
             <!-- Hamburger Toggle BTN -->
 
-            <a href="#" class="lg:hidden">
-                <img class="dark:hidden" src="./images/logo/logo.svg" alt="Logo" />
-                <img class="hidden dark:block" src="./images/logo/logo-dark.svg" alt="Logo" />
+            <a href="{{ route('dashboard') }}" class="lg:hidden">
+                <img class="dark:hidden h-10" src="{{ asset('img/smk.png') }}" alt="SMK Logo" />
+                <img class="hidden dark:block h-10" src="{{ asset('img/smk.png') }}" alt="SMK Logo" />
             </a>
 
             <!-- Application nav menu button -->
@@ -50,8 +50,8 @@
             </button>
             <!-- Application nav menu button -->
 
-            <div class="hidden lg:block">
-                <form>
+            <div class="hidden lg:block" x-data="bookSearch()" @click.away="isOpen = false">
+                <form action="{{ route('books.search') }}" method="GET" @submit="handleSubmit">
                     <div class="relative">
                         <span class="absolute top-1/2 left-4 -translate-y-1/2">
                             <svg class="fill-gray-500 dark:fill-gray-400" width="20" height="20"
@@ -61,17 +61,121 @@
                                     fill="" />
                             </svg>
                         </span>
-                        <input type="text" placeholder="Search or type command..." id="search-input"
-                            class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pr-14 pl-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden xl:w-[430px] dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30" />
+                        <input type="text" name="q" placeholder="Search books..." id="search-input"
+                            @input="handleSearch"
+                            @keydown.arrow-down="selectedIndex = Math.min(selectedIndex + 1, books.length - 1)"
+                            @keydown.arrow-up="selectedIndex = Math.max(selectedIndex - 1, -1)"
+                            @keydown.enter="selectBook"
+                            class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden xl:w-[430px] dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30" />
 
-                        <button id="search-button"
-                            class="absolute top-1/2 right-2.5 inline-flex -translate-y-1/2 items-center gap-0.5 rounded-lg border border-gray-200 bg-gray-50 px-[7px] py-[4.5px] text-xs -tracking-[0.2px] text-gray-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-400">
-                            <span> ⌘ </span>
-                            <span> K </span>
-                        </button>
+                        <!-- Dropdown Results -->
+                        <div x-show="isOpen && query.length >= 2" 
+                            class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+                            
+                            <!-- Loading State -->
+                            <div x-show="isLoading" class="px-4 py-8 text-center">
+                                <svg class="animate-spin h-5 w-5 mx-auto text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </div>
+
+                            <!-- No Results -->
+                            <div x-show="!isLoading && books.length === 0" class="px-4 py-8 text-center">
+                                <svg class="mx-auto h-12 w-12 text-gray-300 dark:text-gray-700 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                                <p class="text-gray-500 dark:text-gray-400 font-medium">No books found</p>
+                                <p class="text-gray-400 dark:text-gray-500 text-sm mt-1">Try searching with different keywords</p>
+                            </div>
+
+                            <!-- Results List -->
+                            <template x-for="(book, index) in books" :key="book.id">
+                                <a :href="book.url" 
+                                    @click="isOpen = false"
+                                    :class="selectedIndex === index ? 'bg-blue-50 dark:bg-gray-800' : 'hover:bg-gray-50 dark:hover:bg-gray-800'"
+                                    class="flex items-center gap-3 px-4 py-3 border-b border-gray-100 dark:border-gray-800 last:border-b-0 transition-colors cursor-pointer">
+                                    
+                                    <!-- Book Cover -->
+                                    <img :src="book.cover" :alt="book.name" class="h-10 w-8 object-cover rounded bg-gray-200 dark:bg-gray-700" />
+                                    
+                                    <!-- Book Info -->
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 dark:text-white truncate" x-text="book.name"></p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                            <span x-text="book.publisher"></span>
+                                            <span class="mx-1">•</span>
+                                            <span x-text="book.category"></span>
+                                        </p>
+                                    </div>
+
+                                    <!-- Arrow Icon -->
+                                    <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </a>
+                            </template>
+
+                            <!-- View All Results -->
+                            <div x-show="books.length > 0" class="px-4 py-3 border-t border-gray-100 dark:border-gray-800">
+                                <button type="submit" class="w-full text-center text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
+                                    View all results for "<span x-text="query"></span>"
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
+
+            <script>
+                function bookSearch() {
+                    return {
+                        query: '',
+                        books: [],
+                        isOpen: false,
+                        isLoading: false,
+                        selectedIndex: -1,
+                        
+                        async handleSearch(event) {
+                            this.query = event.target.value;
+                            this.selectedIndex = -1;
+
+                            if (this.query.length < 2) {
+                                this.isOpen = false;
+                                this.books = [];
+                                return;
+                            }
+
+                            this.isOpen = true;
+                            this.isLoading = true;
+
+                            try {
+                                const response = await fetch(`{{ route('books.search-api') }}?q=${encodeURIComponent(this.query)}`);
+                                const data = await response.json();
+                                this.books = data.books;
+                            } catch (error) {
+                                console.error('Search error:', error);
+                                this.books = [];
+                            } finally {
+                                this.isLoading = false;
+                            }
+                        },
+
+                        selectBook() {
+                            if (this.selectedIndex >= 0 && this.selectedIndex < this.books.length) {
+                                window.location.href = this.books[this.selectedIndex].url;
+                            } else if (this.books.length > 0) {
+                                // Default to first result if none selected
+                                window.location.href = this.books[0].url;
+                            }
+                        },
+
+                        handleSubmit(event) {
+                            // Let form submit normally if we want to see all results
+                        }
+                    }
+                }
+            </script>
         </div>
 
         <div :class="menuToggle ? 'flex' : 'hidden'"

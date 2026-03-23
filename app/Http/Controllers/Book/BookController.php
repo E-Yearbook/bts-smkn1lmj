@@ -15,7 +15,7 @@ class BookController extends Controller
 {
     public function index()
     {
-        $books = Book::with(['category', 'yearCover', 'user'])->latest()->get();
+        $books = Book::with(['category', 'yearCover', 'user'])->latest()->paginate(10);
         return view('admin.books.index', compact('books'));
     }
 
@@ -116,5 +116,48 @@ class BookController extends Controller
         $book->delete();
 
         return redirect()->route('books.index')->with('success', 'Book "' . $name . '" deleted successfully!');
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->get('q', '');
+        $books = Book::query();
+
+        if ($query) {
+            $books->where('name', 'like', '%' . $query . '%')
+                  ->orWhere('publisher', 'like', '%' . $query . '%');
+        }
+
+        $books = $books->with(['category', 'yearCover', 'user'])->latest()->get();
+        return view('admin.books.index', compact('books', 'query'));
+    }
+
+    public function searchApi(Request $request)
+    {
+        $query = $request->get('q', '');
+        $limit = 6;
+
+        if (!$query || strlen($query) < 2) {
+            return response()->json(['books' => [], 'query' => $query]);
+        }
+
+        $books = Book::where('name', 'like', '%' . $query . '%')
+                      ->orWhere('publisher', 'like', '%' . $query . '%')
+                      ->with(['category', 'yearCover'])
+                      ->latest()
+                      ->limit($limit)
+                      ->get()
+                      ->map(function ($book) {
+                          return [
+                              'id' => $book->id,
+                              'name' => $book->name,
+                              'publisher' => $book->publisher,
+                              'category' => $book->category?->name ?? 'Uncategorized',
+                              'cover' => $book->book_cover ? asset('storage/' . $book->book_cover) : asset('img/no-cover.png'),
+                              'url' => route('books.show', $book->id),
+                          ];
+                      });
+
+        return response()->json(['books' => $books, 'query' => $query, 'total' => count($books)]);
     }
 }

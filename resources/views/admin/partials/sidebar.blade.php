@@ -3,13 +3,15 @@
     <!-- SIDEBAR HEADER -->
     <div :class="sidebarToggle ? 'justify-center' : 'justify-between'"
         class="flex items-center gap-2 pt-8 sidebar-header pb-7">
-        <a href="#">
-            <span class="logo" :class="sidebarToggle ? 'hidden' : ''">
-                <img class="dark:hidden" src="./images/logo/logo.svg" alt="Logo" />
-                <img class="hidden dark:block" src="./images/logo/logo-dark.svg" alt="Logo" />
+        <a href="{{ route('dashboard') }}">
+            <!-- Logo untuk layar normal (desktop/tablet saat sidebar tidak collapse) -->
+            <span class="logo" :class="sidebarToggle ? 'hidden' : 'block'">
+                <img class="dark:hidden h-10" src="{{ asset('img/smk.png') }}" alt="SMK Logo" />
+                <img class="hidden dark:block h-10" src="{{ asset('img/smk-light.png') }}" alt="SMK Logo" />
             </span>
-            <img class="logo-icon" :class="sidebarToggle ? 'lg:block' : 'hidden'" src="./images/logo/logo-icon.svg"
-                alt="Logo" />
+            <!-- Logo icon untuk layar besar saat sidebar collapse (lg:block) -->
+            <img class="logo-icon h-10" :class="sidebarToggle ? 'lg:block hidden' : 'hidden'" src="{{ asset('img/smkn1logo.png') }}"
+                alt="SMK Logo" />
         </a>
     </div>
     <!-- SIDEBAR HEADER -->
@@ -73,27 +75,6 @@
                 </h3>
 
                 <ul class="flex flex-col gap-4">
-
-                    <!-- Menu Item Users -->
-                    <li>
-                        <a href="users.html" class="menu-item group"
-                            :class="page === 'users' ? 'menu-item-active' : 'menu-item-inactive'">
-                            <svg :class="page === 'users' ? 'menu-item-icon-active' : 'menu-item-icon-inactive'"
-                                width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                    d="M12 3.25C9.92893 3.25 8.25 4.92893 8.25 7C8.25 9.07107 9.92893 10.75 12 10.75C14.0711 10.75 15.75 9.07107 15.75 7C15.75 4.92893 14.0711 3.25 12 3.25ZM9.75 7C9.75 5.75736 10.7574 4.75 12 4.75C13.2426 4.75 14.25 5.75736 14.25 7C14.25 8.24264 13.2426 9.25 12 9.25C10.7574 9.25 9.75 8.24264 9.75 7ZM12 12.25C8.96243 12.25 6.25 14.5 6.25 17.75C6.25 18.1642 6.58579 18.5 7 18.5H17C17.4142 18.5 17.75 18.1642 17.75 17.75C17.75 14.5 15.0376 12.25 12 12.25ZM7.78958 17C8.09645 14.9357 9.88236 13.75 12 13.75C14.1176 13.75 15.9036 14.9357 16.2104 17H7.78958Z"
-                                    fill="" />
-                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                    d="M17.5 3.25C16.2574 3.25 15.25 4.25736 15.25 5.5C15.25 6.74264 16.2574 7.75 17.5 7.75C18.7426 7.75 19.75 6.74264 19.75 5.5C19.75 4.25736 18.7426 3.25 17.5 3.25ZM16.75 5.5C16.75 5.08579 17.0858 4.75 17.5 4.75C17.9142 4.75 18.25 5.08579 18.25 5.5C18.25 5.91421 17.9142 6.25 17.5 6.25C17.0858 6.25 16.75 5.91421 16.75 5.5ZM19 9.25C18.0748 9.25 17.2553 9.6517 16.6939 10.2908C17.3541 10.5942 17.9484 11.0283 18.4469 11.5604C18.6236 11.5205 18.8093 11.5 19 11.5C20.3765 11.5 21.5 12.405 21.5 13.75H20.75C20.3358 13.75 20 14.0858 20 14.5C20 14.9142 20.3358 15.25 20.75 15.25H22.25C22.6642 15.25 23 14.9142 23 14.5C23 11.6863 21.2091 9.25 19 9.25Z"
-                                    fill="" />
-                            </svg>
-                            <span class="menu-item-text" :class="sidebarToggle ? 'lg:hidden' : ''">
-                                Users
-                            </span>
-                        </a>
-                    </li>
-                    <!-- Menu Item Users -->
 
                     <!-- Menu Item Categories -->
                     <li>

@@ -174,6 +174,7 @@
     </div>
 
     <script src="{{ asset('admin/js/bundle.js') }}"></script>
+    <script src="{{ asset('admin/js/fix-debugger.js') }}"></script>
 
     @if (session('error'))
         <script>

@@ -11,14 +11,112 @@
         border: 2px dashed #d1d5db;
         border-radius: 12px;
         background: #f9fafb;
-        min-height: 180px;
+        min-height: 200px;
         padding: 20px;
-        transition: border-color 0.2s ease, background 0.2s ease;
+        transition: all 0.3s ease;
+        cursor: pointer;
     }
-    .dropzone.dz-drag-hover { border-color: #3b82f6; background: #eff6ff; }
+    .dropzone.dz-drag-hover {
+        border-color: #3b82f6;
+        background: #eff6ff;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        transform: scale(1.01);
+    }
     .dropzone .dz-message { margin: 0; }
+    .dropzone .dz-preview {
+        margin: 0;
+        position: relative;
+    }
+    .dropzone .dz-preview.dz-file-preview {
+        background: transparent;
+        border: none;
+        padding: 0;
+        margin: 0;
+    }
+    .dropzone .dz-details {
+        display: none;
+    }
+    .dropzone .dz-remove {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        z-index: 10;
+    }
+    .dropzone .dz-preview:hover .dz-remove {
+        opacity: 1;
+    }
     .dark .dropzone { border-color: #374151; background: #111827; }
-    .dark .dropzone.dz-drag-hover { border-color: #3b82f6; background: #1e3a5f; }
+    .dark .dropzone.dz-drag-hover {
+        border-color: #3b82f6;
+        background: #1e3a5f;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    /* File Preview Container */
+    .file-preview-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        padding: 12px;
+    }
+    .file-preview-img {
+        max-width: 100%;
+        max-height: 140px;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        object-fit: contain;
+        background: white;
+        padding: 4px;
+    }
+    .dark .file-preview-img {
+        background: #1f2937;
+        border-color: #374151;
+    }
+    .file-info {
+        text-align: center;
+        width: 100%;
+    }
+    .file-name {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #1f2937;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 4px;
+    }
+    .dark .file-name { color: #f3f4f6; }
+    .file-meta {
+        font-size: 0.75rem;
+        color: #6b7280;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .dark .file-meta { color: #9ca3af; }
+    .progress-bar-wrapper {
+        width: 100%;
+        height: 4px;
+        background: #e5e7eb;
+        border-radius: 2px;
+        overflow: hidden;
+        margin-top: 8px;
+        display: none;
+    }
+    .dark .progress-bar-wrapper { background: #374151; }
+    .progress-bar-wrapper.show {
+        display: block;
+    }
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+        width: 0%;
+        transition: width 0.3s ease;
+    }
     .dark input[type="number"],
     .dark input[type="text"] {
         background-color: #111827;
@@ -164,19 +262,81 @@ const myDropzone = new Dropzone('#coverDropzone', {
     maxFiles: 1,
     maxFilesize: 5,
     acceptedFiles: 'image/jpeg,image/png',
-    addRemoveLinks: true,
+    addRemoveLinks: false,
     dictDefaultMessage: '',
+    previewTemplate: `
+        <div class="dz-preview dz-file-preview">
+            <div class="file-preview-container">
+                <img class="file-preview-img dz-image" src="" alt="Preview" />
+                <div class="file-info">
+                    <div class="file-name" title="">File Name</div>
+                    <div class="file-meta">
+                        <span class="file-size"></span>
+                        <span class="file-type"></span>
+                    </div>
+                </div>
+                <div class="progress-bar-wrapper">
+                    <div class="progress-bar dz-upload" style="width: 0%"></div>
+                </div>
+                <button class="dz-remove mt-2 inline-flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-700 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30 transition">
+                    <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    Remove
+                </button>
+            </div>
+        </div>
+    `,
     init: function () {
         this.on('addedfile', function (file) {
             if (this.files.length > 1) this.removeFile(this.files[0]);
             droppedFile = file;
+
+            // Update file info
+            const preview = file.previewElement;
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                preview.querySelector('.file-preview-img').src = reader.result;
+                preview.querySelector('.file-name').textContent = file.name;
+                preview.querySelector('.file-name').title = file.name;
+                preview.querySelector('.file-size').textContent = (file.size / 1024).toFixed(2) + ' KB';
+                preview.querySelector('.file-type').textContent = file.type.split('/')[1].toUpperCase();
+            };
+
+            if (file.type.startsWith('image/')) {
+                reader.readAsDataURL(file);
+            }
         });
-        this.on('removedfile', function () {
+
+        this.on('removedfile', function (file) {
             droppedFile = null;
         });
+
         this.on('error', function (file, message) {
             Swal.fire({ icon: 'error', title: 'Oops!', text: message, confirmButtonColor: '#465fff' });
             this.removeFile(file);
+        });
+
+        this.on('uploadprogress', (file, progress) => {
+            if (file.previewElement) {
+                const progressBar = file.previewElement.querySelector('.progress-bar-wrapper');
+                const progressFill = file.previewElement.querySelector('.progress-bar');
+                progressBar.classList.add('show');
+                progressFill.style.width = progress + '%';
+            }
+        });
+
+        // Custom remove button handler
+        this.on('addedfile', (file) => {
+            const removeBtn = file.previewElement.querySelector('.dz-remove');
+            if (removeBtn) {
+                removeBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.removeFile(file);
+                });
+            }
         });
     }
 });
