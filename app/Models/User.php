@@ -54,6 +54,6 @@ class User extends Authenticatable
     }
 
     public function books() {
-        return $this->hasMany(TableBook::class);
+        return $this->hasMany(Book::class);
     }
 }

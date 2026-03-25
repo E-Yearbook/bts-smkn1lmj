@@ -20,6 +20,6 @@ class YearCover extends Model
     ];
 
     public function books() {
-        return $this->hasMany(TableBook::class, 'year_cover_id');
+        return $this->hasMany(Book::class, 'year_cover_id');
     }
 }

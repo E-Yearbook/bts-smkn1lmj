@@ -16,7 +16,7 @@ class BookCategory extends Model
     ];
 
     public function books() {
-        return $this->hasMany(TableBook::class, 'book_category_id');
+        return $this->hasMany(Book::class, 'book_category_id');
     }
-    
+
 }
