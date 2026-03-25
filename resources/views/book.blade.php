@@ -142,9 +142,10 @@
             {{-- Books grid --}}
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
                 @foreach ($cat['books'] as $bi => $book)
-                <a href="{{ $book['file'] ?? '#' }}" target="{{ $book['file'] ? '_blank' : '_self' }}"
-                    class="book-card group flex flex-col items-center gap-3 cursor-pointer"
-                    data-aos="zoom-in" data-aos-duration="500" data-aos-delay="{{ $bi * 60 }}">
+                <div onclick="openFlipbook({{ json_encode($book['title']) }}, {{ json_encode($book['file'] ?? '') }})"
+    class="book-card group flex flex-col items-center gap-3 cursor-pointer"
+    data-aos="zoom-in" data-aos-duration="500" data-aos-delay="{{ $bi * 60 }}">
+
 
                     {{-- Book cover --}}
                     <div class="relative w-full aspect-[3/4] rounded-xl overflow-hidden
@@ -210,7 +211,7 @@
                         {{ $book['title'] }}
                     </p>
 
-                </a>
+                </div>
                 @endforeach
             </div>
         </div>
@@ -227,8 +228,70 @@
     </div>
 </div>
 
+{{-- ── Flipbook Modal ── --}}
+<div id="flipbook-overlay"
+    class="fixed inset-0 z-[999] bg-black/80 backdrop-blur-sm
+           flex flex-col items-center justify-center
+           opacity-0 pointer-events-none transition-opacity duration-300">
+
+    {{-- Header modal --}}
+    <div class="flex items-center justify-between w-full max-w-5xl px-4 mb-3">
+        <div>
+            <span id="flipbook-title"
+                class="font-mono text-sm font-bold tracking-widest uppercase text-white/90"></span>
+        </div>
+        <div class="flex items-center gap-2">
+            {{-- Nav buttons --}}
+            <button onclick="flipPrev()"
+                class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20
+                       flex items-center justify-center text-white transition-all duration-200">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <span id="flipbook-page-info" class="font-mono text-[11px] text-white/60 tracking-widest min-w-[60px] text-center"></span>
+            <button onclick="flipNext()"
+                class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20
+                       flex items-center justify-center text-white transition-all duration-200">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+            </button>
+            {{-- Close --}}
+            <button onclick="closeFlipbook()"
+                class="w-9 h-9 rounded-full bg-white/10 hover:bg-red-500/70 border border-white/20
+                       flex items-center justify-center text-white transition-all duration-200 ml-2">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+    </div>
+
+    {{-- Loading state --}}
+    <div id="flipbook-loading" class="flex flex-col items-center gap-3 text-white/60">
+        <svg class="w-8 h-8 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+        </svg>
+        <span class="font-mono text-xs tracking-widest">Memuat buku...</span>
+    </div>
+
+    {{-- No file state --}}
+    <div id="flipbook-nofile" class="hidden flex-col items-center gap-3 text-white/60">
+        <svg class="w-12 h-12 opacity-40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+        <p class="font-mono text-sm tracking-widest">File PDF belum tersedia</p>
+    </div>
+
+    {{-- Flipbook container --}}
+    <div id="flipbook-container" class="hidden">
+        <div id="flipbook"></div>
+    </div>
+
+    {{-- Keyboard hint --}}
+    <p class="font-mono text-[10px] text-white/30 tracking-widest mt-4">
+        Tekan ← → untuk berpindah halaman &nbsp;·&nbsp; ESC untuk tutup
+    </p>
+</div>
+
+
 <style>
-    /* Filter active state */
     .active-filter {
         background: #6366f1 !important;
         color: white !important;
@@ -240,22 +303,35 @@
         color: #6b7280;
         border-color: rgba(0,0,0,0.07);
     }
-
-    /* Category section hide/show */
-    .category-section { transition: opacity 0.3s ease, transform 0.3s ease; }
+    .category-section { transition: opacity 0.3s ease; }
     .category-section.hidden-cat { display: none; }
+
+    /* StPageFlip override */
+    .stf__parent { margin: 0 auto; }
+    .stf__block { box-shadow: 0 20px 60px rgba(0,0,0,0.5) !important; }
+
+    #flipbook-overlay.active {
+        opacity: 1 !important;
+        pointer-events: all !important;
+    }
 </style>
 
-<script>
-function filterCategory(slug) {
-    // Update button states
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active-filter');
-        btn.classList.add('filter-btn');
-    });
-    document.querySelector(`[data-cat="${slug}"]`).classList.add('active-filter');
+{{-- PDF.js --}}
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+{{-- StPageFlip --}}
+<script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.js"></script>
 
-    // Show/hide sections
+<script>
+// ── PDF.js worker ──
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+
+let pageFlipInstance = null;
+
+// ── Filter kategori ──
+function filterCategory(slug) {
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active-filter'));
+    document.querySelector(`[data-cat="${slug}"]`).classList.add('active-filter');
     document.querySelectorAll('.category-section').forEach(section => {
         if (slug === 'all' || section.dataset.category === slug) {
             section.classList.remove('hidden-cat');
@@ -264,6 +340,152 @@ function filterCategory(slug) {
         }
     });
 }
+
+// ── Buka flipbook ──
+async function openFlipbook(title, fileUrl) {
+    const overlay    = document.getElementById('flipbook-overlay');
+    const loading    = document.getElementById('flipbook-loading');
+    const nofile     = document.getElementById('flipbook-nofile');
+    const container  = document.getElementById('flipbook-container');
+    const titleEl    = document.getElementById('flipbook-title');
+    const pageInfo   = document.getElementById('flipbook-page-info');
+    const flipbookEl = document.getElementById('flipbook');
+
+    // Reset state
+    loading.classList.remove('hidden');
+    loading.style.display = 'flex';
+    nofile.classList.add('hidden');
+    nofile.style.display = 'none';
+    container.classList.add('hidden');
+    titleEl.textContent = title;
+    pageInfo.textContent = '';
+
+    // Destroy instance lama
+    if (pageFlipInstance) {
+        try { pageFlipInstance.destroy(); } catch(e) {}
+        pageFlipInstance = null;
+        flipbookEl.innerHTML = '';
+    }
+
+    // Tampilkan overlay
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    // Tidak ada file
+    if (!fileUrl) {
+        loading.style.display = 'none';
+        nofile.style.display  = 'flex';
+        return;
+    }
+
+    try {
+        // ── Load PDF ──
+        const pdf      = await pdfjsLib.getDocument(fileUrl).promise;
+        const numPages = pdf.numPages;
+
+        // Hitung ukuran halaman dari halaman pertama
+        const firstPage = await pdf.getPage(1);
+        const viewport   = firstPage.getViewport({ scale: 1 });
+
+        // Tentukan ukuran render berdasarkan layar
+        const maxH  = Math.min(window.innerHeight * 0.78, 700);
+        const scale = maxH / viewport.height;
+        const W     = Math.floor(viewport.width  * scale);
+        const H     = Math.floor(viewport.height * scale);
+
+        // Render semua halaman jadi canvas, lalu ambil dataURL
+        const pages = [];
+        for (let i = 1; i <= numPages; i++) {
+            const page     = await pdf.getPage(i);
+            const vp       = page.getViewport({ scale });
+            const canvas   = document.createElement('canvas');
+            canvas.width   = W;
+            canvas.height  = H;
+            const ctx      = canvas.getContext('2d');
+            await page.render({ canvasContext: ctx, viewport: vp }).promise;
+            pages.push(canvas.toDataURL('image/jpeg', 0.85));
+        }
+
+        // ── Build StPageFlip ──
+        // Buat elemen img untuk setiap halaman
+        flipbookEl.innerHTML = '';
+        pages.forEach(src => {
+            const img = document.createElement('img');
+            img.src = src;
+            img.style.cssText = `width:${W}px;height:${H}px;object-fit:cover;display:block;`;
+            flipbookEl.appendChild(img);
+        });
+
+        // Responsif: single page di mobile
+        const isMobile = window.innerWidth < 640;
+
+        pageFlipInstance = new St.PageFlip(flipbookEl, {
+            width        : W,
+            height       : H,
+            size         : 'fixed',
+            showCover    : true,
+            flippingTime : 700,
+            usePortrait  : isMobile,
+            startPage    : 0,
+            drawShadow   : true,
+            maxShadowOpacity: 0.4,
+        });
+
+        pageFlipInstance.loadFromImages(pages);
+
+        // Update page info
+        pageFlipInstance.on('flip', (e) => {
+            const cur   = e.data + 1;
+            const total = pageFlipInstance.getPageCount();
+            pageInfo.textContent = `${cur} / ${total}`;
+        });
+
+        pageInfo.textContent = `1 / ${numPages}`;
+
+        // Tampilkan
+        loading.style.display = 'none';
+        container.classList.remove('hidden');
+
+    } catch (err) {
+        console.error('Flipbook error:', err);
+        loading.style.display = 'none';
+        nofile.style.display  = 'flex';
+        nofile.querySelector('p').textContent = 'Gagal memuat PDF';
+    }
+}
+
+// ── Navigasi ──
+function flipPrev() {
+    if (pageFlipInstance) pageFlipInstance.flipPrev();
+}
+function flipNext() {
+    if (pageFlipInstance) pageFlipInstance.flipNext();
+}
+
+// ── Tutup ──
+function closeFlipbook() {
+    document.getElementById('flipbook-overlay').classList.remove('active');
+    document.body.style.overflow = '';
+    if (pageFlipInstance) {
+        try { pageFlipInstance.destroy(); } catch(e) {}
+        pageFlipInstance = null;
+    }
+    document.getElementById('flipbook').innerHTML = '';
+}
+
+// ── Keyboard ──
+document.addEventListener('keydown', (e) => {
+    const overlay = document.getElementById('flipbook-overlay');
+    if (!overlay.classList.contains('active')) return;
+    if (e.key === 'Escape')     closeFlipbook();
+    if (e.key === 'ArrowLeft')  flipPrev();
+    if (e.key === 'ArrowRight') flipNext();
+});
+
+// ── Klik backdrop untuk tutup ──
+document.getElementById('flipbook-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeFlipbook();
+});
 </script>
 
 @endsection
