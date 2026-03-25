@@ -7,68 +7,6 @@
     Contoh: $year = 2025, $categories = [...]
 --}}
 @php
-    $year = $year ?? 2025;
-    $categories = $categories ?? [
-        [
-            'slug'    => 'kelas',
-            'label'   => 'Kelas',
-            'icon'    => 'class',
-            'color'   => 'indigo',
-            'books'   => [
-                ['title' => 'XII RPL 1', 'cover' => 'storage/cover1.png'],
-                ['title' => 'XII RPL 2', 'cover' => 'storage/cover2.png'],
-                ['title' => 'XII TKJ 1', 'cover' => 'storage/cover3.png'],
-                ['title' => 'XII TKJ 2', 'cover' => 'storage/cover4.png'],
-                ['title' => 'XII MM 1',  'cover' => 'storage/cover5.png'],
-                ['title' => 'XII MM 2',  'cover' => 'storage/cover6.png'],
-            ],
-        ],
-        [
-            'slug'    => 'ekstrakurikuler',
-            'label'   => 'Ekstrakurikuler',
-            'icon'    => 'star',
-            'color'   => 'violet',
-            'books'   => [
-                ['title' => 'OSIS',      'cover' => 'storage/cover1.png'],
-                ['title' => 'Pramuka',   'cover' => 'storage/cover1.png'],
-                ['title' => 'PMR',       'cover' => 'storage/cover1.png'],
-                ['title' => 'Basket',    'cover' => 'storage/cover1.png'],
-            ],
-        ],
-        [
-            'slug'    => 'organisasi',
-            'label'   => 'Organisasi',
-            'icon'    => 'users',
-            'color'   => 'blue',
-            'books'   => [
-                ['title' => 'OSIS',      'cover' => null],
-                ['title' => 'MPK',       'cover' => null],
-                ['title' => 'Rohis',     'cover' => null],
-            ],
-        ],
-        [
-            'slug'    => 'guru',
-            'label'   => 'Struktur Guru',
-            'icon'    => 'academic',
-            'color'   => 'emerald',
-            'books'   => [
-                ['title' => 'Kepala Sekolah & Wakil', 'cover' => null],
-                ['title' => 'Staff TU',               'cover' => null],
-                ['title' => 'Wali Kelas',             'cover' => null],
-            ],
-        ],
-        [
-            'slug'    => 'lainnya',
-            'label'   => 'Lainnya',
-            'icon'    => 'grid',
-            'color'   => 'rose',
-            'books'   => [
-                ['title' => 'Kenangan Wisuda', 'cover' => null],
-                ['title' => 'Study Tour',      'cover' => null],
-            ],
-        ],
-    ];
-
     $colorMap = [
         'indigo'  => ['bg' => 'bg-indigo-50',  'text' => 'text-indigo-500',  'border' => 'border-indigo-200/60',  'badge' => 'bg-indigo-100 text-indigo-600',  'hover_shadow' => 'hover:shadow-[0_12px_36px_rgba(99,102,241,0.18)]',  'hover_border' => 'hover:border-indigo-300/60'],
         'violet'  => ['bg' => 'bg-violet-50',  'text' => 'text-violet-500',  'border' => 'border-violet-200/60',  'badge' => 'bg-violet-100 text-violet-600',  'hover_shadow' => 'hover:shadow-[0_12px_36px_rgba(139,92,246,0.18)]',   'hover_border' => 'hover:border-violet-300/60'],
@@ -159,7 +97,7 @@
 
             {{-- Section header --}}
             <div class="flex items-center gap-3 mb-6">
-                {{-- Icon --}}
+                {{-- Icon
                 <div class="w-9 h-9 rounded-xl {{ $c['bg'] }} flex items-center justify-center shrink-0">
                     @if ($cat['icon'] === 'class')
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 {{ $c['text'] }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -185,14 +123,15 @@
                         <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
                     </svg>
                     @endif
-                </div>
+                </div> --}}
 
                 <div>
                     <h2 class="text-lg font-bold italic text-gray-800 tracking-tight leading-none mb-0.5">
                         {{ $cat['label'] }}
                     </h2>
                     <p class="font-mono text-[10px] tracking-[0.18em] uppercase text-gray-400">
-                        {{ count($cat['books']) }} buku tersedia
+                        {{ count($cat['books']) }} {{ count($cat['books']) == 1 ? 'buku' : 'buku' }} tersedia
+
                     </p>
                 </div>
 
@@ -203,7 +142,7 @@
             {{-- Books grid --}}
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
                 @foreach ($cat['books'] as $bi => $book)
-                <a href="/yearbook/{{ $year }}/{{ $cat['slug'] }}/{{ $bi + 1 }}"
+                <a href="{{ $book['file'] ?? '#' }}" target="{{ $book['file'] ? '_blank' : '_self' }}"
                     class="book-card group flex flex-col items-center gap-3 cursor-pointer"
                     data-aos="zoom-in" data-aos-duration="500" data-aos-delay="{{ $bi * 60 }}">
 

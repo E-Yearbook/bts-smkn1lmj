@@ -9,7 +9,7 @@ use App\Http\Controllers\View\ViewBookController;
 
 Route::get('/', [YearBookController::class, 'home']);
 
-Route::get('/book', [ViewBookController::class, 'ViewBook'])->name('book');
+Route::get('/book/{year}', [ViewBookController::class, 'ViewBook'])->name('book');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
