@@ -15,6 +15,7 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
+        "@dearhive/dearflip-jquery-flipbook": "^1.7.3",
         "@studio-freight/lenis": "^1.0.42",
         "alpinejs": "^3.15.8",
         "aos": "^2.3.4",
