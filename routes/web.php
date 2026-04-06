@@ -7,6 +7,17 @@ use App\Http\Controllers\Book\YearBookController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\View\ViewBookController;
 
+/* untuk link storage server
+Route::get('/relink', function () {
+    if (file_exists(public_path('storage'))) {
+        app('files')->delete(public_path('storage'));
+    }
+
+    Artisan::call('storage:link');
+    return "Symlink recreated successfully!";
+});
+*/
+
 Route::get('/', [YearBookController::class, 'home']);
 
 Route::get('/book/{year}', [ViewBookController::class, 'ViewBook'])->name('book');
