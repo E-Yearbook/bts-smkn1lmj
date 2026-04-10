@@ -1,182 +1,193 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Detail Cover ' . $yearcover->year)
-
 @php $page = 'yearcover'; @endphp
 
 @section('content')
 
-@php
-    function getYoutubeIdDetail(string $url): string
-    {
-        preg_match(
-            '/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/',
-            $url,
-            $matches,
-        );
-        return $matches[1] ?? '';
-    }
-    $ytId = getYoutubeIdDetail($yearcover->youtube_link);
-@endphp
+    @php
+        function getYoutubeIdDetail(string $url): string
+        {
+            preg_match(
+                '/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/',
+                $url,
+                $matches,
+            );
+            return $matches[1] ?? '';
+        }
+        $ytId = getYoutubeIdDetail($yearcover->youtube_link);
+    @endphp
 
-{{-- Header --}}
-<div class="mb-8 flex items-center justify-between">
-    <div>
-        <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Year Cover {{ $yearcover->year }}</h1>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Complete information about the annual cover and video</p>
-    </div>
-    <div class="flex items-center gap-3">
-        <a href="{{ route('yearcover.edit', $yearcover->id) }}"
-           class="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-amber-600 transition-colors">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-            </svg>
-            Edit
-        </a>
-        <a href="{{ route('yearcover') }}"
-           class="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-            </svg>
-            Back
-        </a>
-    </div>
-</div>
-
-<div class="grid grid-cols-1 gap-6 lg:grid-cols-5">
-
-    {{-- LEFT: Cover Image --}}
-    <div class="lg:col-span-2 space-y-4">
-        <div class="rounded-2xl border border-gray-200 bg-white overflow-hidden dark:border-gray-700 dark:bg-gray-800">
-            <div class="bg-gradient-to-br from-blue-50 to-gray-100 dark:from-gray-700 dark:to-gray-900 p-6 flex items-center justify-center" style="min-height: 280px;">
-                <img src="{{ Storage::url($yearcover->cover_path) }}"
-                     alt="Cover {{ $yearcover->year }}"
-                     class="max-h-64 w-auto object-contain rounded-lg shadow-md">
-            </div>
-            <div class="p-4 border-t border-gray-100 dark:border-gray-700">
-                <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-500 dark:text-gray-400">Year</span>
-                    <span class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $yearcover->year }}</span>
-                </div>
-                <div class="mt-2 flex items-center justify-between">
-                    <span class="text-xs text-gray-400">Added</span>
-                    <span class="text-xs text-gray-600 dark:text-gray-400">{{ $yearcover->created_at->format('d M Y') }}</span>
-                </div>
-                <div class="mt-1 flex items-center justify-between">
-                    <span class="text-xs text-gray-400">Updated</span>
-                    <span class="text-xs text-gray-600 dark:text-gray-400">{{ $yearcover->updated_at->format('d M Y') }}</span>
-                </div>
-            </div>
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-semibold text-gray-900">Year Cover {{ $yearcover->year }}</h1>
+            <p class="mt-1 text-sm text-gray-500">Complete information about the annual cover and video</p>
         </div>
-
-        {{-- Action Buttons --}}
-        <div class="flex gap-3">
-            <a href="{{ route('yearcover.edit', $yearcover->id) }}"
-               class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 py-2.5 text-sm font-medium text-white hover:bg-amber-600 transition-colors">
+        <div class="flex items-center gap-3">
+            <a href="{{ route('yearcover') }}"
+                class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-                Edit Cover
+                Back
             </a>
-            <button onclick="confirmDelete({{ $yearcover->id }}, {{ $yearcover->year }})"
-                    class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-red-500 py-2.5 text-sm font-medium text-white hover:bg-red-600 transition-colors border-0 cursor-pointer">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                </svg>
-                Delete
-            </button>
         </div>
     </div>
 
-    {{-- RIGHT: YouTube Video --}}
-    <div class="lg:col-span-3 space-y-4">
-        <div class="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-            <div class="mb-4 flex items-center gap-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 dark:bg-red-900/30">
-                    <svg class="h-5 w-5 text-red-500" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+    <div class="space-y-6">
+        <!-- Banner Card -->
+        <div class="rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-sm">
+            <!-- decorative top gradient -->
+            <div class="h-8 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
+            <div class="p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8">
+                <!-- Cover Image -->
+                <div class="shrink-0 relative group">
+                    <div
+                        class="absolute inset-0 bg-blue-500 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300">
+                    </div>
+                    <img src="{{ Storage::url($yearcover->cover_path) }}" alt="Cover {{ $yearcover->year }}"
+                        class="relative h-48 w-auto max-w-[140px] border border-gray-100 object-contain rounded-xl shadow-lg bg-white p-1">
+                </div>
+
+                <!-- Meta Info -->
+                <div class="flex-1 text-center sm:text-left pt-2">
+                    <div
+                        class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 mb-3 border border-blue-100 shadow-sm">
+                        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        Year {{ $yearcover->year }}
+                    </div>
+                    <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Cover {{ $yearcover->year }}</h2>
+                    <p class="mt-2 text-sm text-gray-500 max-w-2xl font-medium mx-auto sm:mx-0">
+                        Detailed presentation and video highlight for the class of {{ $yearcover->year }}.
+                    </p>
+
+                    <div class="mt-6 flex flex-wrap items-center justify-center sm:justify-start gap-4 sm:gap-8">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 border border-indigo-100 text-indigo-600">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Added Date</p>
+                                <p class="text-sm font-semibold text-gray-900">{{ $yearcover->created_at->format('d M Y') }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-600">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Last Update</p>
+                                <p class="text-sm font-semibold text-gray-900">{{ $yearcover->updated_at->format('d M Y') }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Section -->
+        <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div class="mb-6 flex items-center justify-center sm:justify-start gap-3">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-red-500">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
                     </svg>
                 </div>
-                <div>
-                    <h3 class="text-base font-semibold text-gray-800 dark:text-white">Year {{ $yearcover->year }} Video</h3>
-                    <p class="text-xs text-gray-400">Click play to watch the video</p>
+                <div class="text-center sm:text-left">
+                    <h3 class="text-lg font-bold text-gray-900">Featured Video</h3>
+                    <p class="text-sm font-medium text-gray-500">Video highlight presentation for this year</p>
                 </div>
             </div>
 
-            @if($ytId)
-            <div class="overflow-hidden rounded-xl bg-black shadow-lg">
-                <iframe
-                    src="https://www.youtube.com/embed/{{ $ytId }}"
-                    width="100%"
-                    frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowfullscreen
-                    style="aspect-ratio: 16/9; display: block;">
-                </iframe>
-            </div>
+            @if ($ytId)
+                <div class="overflow-hidden rounded-xl bg-gray-900 shadow-md ring-1 ring-gray-900/5 mx-auto max-w-4xl">
+                    <iframe src="https://www.youtube.com/embed/{{ $ytId }}" width="100%" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen class="block aspect-video w-full"></iframe>
+                </div>
 
-            {{-- YouTube Thumbnail & Link --}}
-            <div class="mt-4 flex items-center gap-3 rounded-xl bg-gray-50 p-3 dark:bg-gray-900">
-                <img src="https://img.youtube.com/vi/{{ $ytId }}/mqdefault.jpg"
-                     alt="Thumbnail"
-                     class="h-14 w-24 rounded-lg object-cover flex-shrink-0">
-                <div class="min-w-0">
-                    <p class="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">YouTube Link:</p>
+                <div
+                    class="mt-4 flex flex-col sm:flex-row items-center sm:justify-between gap-4 rounded-xl bg-gray-50 border border-gray-100 p-4 mx-auto max-w-4xl hover:border-gray-200 transition">
+                    <div class="flex items-center gap-4 w-full sm:w-auto overflow-hidden">
+                        <img src="https://img.youtube.com/vi/{{ $ytId }}/mqdefault.jpg" alt="Thumbnail"
+                            class="h-16 w-28 rounded-lg object-cover shadow-sm ring-1 ring-black/5 flex-shrink-0">
+                        <div class="min-w-0 flex-1">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">YouTube Source</p>
+                            <a href="{{ $yearcover->youtube_link }}" target="_blank"
+                                class="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline break-all block truncate">
+                                {{ $yearcover->youtube_link }}
+                            </a>
+                        </div>
+                    </div>
                     <a href="{{ $yearcover->youtube_link }}" target="_blank"
-                       class="text-xs text-blue-500 hover:text-blue-600 hover:underline break-all">
-                        {{ $yearcover->youtube_link }}
+                        class="w-full sm:w-auto flex-shrink-0 inline-flex justify-center items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 transition-all">
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                        </svg>
+                        Watch Full Video
                     </a>
                 </div>
-                <a href="{{ $yearcover->youtube_link }}" target="_blank"
-                   class="ml-auto flex-shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-red-500 px-3 py-2 text-xs font-medium text-white hover:bg-red-600 transition-colors">
-                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                    </svg>
-                    Open YouTube
-                </a>
-            </div>
             @else
-            <div class="flex flex-col items-center justify-center py-12 text-center rounded-xl bg-gray-50 dark:bg-gray-900">
-                <svg class="h-12 w-12 text-gray-300 mb-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"/>
-                </svg>
-                <p class="text-sm text-gray-400">Invalid YouTube link</p>
-            </div>
+                <div
+                    class="flex flex-col items-center justify-center py-16 text-center rounded-xl bg-gray-50 border border-dashed border-gray-200 mx-auto max-w-4xl">
+                    <div class="rounded-full bg-gray-100 p-4 mb-4">
+                        <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-sm font-semibold text-gray-900">No Video Available</h3>
+                    <p class="mt-1 text-sm text-gray-500">The provided YouTube link is invalid or missing.</p>
+                </div>
             @endif
         </div>
     </div>
-</div>
 
-{{-- Hidden Delete Form --}}
-<form id="deleteForm" method="POST" class="hidden">
-    @csrf
-    @method('DELETE')
-</form>
+    <form id="deleteForm" method="POST" class="hidden">
+        @csrf
+        @method('DELETE')
+    </form>
 
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    function confirmDelete(id, year) {
-        Swal.fire({
-            title: 'Delete Cover?',
-            html: `Year <strong>${year}</strong> cover will be permanently deleted.<br>This action cannot be undone.`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#ef4444',
-            cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Yes, Delete!',
-            cancelButtonText: 'Cancel',
-            reverseButtons: true,
-            focusCancel: true,
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const form = document.getElementById('deleteForm');
-                form.action = `/yearcover/${id}`;
-                form.submit();
+    @push('scripts')
+        <script>
+            function confirmDelete(id, year) {
+                Swal.fire({
+                    title: 'Delete Cover?',
+                    html: `Year <strong>${year}</strong> cover will be permanently deleted.<br>This action cannot be undone.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Yes, Delete!',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true,
+                    focusCancel: true,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = document.getElementById('deleteForm');
+                        form.action = `/yearcover/${id}`;
+                        form.submit();
+                    }
+                });
             }
-        });
-    }
-</script>
-@endpush
+        </script>
+    @endpush
 
 @endsection

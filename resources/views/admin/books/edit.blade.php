@@ -4,310 +4,388 @@
 @php $page = 'books'; @endphp
 
 @push('styles')
-<style>
-    .dropzone {
-        border: 2px dashed #d1d5db;
-        border-radius: 12px;
-        background: #f9fafb;
-        min-height: 160px;
-        padding: 16px;
-        transition: all 0.2s ease;
-        cursor: pointer;
-    }
-    .dropzone.dz-drag-hover { border-color: #3b82f6; background: #eff6ff; }
-    .dropzone .dz-message { margin: 0; }
-    .dark .dropzone { border-color: #374151; background: #111827; }
-    .dark .dropzone.dz-drag-hover { border-color: #3b82f6; background: #1e3a5f; }
+    <style>
+        .dropzone {
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            background: #f9fafb;
+            min-height: 160px;
+            padding: 16px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
 
-    .dropzone .dz-preview .dz-success-mark,
-    .dropzone .dz-preview .dz-error-mark,
-    .dropzone .dz-preview .dz-progress { display: none !important; }
+        .dropzone.dz-drag-hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
 
-    .file-preview-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        padding: 8px;
-    }
-    .file-preview-img {
-        max-width: 100%;
-        max-height: 120px;
-        border-radius: 8px;
-        border: 1px solid #e5e7eb;
-        object-fit: contain;
-        background: #fff;
-        padding: 4px;
-    }
-    .dark .file-preview-img { background: #1f2937; border-color: #374151; }
-    .file-name {
-        font-size: 0.8rem;
-        font-weight: 500;
-        color: #1f2937;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 200px;
-        text-align: center;
-    }
-    .dark .file-name { color: #f3f4f6; }
-    .file-meta { font-size: 0.75rem; color: #6b7280; text-align: center; }
-    .dark .file-meta { color: #9ca3af; }
-    .dz-remove-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        border-radius: 8px;
-        background: #fef2f2;
-        padding: 6px 12px;
-        font-size: 0.75rem;
-        font-weight: 500;
-        color: #b91c1c;
-        border: none;
-        cursor: pointer;
-        transition: background 0.2s;
-    }
-    .dz-remove-btn:hover { background: #fee2e2; }
-    .dark .dz-remove-btn { background: rgba(239,68,68,0.15); color: #f87171; }
-    .dark .dz-remove-btn:hover { background: rgba(239,68,68,0.25); }
-</style>
+        .dropzone .dz-message {
+            margin: 0;
+        }
+
+        .dropzone .dz-preview .dz-success-mark,
+        .dropzone .dz-preview .dz-error-mark,
+        .dropzone .dz-preview .dz-progress {
+            display: none !important;
+        }
+
+        .file-preview-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+        }
+
+        .file-preview-img {
+            max-width: 100%;
+            max-height: 120px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            object-fit: contain;
+            background: #fff;
+            padding: 4px;
+        }
+
+        .file-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #1f2937;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+            text-align: center;
+        }
+
+        .file-meta {
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-align: center;
+        }
+
+        .dz-remove-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border-radius: 8px;
+            background: #fef2f2;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #b91c1c;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .dz-remove-btn:hover {
+            background: #fee2e2;
+        }
+    </style>
 @endpush
 
 @section('content')
 
-<div class="mb-8 flex items-center justify-between">
-    <div>
-        <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Edit Book</h1>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Update book details</p>
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-semibold text-gray-900">Edit Book</h1>
+            <p class="mt-1 text-sm text-gray-500">Update book details</p>
+        </div>
     </div>
-</div>
 
-<form id="bookForm" action="{{ route('books.update', $book->id) }}" method="POST" enctype="multipart/form-data">
-    @csrf
-    @method('PUT')
+    <form id="bookForm" action="{{ route('books.update', $book->id) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
 
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-
-        {{-- LEFT: Book Info --}}
-        <div class="space-y-6">
-            <div class="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-                <h3 class="mb-4 text-base font-semibold text-gray-800 dark:text-white">Book Information</h3>
-                <div class="space-y-4">
-
-                    <div>
-                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-white">
-                            Book Name <span style="color: var(--color-error-500);">*</span>
-                        </label>
-                        <input type="text" name="name" value="{{ old('name', $book->name) }}" placeholder="Enter book name"
-                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-white @error('name') !border-error-500 @enderror" />
-                        @error('name') <p class="mt-1 text-xs text-error-500">{{ $message }}</p> @enderror
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {{-- LEFT: Book Info --}}
+            <div class="space-y-6">
+                <div class="rounded-2xl border border-gray-200 bg-white p-6">
+                    <h3 class="mb-4 text-base font-semibold text-gray-800">Book Information</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="mb-1.5 block text-sm font-medium text-gray-700">
+                                Book Name <span class="text-error-500">*</span>
+                            </label>
+                            <input type="text" name="name" value="{{ old('name', $book->name) }}"
+                                placeholder="Enter book name"
+                                class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none @error('name') !border-error-500 @enderror" />
+                            @error('name')
+                                <p class="mt-1 text-xs text-error-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="mb-1.5 block text-sm font-medium text-gray-700">
+                                Publisher <span class="text-error-500">*</span>
+                            </label>
+                            <input type="text" name="publisher" value="{{ old('publisher', $book->publisher) }}"
+                                placeholder="Enter publisher name"
+                                class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none @error('publisher') !border-error-500 @enderror" />
+                            @error('publisher')
+                                <p class="mt-1 text-xs text-error-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="mb-1.5 block text-sm font-medium text-gray-700">Category</label>
+                            <select name="book_category_id"
+                                class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none">
+                                <option value="">— Select Category —</option>
+                                @foreach ($categories as $cat)
+                                    <option value="{{ $cat->id }}"
+                                        {{ old('book_category_id', $book->book_category_id) == $cat->id ? 'selected' : '' }}>
+                                        {{ $cat->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="mb-1.5 block text-sm font-medium text-gray-700">Year Cover</label>
+                            <select name="year_cover_id"
+                                class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none">
+                                <option value="">— Select Year —</option>
+                                @foreach ($yearCovers as $yc)
+                                    <option value="{{ $yc->id }}"
+                                        {{ old('year_cover_id', $book->year_cover_id) == $yc->id ? 'selected' : '' }}>
+                                        {{ $yc->year }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
+                </div>
+            </div>
 
-                    <div>
-                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-white">
-                            Publisher <span style="color: var(--color-error-500);">*</span>
-                        </label>
-                        <input type="text" name="publisher" value="{{ old('publisher', $book->publisher) }}" placeholder="Enter publisher name"
-                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-white @error('publisher') !border-error-500 @enderror" />
-                        @error('publisher') <p class="mt-1 text-xs text-error-500">{{ $message }}</p> @enderror
+            {{-- RIGHT: File Uploads --}}
+            <div class="space-y-6">
+                <div class="rounded-2xl border border-gray-200 bg-white p-6">
+                    <h3 class="mb-1 text-base font-semibold text-gray-800">Book Cover</h3>
+                    <p class="mb-3 text-xs text-gray-400">Format: JPG, PNG • Max: 5MB • Leave empty to keep current</p>
+                    @if ($book->book_cover)
+                        <div class="mb-4 rounded-xl border border-gray-200 bg-gray-50 p-4">
+                            <div class="flex items-center gap-4">
+                                <div class="relative h-20 w-16 overflow-hidden rounded-lg border border-gray-200 shadow-sm">
+                                    <img src="{{ Storage::url($book->book_cover) }}" alt="Current cover"
+                                        class="h-full w-full object-cover">
+                                </div>
+                                <div>
+                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Current Cover</p>
+                                    <p class="text-sm font-medium text-gray-700">Cover Image</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                    <div id="coverDropzone" class="dropzone rounded-xl">
+                        <div class="dz-message needsclick text-center py-4">
+                            <svg class="mx-auto mb-2 h-8 w-8 text-gray-400" fill="none" stroke="currentColor"
+                                stroke-width="1.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                            </svg>
+                            <p class="text-sm font-semibold text-gray-700 mb-1">Drag & Drop new image</p>
+                            <p class="text-xs text-gray-400">or click to select</p>
+                        </div>
                     </div>
+                    <input type="file" name="book_cover" id="coverInput" class="hidden" />
+                </div>
 
-                    <div>
-                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-white">Category</label>
-                        <select name="book_category_id"
-                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-                            <option value="">— Select Category —</option>
-                            @foreach ($categories as $cat)
-                                <option value="{{ $cat->id }}" {{ old('book_category_id', $book->book_category_id) == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
-                            @endforeach
-                        </select>
+                <div class="rounded-2xl border border-gray-200 bg-white p-6">
+                    <h3 class="mb-1 text-base font-semibold text-gray-800">Book File (PDF)</h3>
+                    <p class="mb-3 text-xs text-gray-400">Format: PDF • Max: 20MB • Leave empty to keep current</p>
+                    @if ($book->book_path)
+                        <div class="mb-4 rounded-xl border border-gray-200 bg-gray-50 p-4">
+                            <div class="flex items-center gap-4">
+                                <div class="flex h-16 w-14 items-center justify-center rounded-lg bg-red-100 text-red-600 shadow-sm border border-red-200">
+                                    <svg class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z" />
+                                    </svg>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Current File</p>
+                                    <p class="truncate text-sm font-medium text-gray-700">Digital Book (PDF)</p>
+                                    <a href="{{ Storage::url($book->book_path) }}" target="_blank" class="mt-1 inline-flex items-center gap-1 text-xs font-medium text-brand-600 hover:text-brand-700">
+                                        <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                        </svg>
+                                        View current PDF
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                    <div id="pdfDropzone" class="dropzone rounded-xl">
+                        <div class="dz-message needsclick text-center py-4">
+                            <svg class="mx-auto mb-2 h-8 w-8 text-gray-400" fill="none" stroke="currentColor"
+                                stroke-width="1.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                            </svg>
+                            <p class="text-sm font-semibold text-gray-700 mb-1">Drag & Drop new PDF</p>
+                            <p class="text-xs text-gray-400">or click to select</p>
+                        </div>
                     </div>
-
-                    <div>
-                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-white">Year Cover</label>
-                        <select name="year_cover_id"
-                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-                            <option value="">— Select Year —</option>
-                            @foreach ($yearCovers as $yc)
-                                <option value="{{ $yc->id }}" {{ old('year_cover_id', $book->year_cover_id) == $yc->id ? 'selected' : '' }}>{{ $yc->year }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
+                    <input type="file" name="book_path" id="pdfInput" class="hidden" />
                 </div>
             </div>
         </div>
 
-        {{-- RIGHT: File Uploads --}}
-        <div class="space-y-6">
-            <div class="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-                <h3 class="mb-1 text-base font-semibold text-gray-800 dark:text-white">Book Cover</h3>
-                <p class="mb-3 text-xs text-gray-400">Format: JPG, PNG • Max: 5MB • Leave empty to keep current</p>
-                @if ($book->book_cover)
-                    <div class="mb-3 flex items-center gap-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-700">
-                        <img src="{{ Storage::url($book->book_cover) }}" alt="Current cover" class="h-16 w-12 object-cover rounded shadow">
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Current cover</p>
-                    </div>
-                @endif
-                <div id="coverDropzone" class="dropzone rounded-xl">
-                    <div class="dz-message needsclick text-center py-4">
-                        <svg class="mx-auto mb-2 h-8 w-8 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
-                        </svg>
-                        <p class="text-sm font-semibold text-gray-700 dark:text-white mb-1">Drag & Drop new image</p>
-                        <p class="text-xs text-gray-400">or click to select</p>
-                    </div>
-                </div>
-                <input type="file" name="book_cover" id="coverInput" class="hidden" />
-            </div>
-
-            <div class="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-                <h3 class="mb-1 text-base font-semibold text-gray-800 dark:text-white">Book File (PDF)</h3>
-                <p class="mb-3 text-xs text-gray-400">Format: PDF • Max: 20MB • Leave empty to keep current</p>
-                @if ($book->book_path)
-                    <div class="mb-3 flex items-center gap-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-700">
-                        <svg class="h-8 w-8 text-red-500" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/>
-                        </svg>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Current PDF file exists</p>
-                    </div>
-                @endif
-                <div id="pdfDropzone" class="dropzone rounded-xl">
-                    <div class="dz-message needsclick text-center py-4">
-                        <svg class="mx-auto mb-2 h-8 w-8 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
-                        </svg>
-                        <p class="text-sm font-semibold text-gray-700 dark:text-white mb-1">Drag & Drop new PDF</p>
-                        <p class="text-xs text-gray-400">or click to select</p>
-                    </div>
-                </div>
-                <input type="file" name="book_path" id="pdfInput" class="hidden" />
-            </div>
+        <div class="mt-6 flex items-center justify-end gap-3">
+            <a href="{{ route('books.index') }}"
+                class="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3.5 text-sm font-medium text-gray-700 shadow-theme-xs ring-1 ring-inset ring-gray-300 transition hover:bg-gray-50">
+                Cancel
+            </a>
+            <button type="button" id="submitBtn"
+                class="inline-flex items-center gap-2 rounded-lg bg-warning-500 px-6 py-2.5 text-sm font-medium text-white hover:bg-warning-600 transition-all shadow-theme-xs">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                Update Book
+            </button>
         </div>
+    </form>
 
-    </div>
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/dropzone@5.9.3/dist/dropzone.min.js"></script>
+        <script>
+            Dropzone.autoDiscover = false;
+            let coverFile = null,
+                pdfFile = null;
 
-    <div class="mt-6 flex items-center justify-end gap-3">
-        <a href="{{ route('books.index') }}"
-            class="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3.5 text-sm font-medium text-gray-700 shadow-theme-xs ring-1 ring-inset ring-gray-300 transition hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700">
-            Cancel
-        </a>
-        <button type="button" id="submitBtn"
-            class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-6 py-2.5 text-sm font-medium text-white hover:bg-brand-600 transition-all shadow-theme-xs">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-            </svg>
-            Update Book
-        </button>
-    </div>
+            const imageTemplate =
+                `<div class="dz-preview"><div class="file-preview-container"><img class="file-preview-img" src="" alt="Preview" /><div class="file-name"></div><div class="file-meta"></div><button type="button" class="dz-remove-btn"><svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg> Remove</button></div></div>`;
 
-</form>
+            const pdfTemplate =
+                `<div class="dz-preview"><div class="file-preview-container"><div class="flex items-center justify-center w-16 h-20 rounded-lg bg-red-50 border border-red-200"><svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg></div><div class="file-name"></div><div class="file-meta"></div><button type="button" class="dz-remove-btn"><svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg> Remove</button></div></div>`;
 
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.jsdelivr.net/npm/dropzone@5.9.3/dist/dropzone.min.js"></script>
-<script>
-Dropzone.autoDiscover = false;
-let coverFile = null, pdfFile = null;
-
-const imageTemplate = `
-<div class="dz-preview">
-    <div class="file-preview-container">
-        <img class="file-preview-img" src="" alt="Preview" />
-        <div class="file-name"></div>
-        <div class="file-meta"></div>
-        <button type="button" class="dz-remove-btn">
-            <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-            Remove
-        </button>
-    </div>
-</div>`;
-
-const pdfTemplate = `
-<div class="dz-preview">
-    <div class="file-preview-container">
-        <div style="display:flex;align-items:center;justify-content:center;width:64px;height:80px;border-radius:8px;background:#fef2f2;border:1px solid #fecaca;">
-            <svg style="width:32px;height:32px;color:#ef4444;" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg>
-        </div>
-        <div class="file-name"></div>
-        <div class="file-meta"></div>
-        <button type="button" class="dz-remove-btn">
-            <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-            Remove
-        </button>
-    </div>
-</div>`;
-
-const coverDz = new Dropzone('#coverDropzone', {
-    url: '/', autoProcessQueue: false, maxFiles: 1, maxFilesize: 5,
-    acceptedFiles: 'image/jpeg,image/png', addRemoveLinks: false,
-    dictDefaultMessage: '', previewTemplate: imageTemplate,
-    init: function () {
-        this.on('addedfile', (file) => {
-            if (this.files.length > 1) this.removeFile(this.files[0]);
-            coverFile = file;
-            const el = file.previewElement;
-            const reader = new FileReader();
-            reader.onload = (e) => { el.querySelector('.file-preview-img').src = e.target.result; };
-            reader.readAsDataURL(file);
-            el.querySelector('.file-name').textContent = file.name;
-            el.querySelector('.file-meta').textContent = (file.size / 1024).toFixed(1) + ' KB';
-            el.querySelector('.dz-remove-btn').addEventListener('click', (e) => {
-                e.preventDefault(); e.stopPropagation(); this.removeFile(file);
+            const coverDz = new Dropzone('#coverDropzone', {
+                url: '/',
+                autoProcessQueue: false,
+                maxFiles: 1,
+                maxFilesize: 5,
+                acceptedFiles: 'image/jpeg,image/png',
+                addRemoveLinks: false,
+                dictDefaultMessage: '',
+                previewTemplate: imageTemplate,
+                init: function() {
+                    this.on('addedfile', (file) => {
+                        if (this.files.length > 1) this.removeFile(this.files[0]);
+                        coverFile = file;
+                        const el = file.previewElement;
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            el.querySelector('.file-preview-img').src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                        el.querySelector('.file-name').textContent = file.name;
+                        el.querySelector('.file-meta').textContent = (file.size / 1024).toFixed(1) + ' KB';
+                        el.querySelector('.dz-remove-btn').addEventListener('click', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            this.removeFile(file);
+                        });
+                    });
+                    this.on('removedfile', () => coverFile = null);
+                    this.on('error', (f, msg) => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: msg
+                        });
+                        this.removeFile(f);
+                    });
+                }
             });
-        });
-        this.on('removedfile', () => coverFile = null);
-        this.on('error', (f, msg) => { Swal.fire({ icon: 'error', title: 'Error', text: msg }); this.removeFile(f); });
-    }
-});
 
-const pdfDz = new Dropzone('#pdfDropzone', {
-    url: '/', autoProcessQueue: false, maxFiles: 1, maxFilesize: 20,
-    acceptedFiles: 'application/pdf', addRemoveLinks: false,
-    dictDefaultMessage: '', previewTemplate: pdfTemplate,
-    init: function () {
-        this.on('addedfile', (file) => {
-            if (this.files.length > 1) this.removeFile(this.files[0]);
-            pdfFile = file;
-            const el = file.previewElement;
-            el.querySelector('.file-name').textContent = file.name;
-            el.querySelector('.file-meta').textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB • PDF';
-            el.querySelector('.dz-remove-btn').addEventListener('click', (e) => {
-                e.preventDefault(); e.stopPropagation(); this.removeFile(file);
+            const pdfDz = new Dropzone('#pdfDropzone', {
+                url: '/',
+                autoProcessQueue: false,
+                maxFiles: 1,
+                maxFilesize: 20,
+                acceptedFiles: 'application/pdf',
+                addRemoveLinks: false,
+                dictDefaultMessage: '',
+                previewTemplate: pdfTemplate,
+                init: function() {
+                    this.on('addedfile', (file) => {
+                        if (this.files.length > 1) this.removeFile(this.files[0]);
+                        pdfFile = file;
+                        const el = file.previewElement;
+                        el.querySelector('.file-name').textContent = file.name;
+                        el.querySelector('.file-meta').textContent = (file.size / (1024 * 1024)).toFixed(
+                            2) + ' MB • PDF';
+                        el.querySelector('.dz-remove-btn').addEventListener('click', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            this.removeFile(file);
+                        });
+                    });
+                    this.on('removedfile', () => pdfFile = null);
+                    this.on('error', (f, msg) => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: msg
+                        });
+                        this.removeFile(f);
+                    });
+                }
             });
-        });
-        this.on('removedfile', () => pdfFile = null);
-        this.on('error', (f, msg) => { Swal.fire({ icon: 'error', title: 'Error', text: msg }); this.removeFile(f); });
-    }
-});
 
-document.getElementById('submitBtn').addEventListener('click', function () {
-    const name = document.querySelector('[name="name"]').value.trim();
-    const publisher = document.querySelector('[name="publisher"]').value.trim();
+            document.getElementById('submitBtn').addEventListener('click', function() {
+                const name = document.querySelector('[name="name"]').value.trim();
+                const publisher = document.querySelector('[name="publisher"]').value.trim();
+                if (!name) return Swal.fire({
+                    icon: 'warning',
+                    title: 'Attention!',
+                    text: 'Book name is required.',
+                    confirmButtonColor: '#465fff'
+                });
+                if (!publisher) return Swal.fire({
+                    icon: 'warning',
+                    title: 'Attention!',
+                    text: 'Publisher is required.',
+                    confirmButtonColor: '#465fff'
+                });
 
-    if (!name) return Swal.fire({ icon: 'warning', title: 'Attention!', text: 'Book name is required.', confirmButtonColor: '#465fff' });
-    if (!publisher) return Swal.fire({ icon: 'warning', title: 'Attention!', text: 'Publisher is required.', confirmButtonColor: '#465fff' });
+                Swal.fire({
+                    title: 'Update Book?',
+                    text: `Update book "${name}"?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#465fff',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Yes, Update!',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true,
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        const btn = document.getElementById('submitBtn');
+                        btn.disabled = true;
+                        btn.innerHTML =
+                            `<svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Updating...`;
+                        if (coverFile) {
+                            const dt = new DataTransfer();
+                            dt.items.add(coverFile);
+                            document.getElementById('coverInput').files = dt.files;
+                        }
+                        if (pdfFile) {
+                            const dt = new DataTransfer();
+                            dt.items.add(pdfFile);
+                            document.getElementById('pdfInput').files = dt.files;
+                        }
+                        document.getElementById('bookForm').submit();
+                    }
+                });
+            });
 
-    Swal.fire({
-        title: 'Update Book?', text: `Update book "${name}"?`, icon: 'question',
-        showCancelButton: true, confirmButtonColor: '#465fff', cancelButtonColor: '#6b7280',
-        confirmButtonText: 'Yes, Update!', cancelButtonText: 'Cancel', reverseButtons: true,
-    }).then(result => {
-        if (result.isConfirmed) {
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.innerHTML = `<svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Updating...`;
-            if (coverFile) { const dt = new DataTransfer(); dt.items.add(coverFile); document.getElementById('coverInput').files = dt.files; }
-            if (pdfFile)   { const dt = new DataTransfer(); dt.items.add(pdfFile);   document.getElementById('pdfInput').files   = dt.files; }
-            document.getElementById('bookForm').submit();
-        }
-    });
-});
-
-@if($errors->any())
-    Swal.fire({ icon: 'error', title: 'Validation Failed', html: `{!! implode('<br>', $errors->all()) !!}`, confirmButtonColor: '#f04438' });
-@endif
-</script>
-@endpush
+            @if ($errors->any())
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Failed',
+                    html: `{!! implode('<br>', $errors->all()) !!}`,
+                    confirmButtonColor: '#f04438'
+                });
+            @endif
+        </script>
+    @endpush
 
 @endsection

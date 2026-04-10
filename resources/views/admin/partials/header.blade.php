@@ -1,12 +1,12 @@
 <header x-data="{ menuToggle: false }"
-    class="sticky top-0 z-99999 flex w-full border-gray-200 bg-white lg:border-b dark:border-gray-800 dark:bg-gray-900">
+    class="sticky top-0 z-99999 flex w-full border-gray-200 bg-white lg:border-b">
     <div class="flex grow flex-col items-center justify-between lg:flex-row lg:px-6">
         <div
-            class="flex w-full items-center justify-between gap-2 border-b border-gray-200 px-3 py-3 sm:gap-4 lg:justify-normal lg:border-b-0 lg:px-0 lg:py-4 dark:border-gray-800">
+            class="flex w-full items-center justify-between gap-2 border-b border-gray-200 px-3 py-3 sm:gap-4 lg:justify-normal lg:border-b-0 lg:px-0 lg:py-4">
             <!-- Hamburger Toggle BTN -->
             <button
-                :class="sidebarToggle ? 'lg:bg-transparent dark:lg:bg-transparent bg-gray-100 dark:bg-gray-800' : ''"
-                class="z-99999 flex h-10 w-10 items-center justify-center rounded-lg border-gray-200 text-gray-500 lg:h-11 lg:w-11 lg:border dark:border-gray-800 dark:text-gray-400"
+                :class="sidebarToggle ? 'lg:bg-transparent bg-gray-100' : ''"
+                class="z-99999 flex h-10 w-10 items-center justify-center rounded-lg border-gray-200 text-gray-500 lg:h-11 lg:w-11 lg:border"
                 @click.stop="sidebarToggle = !sidebarToggle">
                 <svg class="hidden fill-current lg:block" width="16" height="12" viewBox="0 0 16 12" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
@@ -30,17 +30,15 @@
                         fill="" />
                 </svg>
             </button>
-            <!-- Hamburger Toggle BTN -->
 
             <a href="{{ route('dashboard') }}" class="lg:hidden">
-                <img class="dark:hidden h-10" src="{{ asset('img/smk.png') }}" alt="SMK Logo" />
-                <img class="hidden dark:block h-10" src="{{ asset('img/smk.png') }}" alt="SMK Logo" />
+                <img class="h-10" src="{{ asset('img/smk.png') }}" alt="SMK Logo" />
             </a>
 
             <!-- Application nav menu button -->
             <button
-                class="z-99999 flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 hover:bg-gray-100 lg:hidden dark:text-gray-400 dark:hover:bg-gray-800"
-                :class="menuToggle ? 'bg-gray-100 dark:bg-gray-800' : ''" @click.stop="menuToggle = !menuToggle">
+                class="z-99999 flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 hover:bg-gray-100 lg:hidden"
+                :class="menuToggle ? 'bg-gray-100' : ''" @click.stop="menuToggle = !menuToggle">
                 <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" clip-rule="evenodd"
@@ -48,13 +46,12 @@
                         fill="" />
                 </svg>
             </button>
-            <!-- Application nav menu button -->
 
             <div class="hidden lg:block" x-data="bookSearch()" @click.away="isOpen = false">
                 <form action="{{ route('books.search') }}" method="GET" @submit="handleSubmit">
                     <div class="relative">
                         <span class="absolute top-1/2 left-4 -translate-y-1/2">
-                            <svg class="fill-gray-500 dark:fill-gray-400" width="20" height="20"
+                            <svg class="fill-gray-500" width="20" height="20"
                                 viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" clip-rule="evenodd"
                                     d="M3.04175 9.37363C3.04175 5.87693 5.87711 3.04199 9.37508 3.04199C12.8731 3.04199 15.7084 5.87693 15.7084 9.37363C15.7084 12.8703 12.8731 15.7053 9.37508 15.7053C5.87711 15.7053 3.04175 12.8703 3.04175 9.37363ZM9.37508 1.54199C5.04902 1.54199 1.54175 5.04817 1.54175 9.37363C1.54175 13.6991 5.04902 17.2053 9.37508 17.2053C11.2674 17.2053 13.003 16.5344 14.357 15.4176L17.177 18.238C17.4699 18.5309 17.9448 18.5309 18.2377 18.238C18.5306 17.9451 18.5306 17.4703 18.2377 17.1774L15.418 14.3573C16.5365 13.0033 17.2084 11.2669 17.2084 9.37363C17.2084 5.04817 13.7011 1.54199 9.37508 1.54199Z"
@@ -66,13 +63,12 @@
                             @keydown.arrow-down="selectedIndex = Math.min(selectedIndex + 1, books.length - 1)"
                             @keydown.arrow-up="selectedIndex = Math.max(selectedIndex - 1, -1)"
                             @keydown.enter="selectBook"
-                            class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden xl:w-[430px] dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30" />
+                            class="shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden xl:w-[430px]" />
 
                         <!-- Dropdown Results -->
-                        <div x-show="isOpen && query.length >= 2" 
-                            class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
-                            
-                            <!-- Loading State -->
+                        <div x-show="isOpen && query.length >= 2"
+                            class="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+
                             <div x-show="isLoading" class="px-4 py-8 text-center">
                                 <svg class="animate-spin h-5 w-5 mx-auto text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -80,45 +76,36 @@
                                 </svg>
                             </div>
 
-                            <!-- No Results -->
                             <div x-show="!isLoading && books.length === 0" class="px-4 py-8 text-center">
-                                <svg class="mx-auto h-12 w-12 text-gray-300 dark:text-gray-700 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="mx-auto h-12 w-12 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
-                                <p class="text-gray-500 dark:text-gray-400 font-medium">No books found</p>
-                                <p class="text-gray-400 dark:text-gray-500 text-sm mt-1">Try searching with different keywords</p>
+                                <p class="text-gray-500 font-medium">No books found</p>
+                                <p class="text-gray-400 text-sm mt-1">Try searching with different keywords</p>
                             </div>
 
-                            <!-- Results List -->
                             <template x-for="(book, index) in books" :key="book.id">
-                                <a :href="book.url" 
+                                <a :href="book.url"
                                     @click="isOpen = false"
-                                    :class="selectedIndex === index ? 'bg-blue-50 dark:bg-gray-800' : 'hover:bg-gray-50 dark:hover:bg-gray-800'"
-                                    class="flex items-center gap-3 px-4 py-3 border-b border-gray-100 dark:border-gray-800 last:border-b-0 transition-colors cursor-pointer">
-                                    
-                                    <!-- Book Cover -->
-                                    <img :src="book.cover" :alt="book.name" class="h-10 w-8 object-cover rounded bg-gray-200 dark:bg-gray-700" />
-                                    
-                                    <!-- Book Info -->
+                                    :class="selectedIndex === index ? 'bg-blue-50' : 'hover:bg-gray-50'"
+                                    class="flex items-center gap-3 px-4 py-3 border-b border-gray-100 last:border-b-0 transition-colors cursor-pointer">
+                                    <img :src="book.cover" :alt="book.name" class="h-10 w-8 object-cover rounded bg-gray-200" />
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium text-gray-900 dark:text-white truncate" x-text="book.name"></p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                        <p class="text-sm font-medium text-gray-900 truncate" x-text="book.name"></p>
+                                        <p class="text-xs text-gray-500 truncate">
                                             <span x-text="book.publisher"></span>
                                             <span class="mx-1">•</span>
                                             <span x-text="book.category"></span>
                                         </p>
                                     </div>
-
-                                    <!-- Arrow Icon -->
                                     <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                     </svg>
                                 </a>
                             </template>
 
-                            <!-- View All Results -->
-                            <div x-show="books.length > 0" class="px-4 py-3 border-t border-gray-100 dark:border-gray-800">
-                                <button type="submit" class="w-full text-center text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
+                            <div x-show="books.length > 0" class="px-4 py-3 border-t border-gray-100">
+                                <button type="submit" class="w-full text-center text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">
                                     View all results for "<span x-text="query"></span>"
                                 </button>
                             </div>
@@ -135,44 +122,28 @@
                         isOpen: false,
                         isLoading: false,
                         selectedIndex: -1,
-                        
+
                         async handleSearch(event) {
                             this.query = event.target.value;
                             this.selectedIndex = -1;
-
-                            if (this.query.length < 2) {
-                                this.isOpen = false;
-                                this.books = [];
-                                return;
-                            }
-
+                            if (this.query.length < 2) { this.isOpen = false; this.books = []; return; }
                             this.isOpen = true;
                             this.isLoading = true;
-
                             try {
                                 const response = await fetch(`{{ route('books.search-api') }}?q=${encodeURIComponent(this.query)}`);
                                 const data = await response.json();
                                 this.books = data.books;
-                            } catch (error) {
-                                console.error('Search error:', error);
-                                this.books = [];
-                            } finally {
-                                this.isLoading = false;
-                            }
+                            } catch (error) { console.error('Search error:', error); this.books = []; }
+                            finally { this.isLoading = false; }
                         },
-
                         selectBook() {
                             if (this.selectedIndex >= 0 && this.selectedIndex < this.books.length) {
                                 window.location.href = this.books[this.selectedIndex].url;
                             } else if (this.books.length > 0) {
-                                // Default to first result if none selected
                                 window.location.href = this.books[0].url;
                             }
                         },
-
-                        handleSubmit(event) {
-                            // Let form submit normally if we want to see all results
-                        }
+                        handleSubmit(event) {}
                     }
                 }
             </script>
@@ -180,26 +151,6 @@
 
         <div :class="menuToggle ? 'flex' : 'hidden'"
             class="shadow-theme-md w-full items-center justify-between gap-4 px-5 py-4 lg:flex lg:justify-end lg:px-0 lg:shadow-none">
-            <div class="2xsm:gap-3 flex items-center gap-2">
-                <!-- Dark Mode Toggler -->
-                <button
-                    class="hover:text-dark-900 relative flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
-                    @click.prevent="darkMode = !darkMode">
-                    <svg class="hidden dark:block" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                            d="M9.99998 1.5415C10.4142 1.5415 10.75 1.87729 10.75 2.2915V3.5415C10.75 3.95572 10.4142 4.2915 9.99998 4.2915C9.58577 4.2915 9.24998 3.95572 9.24998 3.5415V2.2915C9.24998 1.87729 9.58577 1.5415 9.99998 1.5415ZM10.0009 6.79327C8.22978 6.79327 6.79402 8.22904 6.79402 10.0001C6.79402 11.7712 8.22978 13.207 10.0009 13.207C11.772 13.207 13.2078 11.7712 13.2078 10.0001C13.2078 8.22904 11.772 6.79327 10.0009 6.79327ZM5.29402 10.0001C5.29402 7.40061 7.40135 5.29327 10.0009 5.29327C12.6004 5.29327 14.7078 7.40061 14.7078 10.0001C14.7078 12.5997 12.6004 14.707 10.0009 14.707C7.40135 14.707 5.29402 12.5997 5.29402 10.0001ZM15.9813 5.08035C16.2742 4.78746 16.2742 4.31258 15.9813 4.01969C15.6884 3.7268 15.2135 3.7268 14.9207 4.01969L14.0368 4.90357C13.7439 5.19647 13.7439 5.67134 14.0368 5.96423C14.3297 6.25713 14.8045 6.25713 15.0974 5.96423L15.9813 5.08035ZM18.4577 10.0001C18.4577 10.4143 18.1219 10.7501 17.7077 10.7501H16.4577C16.0435 10.7501 15.7077 10.4143 15.7077 10.0001C15.7077 9.58592 16.0435 9.25013 16.4577 9.25013H17.7077C18.1219 9.25013 18.4577 9.58592 18.4577 10.0001ZM14.9207 15.9806C15.2135 16.2735 15.6884 16.2735 15.9813 15.9806C16.2742 15.6877 16.2742 15.2128 15.9813 14.9199L15.0974 14.036C14.8045 13.7431 14.3297 13.7431 14.0368 14.036C13.7439 14.3289 13.7439 14.8038 14.0368 15.0967L14.9207 15.9806ZM9.99998 15.7088C10.4142 15.7088 10.75 16.0445 10.75 16.4588V17.7088C10.75 18.123 10.4142 18.4588 9.99998 18.4588C9.58577 18.4588 9.24998 18.123 9.24998 17.7088V16.4588C9.24998 16.0445 9.58577 15.7088 9.99998 15.7088ZM5.96356 15.0972C6.25646 14.8043 6.25646 14.3295 5.96356 14.0366C5.67067 13.7437 5.1958 13.7437 4.9029 14.0366L4.01902 14.9204C3.72613 15.2133 3.72613 15.6882 4.01902 15.9811C4.31191 16.274 4.78679 16.274 5.07968 15.9811L5.96356 15.0972ZM4.29224 10.0001C4.29224 10.4143 3.95645 10.7501 3.54224 10.7501H2.29224C1.87802 10.7501 1.54224 10.4143 1.54224 10.0001C1.54224 9.58592 1.87802 9.25013 2.29224 9.25013H3.54224C3.95645 9.25013 4.29224 9.58592 4.29224 10.0001ZM4.9029 5.9637C5.1958 6.25659 5.67067 6.25659 5.96356 5.9637C6.25646 5.6708 6.25646 5.19593 5.96356 4.90303L5.07968 4.01915C4.78679 3.72626 4.31191 3.72626 4.01902 4.01915C3.72613 4.31204 3.72613 4.78692 4.01902 5.07981L4.9029 5.9637Z"
-                            fill="currentColor" />
-                    </svg>
-                    <svg class="dark:hidden" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M17.4547 11.97L18.1799 12.1611C18.265 11.8383 18.1265 11.4982 17.8401 11.3266C17.5538 11.1551 17.1885 11.1934 16.944 11.4207L17.4547 11.97ZM8.0306 2.5459L8.57989 3.05657C8.80718 2.81209 8.84554 2.44682 8.67398 2.16046C8.50243 1.8741 8.16227 1.73559 7.83948 1.82066L8.0306 2.5459ZM12.9154 13.0035C9.64678 13.0035 6.99707 10.3538 6.99707 7.08524H5.49707C5.49707 11.1823 8.81835 14.5035 12.9154 14.5035V13.0035ZM16.944 11.4207C15.8869 12.4035 14.4721 13.0035 12.9154 13.0035V14.5035C14.8657 14.5035 16.6418 13.7499 17.9654 12.5193L16.944 11.4207ZM16.7295 11.7789C15.9437 14.7607 13.2277 16.9586 10.0003 16.9586V18.4586C13.9257 18.4586 17.2249 15.7853 18.1799 12.1611L16.7295 11.7789ZM10.0003 16.9586C6.15734 16.9586 3.04199 13.8433 3.04199 10.0003H1.54199C1.54199 14.6717 5.32892 18.4586 10.0003 18.4586V16.9586ZM3.04199 10.0003C3.04199 6.77289 5.23988 4.05695 8.22173 3.27114L7.83948 1.82066C4.21532 2.77574 1.54199 6.07486 1.54199 10.0003H3.04199ZM6.99707 7.08524C6.99707 5.52854 7.5971 4.11366 8.57989 3.05657L7.48132 2.03522C6.25073 3.35885 5.49707 5.13487 5.49707 7.08524H6.99707Z"
-                            fill="currentColor" />
-                    </svg>
-                </button>
-                <!-- Dark Mode Toggler -->
-            </div>
         </div>
     </div>
 </header>
