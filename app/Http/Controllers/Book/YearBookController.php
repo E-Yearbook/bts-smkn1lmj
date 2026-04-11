@@ -26,7 +26,17 @@ class YearBookController extends Controller
         $request->validate([
             'year'         => 'required|integer|min:2000|max:2100|unique:year_covers,year',
             'cover'        => 'required|file|mimes:jpg,jpeg,png|max:5120',
-            'youtube_link' => 'required|string',
+            'youtube_link' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) {
+                    preg_match_all('/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $value, $matches);
+                    $uniqueIds = array_unique($matches[1]);
+                    if (count($uniqueIds) > 2) {
+                        $fail('You cannot submit more than 2 YouTube links.');
+                    }
+                },
+            ],
         ], [
             'year.required'         => 'Year is required.',
             'year.integer'          => 'Year must be a number.',
@@ -37,7 +47,6 @@ class YearBookController extends Controller
             'cover.mimes'           => 'Cover must be in JPG or PNG format.',
             'cover.max'             => 'Cover size must not exceed 5MB.',
             'youtube_link.required' => 'YouTube link is required.',
-            'youtube_link.url'      => 'YouTube link is invalid.',
         ]);
 
         // Secure file upload
@@ -70,7 +79,17 @@ class YearBookController extends Controller
         $request->validate([
             'year'         => 'required|integer|min:2000|max:2100|unique:year_covers,year,' . $yearcover->id,
             'cover'        => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
-            'youtube_link' => 'required|string',
+            'youtube_link' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) {
+                    preg_match_all('/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $value, $matches);
+                    $uniqueIds = array_unique($matches[1]);
+                    if (count($uniqueIds) > 2) {
+                        $fail('You cannot submit more than 2 YouTube links.');
+                    }
+                },
+            ],
         ], [
             'year.required'         => 'Year is required.',
             'year.integer'          => 'Year must be a number.',
@@ -78,7 +97,6 @@ class YearBookController extends Controller
             'cover.mimes'           => 'Cover must be in JPG or PNG format.',
             'cover.max'             => 'Cover size must not exceed 5MB.',
             'youtube_link.required' => 'YouTube link is required.',
-            'youtube_link.url'      => 'YouTube link is invalid.',
         ]);
 
         $data = [
@@ -116,16 +134,16 @@ class YearBookController extends Controller
     }
 
     public function home()
-{
-    $covers = YearCover::orderBy('year', 'desc')->get();
+    {
+        $covers = YearCover::orderBy('year', 'desc')->get();
 
-    $currentYear = now()->year;
+        $currentYear = now()->year;
 
-    // Cari tahun sekarang, jika tidak ada ambil yang terbaru
-    $activeYear = $covers->firstWhere('year', $currentYear)
-                    ? $currentYear
-                    : ($covers->first()->year ?? $currentYear);
+        // Cari tahun sekarang, jika tidak ada ambil yang terbaru
+        $activeYear = $covers->firstWhere('year', $currentYear)
+                        ? $currentYear
+                        : ($covers->first()->year ?? $currentYear);
 
-    return view('home', compact('covers', 'activeYear'));
-}
+        return view('home', compact('covers', 'activeYear'));
+    }
 }

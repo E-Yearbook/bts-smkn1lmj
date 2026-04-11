@@ -154,7 +154,7 @@ document.getElementById('youtube_link').addEventListener('input', function () {
     clearTimeout(ytTimer);
     const val = this.value.trim();
     ytTimer = setTimeout(() => {
-        const ytIds = extractYoutubeIds(val);
+        const ytIds = extractYoutubeIds(val).slice(0, 2);
         const preview = document.getElementById('yt-preview');
         const container = document.getElementById('yt-iframe-container');
         container.innerHTML = '';
@@ -181,11 +181,13 @@ document.getElementById('yearCoverForm').addEventListener('submit', function (e)
     e.preventDefault();
     const year = document.getElementById('year').value.trim();
     const ytLink = document.getElementById('youtube_link').value.trim();
+    const extractedYtIds = extractYoutubeIds(ytLink);
     if (!year) return Swal.fire({ icon: 'warning', title: 'Attention!', text: 'Year is required.', confirmButtonColor: '#465fff' });
     if (year < 2000 || year > 2100) return Swal.fire({ icon: 'warning', title: 'Attention!', text: 'Year must be between 2000–2100.', confirmButtonColor: '#465fff' });
     if (!droppedFile) return Swal.fire({ icon: 'warning', title: 'Attention!', text: 'Cover not selected.', confirmButtonColor: '#465fff' });
     if (!ytLink) return Swal.fire({ icon: 'warning', title: 'Attention!', text: 'YouTube link is required.', confirmButtonColor: '#465fff' });
-    if (extractYoutubeIds(ytLink).length === 0) return Swal.fire({ icon: 'warning', title: 'Invalid Link!', text: 'Enter valid YouTube links.', confirmButtonColor: '#465fff' });
+    if (extractedYtIds.length === 0) return Swal.fire({ icon: 'warning', title: 'Invalid Link!', text: 'Enter valid YouTube links.', confirmButtonColor: '#465fff' });
+    if (extractedYtIds.length > 2) return Swal.fire({ icon: 'warning', title: 'Limit Exceeded!', text: 'You can only add a maximum of 2 YouTube links.', confirmButtonColor: '#465fff' });
 
     Swal.fire({
         title: 'Save Cover?', html: `Year <strong>${year}</strong> cover will be saved.`, icon: 'question',
