@@ -151,10 +151,9 @@
                             <label class="mb-1.5 block text-sm font-medium text-gray-700">
                                 YouTube Link <span class="text-error-500">*</span>
                             </label>
-                            <input type="text" name="youtube_link" id="youtube_link"
-                                value="{{ old('youtube_link', $yearcover->youtube_link) }}"
-                                placeholder="https://youtu.be/xxxxxx"
-                                class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none" />
+                            <textarea name="youtube_link" id="youtube_link" rows="3"
+                                placeholder="https://youtu.be/xxxxxx, https://youtu.be/yyyyyy"
+                                class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none">{{ old('youtube_link', $yearcover->youtube_link) }}</textarea>
                             <p class="mt-1 text-xs text-gray-400">Video preview appears automatically after entering the
                                 link.</p>
                         </div>
@@ -164,12 +163,14 @@
                 <div id="yt-preview"
                     class="{{ $yearcover->youtube_link ? '' : 'hidden' }} rounded-2xl border border-gray-200 bg-white p-5">
                     <h3 class="mb-3 text-sm font-semibold text-gray-700">YouTube Video Preview</h3>
-                    <div class="overflow-hidden rounded-xl bg-black">
-                        <iframe id="yt-iframe"
-                            src="{{ $yearcover->youtube_link ? 'https://www.youtube.com/embed/' . preg_replace('/.*(?:youtu\.be\/|v=)([a-zA-Z0-9_-]{11}).*/', '$1', $yearcover->youtube_link) : '' }}"
-                            width="100%" frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen class="block" style="aspect-ratio:16/9;"></iframe>
+                    <div id="yt-iframe-container" class="overflow-hidden rounded-xl bg-black flex flex-col gap-2">
+@php
+    preg_match_all('/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $yearcover->youtube_link, $matches);
+    $ytIds = array_unique($matches[1] ?? []);
+@endphp
+@foreach($ytIds as $ytId)
+                        <iframe src="https://www.youtube.com/embed/{{ $ytId }}" width="100%" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="block" style="aspect-ratio:16/9;"></iframe>
+@endforeach
                     </div>
                 </div>
             </div>
@@ -279,9 +280,14 @@
                 }
             });
 
-            function extractYoutubeId(url) {
-                const m = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-                return m ? m[1] : null;
+            function extractYoutubeIds(text) {
+                const ids = [];
+                const regex = /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/g;
+                let match;
+                while((match = regex.exec(text)) !== null) {
+                    if(!ids.includes(match[1])) ids.push(match[1]);
+                }
+                return ids;
             }
 
             let ytTimer;
@@ -289,14 +295,24 @@
                 clearTimeout(ytTimer);
                 const val = this.value.trim();
                 ytTimer = setTimeout(() => {
-                    const ytId = extractYoutubeId(val);
+                    const ytIds = extractYoutubeIds(val);
                     const preview = document.getElementById('yt-preview');
-                    const iframe = document.getElementById('yt-iframe');
-                    if (ytId) {
-                        iframe.src = 'https://www.youtube.com/embed/' + ytId;
+                    const container = document.getElementById('yt-iframe-container');
+                    container.innerHTML = '';
+                    if (ytIds.length > 0) {
+                        ytIds.forEach(id => {
+                            const iframe = document.createElement('iframe');
+                            iframe.src = 'https://www.youtube.com/embed/' + id;
+                            iframe.width = '100%';
+                            iframe.frameBorder = '0';
+                            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+                            iframe.allowFullscreen = true;
+                            iframe.className = 'block';
+                            iframe.style.aspectRatio = '16/9';
+                            container.appendChild(iframe);
+                        });
                         preview.classList.remove('hidden');
                     } else {
-                        iframe.src = '';
                         preview.classList.add('hidden');
                     }
                 }, 600);
@@ -324,10 +340,10 @@
                     text: 'YouTube link is required.',
                     confirmButtonColor: '#465fff'
                 });
-                if (!extractYoutubeId(ytLink)) return Swal.fire({
+                if (extractYoutubeIds(ytLink).length === 0) return Swal.fire({
                     icon: 'warning',
                     title: 'Invalid Link!',
-                    text: 'Enter a valid YouTube link.',
+                    text: 'Enter valid YouTube links.',
                     confirmButtonColor: '#465fff'
                 });
 

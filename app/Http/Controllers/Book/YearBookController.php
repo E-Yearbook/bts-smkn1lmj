@@ -26,7 +26,7 @@ class YearBookController extends Controller
         $request->validate([
             'year'         => 'required|integer|min:2000|max:2100|unique:year_covers,year',
             'cover'        => 'required|file|mimes:jpg,jpeg,png|max:5120',
-            'youtube_link' => 'required|url',
+            'youtube_link' => 'required|string',
         ], [
             'year.required'         => 'Year is required.',
             'year.integer'          => 'Year must be a number.',
@@ -70,7 +70,7 @@ class YearBookController extends Controller
         $request->validate([
             'year'         => 'required|integer|min:2000|max:2100|unique:year_covers,year,' . $yearcover->id,
             'cover'        => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
-            'youtube_link' => 'required|url',
+            'youtube_link' => 'required|string',
         ], [
             'year.required'         => 'Year is required.',
             'year.integer'          => 'Year must be a number.',

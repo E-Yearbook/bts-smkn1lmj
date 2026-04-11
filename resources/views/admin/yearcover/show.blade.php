@@ -6,16 +6,12 @@
 @section('content')
 
     @php
-        function getYoutubeIdDetail(string $url): string
-        {
-            preg_match(
-                '/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/',
-                $url,
-                $matches,
-            );
-            return $matches[1] ?? '';
-        }
-        $ytId = getYoutubeIdDetail($yearcover->youtube_link);
+        preg_match_all(
+            '/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/',
+            $yearcover->youtube_link,
+            $matches
+        );
+        $ytIds = array_unique($matches[1] ?? []);
     @endphp
 
     <div class="mb-8 flex items-center justify-between">
@@ -114,34 +110,40 @@
                 </div>
             </div>
 
-            @if ($ytId)
-                <div class="overflow-hidden rounded-xl bg-gray-900 shadow-md ring-1 ring-gray-900/5 mx-auto max-w-4xl">
-                    <iframe src="https://www.youtube.com/embed/{{ $ytId }}" width="100%" frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowfullscreen class="block aspect-video w-full"></iframe>
-                </div>
+            @if (count($ytIds) > 0)
+                <div class="flex flex-col gap-6 w-full max-w-4xl mx-auto">
+                @foreach($ytIds as $idx => $ytId)
+                    <div class="space-y-4">
+                        <div class="overflow-hidden rounded-xl bg-gray-900 shadow-md ring-1 ring-gray-900/5 mx-auto max-w-4xl w-full">
+                            <iframe src="https://www.youtube.com/embed/{{ $ytId }}" width="100%" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowfullscreen class="block aspect-video w-full"></iframe>
+                        </div>
 
-                <div
-                    class="mt-4 flex flex-col sm:flex-row items-center sm:justify-between gap-4 rounded-xl bg-gray-50 border border-gray-100 p-4 mx-auto max-w-4xl hover:border-gray-200 transition">
-                    <div class="flex items-center gap-4 w-full sm:w-auto overflow-hidden">
-                        <img src="https://img.youtube.com/vi/{{ $ytId }}/mqdefault.jpg" alt="Thumbnail"
-                            class="h-16 w-28 rounded-lg object-cover shadow-sm ring-1 ring-black/5 flex-shrink-0">
-                        <div class="min-w-0 flex-1">
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">YouTube Source</p>
-                            <a href="{{ $yearcover->youtube_link }}" target="_blank"
-                                class="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline break-all block truncate">
-                                {{ $yearcover->youtube_link }}
+                        <div
+                            class="flex flex-col sm:flex-row items-center sm:justify-between gap-4 rounded-xl bg-gray-50 border border-gray-100 p-4 mx-auto max-w-4xl w-full hover:border-gray-200 transition">
+                            <div class="flex items-center gap-4 w-full sm:w-auto overflow-hidden">
+                                <img src="https://img.youtube.com/vi/{{ $ytId }}/mqdefault.jpg" alt="Thumbnail"
+                                    class="h-16 w-28 rounded-lg object-cover shadow-sm ring-1 ring-black/5 flex-shrink-0">
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">YouTube Video {{ $idx + 1 }}</p>
+                                    <a href="https://www.youtube.com/watch?v={{ $ytId }}" target="_blank"
+                                        class="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline break-all block truncate">
+                                        https://youtube.com/watch?v={{ $ytId }}
+                                    </a>
+                                </div>
+                            </div>
+                            <a href="https://www.youtube.com/watch?v={{ $ytId }}" target="_blank"
+                                class="w-full sm:w-auto flex-shrink-0 inline-flex justify-center items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 transition-all">
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                                </svg>
+                                Watch Full Video
                             </a>
                         </div>
                     </div>
-                    <a href="{{ $yearcover->youtube_link }}" target="_blank"
-                        class="w-full sm:w-auto flex-shrink-0 inline-flex justify-center items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 transition-all">
-                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                            <path
-                                d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                        </svg>
-                        Watch Full Video
-                    </a>
+                @endforeach
                 </div>
             @else
                 <div
