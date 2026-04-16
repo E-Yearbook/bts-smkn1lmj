@@ -397,7 +397,18 @@
 {{-- ══════════════════════════════════════════
      Styles
 ══════════════════════════════════════════ --}}
+
+<!-- CSS DearFlip (WAJIB) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@dearhive/dearflip-jquery-flipbook@1.7.3/dflip/css/dflip.min.css">
+
+<!-- File font icon (untuk versi lama) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@dearhive/dearflip-jquery-flipbook@1.7.3/dflip/css/themify-icons.min.css">
 <style>
+    #df-flipbook {
+    background: transparent !important; /* Warna kertas */
+    border-radius: 12px;
+
+}
     /* Filter tabs */
     .active-filter {
         background: #6366f1 !important;
@@ -434,6 +445,7 @@
     #video-modal:hover .absolute {
         opacity: 1;
     }
+
 </style>
 
 {{-- ══════════════════════════════════════════
@@ -492,6 +504,7 @@ function openDearFlip(title, fileUrl) {
     dfBookInstance = $(bookEl).flipBook(fileUrl, {
         height              : '72vh',
         duration            : 800,
+        scale               : 1.5,
         webgl               : true,
         autoEnableOutline   : false,
         autoEnableThumbnail : false,
