@@ -58,9 +58,10 @@ class ViewBookController extends Controller
         }
 
         return view('book', [
-            'year'       => $year,
-            'yearCover'  => $yearCover,
-            'categories' => $categoriesData,
+            'year'         => $year,
+            'yearCover'    => $yearCover,
+            'categories'   => $categoriesData,
+            'youtubeLink'  => $yearCover->youtube_link ?? null,
         ]);
     }
 }

@@ -10,11 +10,28 @@
         'emerald' => ['bg' => 'bg-emerald-50', 'text' => 'text-emerald-500', 'border' => 'border-emerald-200/60', 'badge' => 'bg-emerald-100 text-emerald-600','hover_shadow' => 'hover:shadow-[0_12px_36px_rgba(16,185,129,0.18)]',  'hover_border' => 'hover:border-emerald-300/60'],
         'rose'    => ['bg' => 'bg-rose-50',    'text' => 'text-rose-500',    'border' => 'border-rose-200/60',    'badge' => 'bg-rose-100 text-rose-600',      'hover_shadow' => 'hover:shadow-[0_12px_36px_rgba(244,63,94,0.18)]',   'hover_border' => 'hover:border-rose-300/60'],
     ];
+
+    // Parse multiple YouTube embed IDs from comma or newline separated links
+    $youtubeEmbedIds = [];
+    if ($youtubeLink) {
+        // Split by comma or newline
+        $links = preg_split('/[\s,]+/', $youtubeLink, -1, PREG_SPLIT_NO_EMPTY);
+        foreach ($links as $link) {
+            preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/', $link, $m);
+            if ($id = $m[1] ?? null) {
+                $youtubeEmbedIds[] = $id;
+            }
+        }
+    }
+    $currentVideoIndex = 0;
 @endphp
 
-{{-- DearFlip CSS di atas agar tidak flash --}}
+{{-- DearFlip CSS --}}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@dearhive/dearflip-jquery-flipbook@1.7.3/dflip/css/dflip.min.css">
 
+{{-- ══════════════════════════════════════════
+     Main Page
+══════════════════════════════════════════ --}}
 <div class="relative min-h-screen bg-[#f8f7f4] overflow-x-hidden">
 
     {{-- Background orbs --}}
@@ -28,7 +45,7 @@
 
     <div class="relative z-10 w-full max-w-6xl mx-auto px-6 py-16">
 
-        {{-- Breadcrumb --}}
+        {{-- ── Breadcrumb ── --}}
         <div class="flex items-center gap-2 font-mono text-[11px] tracking-[0.15em] text-gray-400 uppercase mb-10"
             data-aos="fade-down" data-aos-duration="500">
             <a href="/" class="hover:text-indigo-500 transition-colors duration-200">Home</a>
@@ -38,9 +55,11 @@
             <span class="text-indigo-500">{{ $year }}</span>
         </div>
 
-        {{-- Page header --}}
+        {{-- ── Page Header ── --}}
         <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14"
             data-aos="fade-down" data-aos-duration="700">
+
+            {{-- Kiri: judul --}}
             <div>
                 <span class="inline-flex items-center gap-2.5 font-mono text-[11px] font-bold tracking-[0.3em] text-indigo-500 uppercase mb-4">
                     <span class="w-1 h-1 rounded-full bg-indigo-500 inline-block"></span>
@@ -55,22 +74,46 @@
                 </p>
             </div>
 
-            {{-- Back button --}}
-            <a href="/"
-                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl
-                       bg-white border border-black/[0.07] shadow-sm
-                       font-mono text-[11px] font-bold tracking-[0.15em] uppercase text-gray-500
-                       transition-all duration-200 hover:border-indigo-300 hover:text-indigo-600 hover:shadow-md
-                       self-start md:self-auto">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="15 18 9 12 15 6"/>
-                </svg>
-                Kembali
-            </a>
+            {{-- Kanan: tombol-tombol --}}
+            <div class="flex items-center gap-3 flex-wrap self-start md:self-auto">
+
+                {{-- Tombol Video Sambutan (hanya jika ada link) --}}
+                @if (count($youtubeEmbedIds) > 0)
+                <button onclick="openVideoModal()"
+                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl
+                           bg-indigo-500 border border-indigo-400 shadow-sm
+                           font-mono text-[11px] font-bold tracking-[0.15em] uppercase text-white
+                           transition-all duration-200 hover:bg-indigo-600 hover:shadow-[0_6px_20px_rgba(99,102,241,0.35)]
+                           hover:-translate-y-0.5 active:translate-y-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    Video Sambutan
+                    @if (count($youtubeEmbedIds) > 1)
+                    <span class="ml-1 text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full">{{ count($youtubeEmbedIds) }}</span>
+                    @endif
+                </button>
+                @endif
+
+                {{-- Tombol Kembali --}}
+                <a href="/"
+                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl
+                           bg-white border border-black/[0.07] shadow-sm
+                           font-mono text-[11px] font-bold tracking-[0.15em] uppercase text-gray-500
+                           transition-all duration-200 hover:border-indigo-300 hover:text-indigo-600 hover:shadow-md
+                           hover:-translate-y-0.5 active:translate-y-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    Kembali
+                </a>
+
+            </div>
         </div>
 
-        {{-- Category filter tabs --}}
-        <div class="flex items-center gap-2 flex-wrap mb-10" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
+        {{-- ── Category Filter Tabs ── --}}
+        <div class="flex items-center gap-2 flex-wrap mb-10"
+            data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
             <button onclick="filterCategory('all')"
                 class="filter-btn active-filter font-mono text-[10px] font-bold tracking-[0.18em] uppercase
                        px-4 py-2 rounded-full border transition-all duration-200 cursor-pointer"
@@ -88,7 +131,7 @@
             @endforeach
         </div>
 
-        {{-- Categories --}}
+        {{-- ── Categories & Books ── --}}
         @foreach ($categories as $i => $cat)
         @php $c = $colorMap[$cat['color']]; @endphp
         <div class="category-section mb-14" data-category="{{ $cat['slug'] }}"
@@ -120,8 +163,7 @@
                                 shadow-[0_2px_12px_rgba(0,0,0,0.07)]
                                 transition-all duration-300
                                 group-hover:-translate-y-2
-                                {{ $c['hover_shadow'] }}
-                                {{ $c['hover_border'] }}">
+                                {{ $c['hover_shadow'] }} {{ $c['hover_border'] }}">
 
                         @if (!empty($book['cover']))
                         <img src="{{ asset($book['cover']) }}"
@@ -149,7 +191,7 @@
                         {{-- Hover overlay --}}
                         <div class="absolute inset-0 bg-black/0 group-hover:bg-black/[0.06] transition-all duration-300"></div>
 
-                        {{-- Open badge on hover --}}
+                        {{-- "Buka" badge on hover --}}
                         <div class="absolute bottom-2 left-1/2 -translate-x-1/2
                                     opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0
                                     transition-all duration-250">
@@ -186,7 +228,9 @@
         <div class="flex items-center justify-center gap-5 pt-4 pb-8"
             data-aos="fade-up" data-aos-duration="600">
             <div class="h-px w-16 bg-gradient-to-r from-transparent to-gray-300"></div>
-            <span class="font-mono text-[10px] tracking-[0.25em] uppercase text-gray-300">SMKN 1 &mdash; Angkatan {{ $year }}</span>
+            <span class="font-mono text-[10px] tracking-[0.25em] uppercase text-gray-300">
+                SMKN 1 &mdash; Angkatan {{ $year }}
+            </span>
             <div class="h-px w-16 bg-gradient-to-l from-transparent to-gray-300"></div>
         </div>
 
@@ -194,10 +238,10 @@
 </div>
 
 {{-- ══════════════════════════════════════════
-     DearFlip Modal Overlay
+     Modal: DearFlip Flipbook
 ══════════════════════════════════════════ --}}
 <div id="df-overlay"
-    class="fixed inset-0 z-[999] bg-black/85 backdrop-blur-sm
+    class="fixed inset-0 z-[999]  backdrop-blur-sm
            flex flex-col items-center justify-center gap-3
            opacity-0 pointer-events-none"
     style="transition: opacity 0.3s ease;">
@@ -213,15 +257,13 @@
                    flex items-center justify-center text-white transition-all duration-200 shrink-0">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"/>
-                <line x1="6" y1="6" x2="18" y2="18"/>
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
         </button>
     </div>
 
-    {{-- Loading --}}
-    <div id="df-loading"
-        style="display:flex; flex-direction:column; align-items:center; gap:12px; color:rgba(255,255,255,0.5);">
+    {{-- Loading spinner --}}
+    <div id="df-loading" style="display:flex; flex-direction:column; align-items:center; gap:12px; color:rgba(255,255,255,0.5);">
         <svg class="w-8 h-8 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
         </svg>
@@ -229,8 +271,7 @@
     </div>
 
     {{-- No file --}}
-    <div id="df-nofile"
-        style="display:none; flex-direction:column; align-items:center; gap:12px; color:rgba(255,255,255,0.5);">
+    <div id="df-nofile" style="display:none; flex-direction:column; align-items:center; gap:12px; color:rgba(255,255,255,0.5);">
         <svg style="width:56px;height:56px;opacity:0.4;" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
@@ -250,9 +291,114 @@
 </div>
 
 {{-- ══════════════════════════════════════════
+     Modal: Video Sambutan MULTIPLE with CAROUSEL
+══════════════════════════════════════════ --}}
+@if (count($youtubeEmbedIds) > 0)
+<div id="video-modal"
+    class="fixed inset-0 z-[1000] bg-black/90 backdrop-blur-sm
+           flex flex-col items-center justify-center gap-4
+           opacity-0 pointer-events-none"
+    style="transition: opacity 0.35s ease;">
+
+    {{-- Header modal dengan navigasi --}}
+    <div class="flex items-center justify-between w-full px-6" style="max-width: 860px;">
+        <div>
+            <span class="font-mono text-[10px] font-bold tracking-[0.3em] text-indigo-400 uppercase">
+                ▶ Video Sambutan
+            </span>
+            <p class="font-mono text-sm text-white/60 tracking-wider mt-0.5">
+                Angkatan {{ $year }}
+            </p>
+        </div>
+
+        {{-- Counter indicator (jika lebih dari 1 video) --}}
+        @if (count($youtubeEmbedIds) > 1)
+        <div class="flex items-center gap-2">
+            <span id="video-counter" class="font-mono text-xs text-white/40 tracking-wider">
+                1 / {{ count($youtubeEmbedIds) }}
+            </span>
+        </div>
+        @endif
+
+        <button onclick="closeVideoModal()"
+            class="w-9 h-9 rounded-full bg-white/10 hover:bg-red-500/80 border border-white/20
+                   flex items-center justify-center text-white transition-all duration-200 shrink-0">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        </button>
+    </div>
+
+    {{-- Video container dengan tombol prev/next --}}
+    <div class="relative w-full" style="max-width: 860px; padding: 0 1.5rem;">
+
+        {{-- Tombol Previous --}}
+        @if (count($youtubeEmbedIds) > 1)
+        <button id="video-prev"
+            class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-6
+                   w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm
+                   flex items-center justify-center text-white transition-all duration-200
+                   opacity-0 group-hover:opacity-100 z-10 disabled:opacity-30 disabled:cursor-not-allowed"
+            style="display: none;">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"/>
+            </svg>
+        </button>
+        @endif
+
+        {{-- YouTube iframe (16:9) --}}
+        <div style="position:relative; padding-bottom:56.25%; height:0; border-radius:16px; overflow:hidden; background:#000;
+                    box-shadow: 0 32px 80px rgba(0,0,0,0.6);">
+            <iframe id="video-iframe"
+                src=""
+                style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        {{-- Tombol Next --}}
+        @if (count($youtubeEmbedIds) > 1)
+        <button id="video-next"
+            class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-6
+                   w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm
+                   flex items-center justify-center text-white transition-all duration-200
+                   opacity-0 group-hover:opacity-100 z-10">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"/>
+            </svg>
+        </button>
+        @endif
+    </div>
+
+    {{-- Thumbnail navigator (opsional, untuk multi video) --}}
+    @if (count($youtubeEmbedIds) > 1)
+    <div class="flex items-center justify-center gap-2 mt-3 flex-wrap" id="video-thumbnails">
+        @foreach ($youtubeEmbedIds as $idx => $vidId)
+        <button class="video-thumb-btn w-2 h-2 rounded-full transition-all duration-200
+                       bg-white/30 hover:bg-white/60"
+                data-index="{{ $idx }}"
+                style="width: {{ $idx == 0 ? '24px' : '8px' }}; {{ $idx == 0 ? 'background-color: rgba(255,255,255,0.8);' : '' }}">
+        </button>
+        @endforeach
+    </div>
+    @endif
+
+    <p class="font-mono text-white/25 tracking-widest" style="font-size:10px;">
+        @if (count($youtubeEmbedIds) > 1)
+        ◀  Geser atau klik tombol  ▶  &nbsp;·&nbsp;
+        @endif
+        Klik luar area video &nbsp;·&nbsp; ESC untuk menutup
+    </p>
+</div>
+@endif
+
+{{-- ══════════════════════════════════════════
      Styles
 ══════════════════════════════════════════ --}}
 <style>
+    /* Filter tabs */
     .active-filter {
         background: #6366f1 !important;
         color: white !important;
@@ -264,52 +410,53 @@
         color: #6b7280;
         border-color: rgba(0,0,0,0.07);
     }
+
+    /* Category sections */
     .category-section { transition: opacity 0.3s ease; }
     .category-section.hidden-cat { display: none; }
 
+    /* DearFlip overlay */
     #df-overlay.df-active {
         opacity: 1 !important;
         pointer-events: all !important;
     }
-
-    /* Override background DearFlip agar transparan */
     #df-flipbook .df-container,
     #df-flipbook .dflip-container,
     .dflip-container { background: transparent !important; }
+
+    /* Video modal active state */
+    #video-modal.vm-active {
+        opacity: 1 !important;
+        pointer-events: all !important;
+    }
+
+    /* Hover effect untuk tombol navigasi */
+    #video-modal:hover .absolute {
+        opacity: 1;
+    }
 </style>
 
 {{-- ══════════════════════════════════════════
      Scripts — urutan WAJIB: jQuery → DearFlip → custom
 ══════════════════════════════════════════ --}}
-
-{{-- 1. jQuery WAJIB sebelum DearFlip --}}
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-
-{{-- 2. DearFlip JS CDN v1.7.3 --}}
 <script src="https://cdn.jsdelivr.net/npm/@dearhive/dearflip-jquery-flipbook@1.7.3/dflip/js/dflip.min.js"></script>
 
-{{-- 3. Custom script --}}
 <script>
-// ─────────────────────────────────────
-// Filter kategori
-// ─────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// 1. Filter kategori
+// ─────────────────────────────────────────────────────────────
 function filterCategory(slug) {
-    document.querySelectorAll('.filter-btn').forEach(function(btn) {
-        btn.classList.remove('active-filter');
-    });
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active-filter'));
     document.querySelector('[data-cat="' + slug + '"]').classList.add('active-filter');
-    document.querySelectorAll('.category-section').forEach(function(section) {
-        if (slug === 'all' || section.dataset.category === slug) {
-            section.classList.remove('hidden-cat');
-        } else {
-            section.classList.add('hidden-cat');
-        }
+    document.querySelectorAll('.category-section').forEach(section => {
+        section.classList.toggle('hidden-cat', slug !== 'all' && section.dataset.category !== slug);
     });
 }
 
-// ─────────────────────────────────────
-// DearFlip state
-// ─────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// 2. DearFlip Flipbook
+// ─────────────────────────────────────────────────────────────
 var dfBookInstance = null;
 
 function openDearFlip(title, fileUrl) {
@@ -320,7 +467,6 @@ function openDearFlip(title, fileUrl) {
     var bookWrap = document.getElementById('df-book-wrap');
     var bookEl   = document.getElementById('df-flipbook');
 
-    // Set judul & tampilkan overlay
     titleEl.textContent          = title;
     loading.style.display        = 'flex';
     nofile.style.display         = 'none';
@@ -328,26 +474,21 @@ function openDearFlip(title, fileUrl) {
     overlay.classList.add('df-active');
     document.body.style.overflow = 'hidden';
 
-    // Tidak ada PDF
     if (!fileUrl) {
         loading.style.display = 'none';
         nofile.style.display  = 'flex';
         return;
     }
 
-    // Hancurkan instance lama
     if (dfBookInstance) {
         try { dfBookInstance.dispose(); } catch(e) {}
         dfBookInstance = null;
     }
 
-    // Bersihkan & tampilkan container
     bookEl.innerHTML       = '';
     bookWrap.style.display = 'block';
     loading.style.display  = 'none';
 
-    // ── Init DearFlip ──
-    // Cara yang benar untuk versi 1.7.3: pakai HTML element + source attribute
     dfBookInstance = $(bookEl).flipBook(fileUrl, {
         height              : '72vh',
         duration            : 800,
@@ -355,20 +496,15 @@ function openDearFlip(title, fileUrl) {
         autoEnableOutline   : false,
         autoEnableThumbnail : false,
         controlsPosition    : 'bottom',
-        onReady             : function() {
-            loading.style.display = 'none';
-        },
-        onError             : function() {
-            loading.style.display = 'none';
-            nofile.style.display  = 'flex';
+        onReady : function() { loading.style.display = 'none'; },
+        onError : function() {
+            loading.style.display  = 'none';
+            nofile.style.display   = 'flex';
             bookWrap.style.display = 'none';
         },
     });
 }
 
-// ─────────────────────────────────────
-// Tutup DearFlip
-// ─────────────────────────────────────
 function closeDearFlip() {
     var overlay  = document.getElementById('df-overlay');
     var bookEl   = document.getElementById('df-flipbook');
@@ -390,14 +526,130 @@ function closeDearFlip() {
     nofile.style.display   = 'none';
 }
 
-// ESC untuk tutup
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeDearFlip();
-});
-
-// Klik backdrop untuk tutup
+// Klik backdrop → tutup flipbook
 document.getElementById('df-overlay').addEventListener('click', function(e) {
     if (e.target === this) closeDearFlip();
+});
+
+// ─────────────────────────────────────────────────────────────
+// 3. Video Sambutan Modal MULTIPLE VIDEO
+// ─────────────────────────────────────────────────────────────
+@if (count($youtubeEmbedIds) > 0)
+var videoIds = @json($youtubeEmbedIds);
+var currentVideoIndex = 0;
+var videoModal = document.getElementById('video-modal');
+var videoIframe = document.getElementById('video-iframe');
+var videoPrevBtn = document.getElementById('video-prev');
+var videoNextBtn = document.getElementById('video-next');
+var videoCounter = document.getElementById('video-counter');
+
+function loadVideo(index) {
+    if (!videoIds[index]) return;
+    var videoId = videoIds[index];
+    videoIframe.src = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1&rel=0&enablejsapi=1';
+
+    // Update counter
+    if (videoCounter) {
+        videoCounter.textContent = (index + 1) + ' / ' + videoIds.length;
+    }
+
+    // Update tombol prev/next state
+    if (videoPrevBtn) {
+        videoPrevBtn.style.display = index === 0 ? 'none' : 'flex';
+    }
+    if (videoNextBtn) {
+        videoNextBtn.style.display = index === videoIds.length - 1 ? 'none' : 'flex';
+    }
+
+    // Update thumbnail indicators
+    document.querySelectorAll('.video-thumb-btn').forEach((btn, i) => {
+        if (i === index) {
+            btn.style.width = '24px';
+            btn.style.backgroundColor = 'rgba(255,255,255,0.8)';
+        } else {
+            btn.style.width = '8px';
+            btn.style.backgroundColor = 'rgba(255,255,255,0.3)';
+        }
+    });
+}
+
+function nextVideo() {
+    if (currentVideoIndex < videoIds.length - 1) {
+        currentVideoIndex++;
+        loadVideo(currentVideoIndex);
+    }
+}
+
+function prevVideo() {
+    if (currentVideoIndex > 0) {
+        currentVideoIndex--;
+        loadVideo(currentVideoIndex);
+    }
+}
+
+function openVideoModal() {
+    currentVideoIndex = 0;
+    loadVideo(currentVideoIndex);
+    videoModal.classList.add('vm-active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeVideoModal() {
+    videoIframe.src = ''; // stop video
+    videoModal.classList.remove('vm-active');
+    document.body.style.overflow = '';
+}
+
+// Event listeners untuk tombol navigasi
+if (videoPrevBtn) videoPrevBtn.addEventListener('click', prevVideo);
+if (videoNextBtn) videoNextBtn.addEventListener('click', nextVideo);
+
+// Thumbnail click
+document.querySelectorAll('.video-thumb-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        var idx = parseInt(this.dataset.index);
+        if (!isNaN(idx) && idx !== currentVideoIndex) {
+            currentVideoIndex = idx;
+            loadVideo(currentVideoIndex);
+        }
+    });
+});
+
+// Klik backdrop → tutup video
+videoModal.addEventListener('click', function(e) {
+    if (e.target === this) closeVideoModal();
+});
+
+// Keyboard navigasi (panah kiri/kanan) saat modal aktif
+document.addEventListener('keydown', function(e) {
+    if (!videoModal.classList.contains('vm-active')) return;
+
+    if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        if (currentVideoIndex > 0) prevVideo();
+    } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        if (currentVideoIndex < videoIds.length - 1) nextVideo();
+    } else if (e.key === 'Escape') {
+        closeVideoModal();
+    }
+});
+
+// Auto popup saat halaman pertama dibuka
+window.addEventListener('DOMContentLoaded', function() {
+    setTimeout(openVideoModal, 700);
+});
+@endif
+
+// ESC → tutup modal yang sedang aktif (fallback)
+document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Escape') return;
+    @if (count($youtubeEmbedIds) > 0)
+    if (document.getElementById('video-modal').classList.contains('vm-active')) {
+        closeVideoModal(); return;
+    }
+    @endif
+    closeDearFlip();
 });
 </script>
 
