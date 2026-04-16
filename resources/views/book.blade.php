@@ -394,159 +394,20 @@
 </div>
 @endif
 
-{{-- ══════════════════════════════════════════
-     Styles
-══════════════════════════════════════════ --}}
-
-<!-- CSS DearFlip (WAJIB) -->
+{{-- Style --}}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@dearhive/dearflip-jquery-flipbook@1.7.3/dflip/css/dflip.min.css">
-
-<!-- File font icon (untuk versi lama) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@dearhive/dearflip-jquery-flipbook@1.7.3/dflip/css/themify-icons.min.css">
-<style>
-    #df-flipbook {
-    background: transparent !important; /* Warna kertas */
-    border-radius: 12px;
+<link rel="stylesheet" href="{{ asset('css/book.css') }}">
 
-}
-    /* Filter tabs */
-    .active-filter {
-        background: #6366f1 !important;
-        color: white !important;
-        border-color: #6366f1 !important;
-        box-shadow: 0 4px 14px rgba(99,102,241,0.3);
-    }
-    .filter-btn:not(.active-filter) {
-        background: white;
-        color: #6b7280;
-        border-color: rgba(0,0,0,0.07);
-    }
 
-    /* Category sections */
-    .category-section { transition: opacity 0.3s ease; }
-    .category-section.hidden-cat { display: none; }
-
-    /* DearFlip overlay */
-    #df-overlay.df-active {
-        opacity: 1 !important;
-        pointer-events: all !important;
-    }
-    #df-flipbook .df-container,
-    #df-flipbook .dflip-container,
-    .dflip-container { background: transparent !important; }
-
-    /* Video modal active state */
-    #video-modal.vm-active {
-        opacity: 1 !important;
-        pointer-events: all !important;
-    }
-
-    /* Hover effect untuk tombol navigasi */
-    #video-modal:hover .absolute {
-        opacity: 1;
-    }
-
-</style>
-
-{{-- ══════════════════════════════════════════
-     Scripts — urutan WAJIB: jQuery → DearFlip → custom
-══════════════════════════════════════════ --}}
+{{-- Scripts --}}
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@dearhive/dearflip-jquery-flipbook@1.7.3/dflip/js/dflip.min.js"></script>
+<script src="{{ asset('_func/book.js') }}"></script>
 
 <script>
-// ─────────────────────────────────────────────────────────────
-// 1. Filter kategori
-// ─────────────────────────────────────────────────────────────
-function filterCategory(slug) {
-    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active-filter'));
-    document.querySelector('[data-cat="' + slug + '"]').classList.add('active-filter');
-    document.querySelectorAll('.category-section').forEach(section => {
-        section.classList.toggle('hidden-cat', slug !== 'all' && section.dataset.category !== slug);
-    });
-}
+// script Video Sambutan Modal MULTIPLE VIDEO
 
-// ─────────────────────────────────────────────────────────────
-// 2. DearFlip Flipbook
-// ─────────────────────────────────────────────────────────────
-var dfBookInstance = null;
-
-function openDearFlip(title, fileUrl) {
-    var overlay  = document.getElementById('df-overlay');
-    var titleEl  = document.getElementById('df-title');
-    var loading  = document.getElementById('df-loading');
-    var nofile   = document.getElementById('df-nofile');
-    var bookWrap = document.getElementById('df-book-wrap');
-    var bookEl   = document.getElementById('df-flipbook');
-
-    titleEl.textContent          = title;
-    loading.style.display        = 'flex';
-    nofile.style.display         = 'none';
-    bookWrap.style.display       = 'none';
-    overlay.classList.add('df-active');
-    document.body.style.overflow = 'hidden';
-
-    if (!fileUrl) {
-        loading.style.display = 'none';
-        nofile.style.display  = 'flex';
-        return;
-    }
-
-    if (dfBookInstance) {
-        try { dfBookInstance.dispose(); } catch(e) {}
-        dfBookInstance = null;
-    }
-
-    bookEl.innerHTML       = '';
-    bookWrap.style.display = 'block';
-    loading.style.display  = 'none';
-
-    dfBookInstance = $(bookEl).flipBook(fileUrl, {
-        height              : '72vh',
-        duration            : 800,
-        scale               : 1.5,
-        webgl               : true,
-        autoEnableOutline   : false,
-        autoEnableThumbnail : false,
-        controlsPosition    : 'bottom',
-        onReady : function() { loading.style.display = 'none'; },
-        onError : function() {
-            loading.style.display  = 'none';
-            nofile.style.display   = 'flex';
-            bookWrap.style.display = 'none';
-        },
-    });
-}
-
-function closeDearFlip() {
-    var overlay  = document.getElementById('df-overlay');
-    var bookEl   = document.getElementById('df-flipbook');
-    var bookWrap = document.getElementById('df-book-wrap');
-    var loading  = document.getElementById('df-loading');
-    var nofile   = document.getElementById('df-nofile');
-
-    overlay.classList.remove('df-active');
-    document.body.style.overflow = '';
-
-    if (dfBookInstance) {
-        try { dfBookInstance.dispose(); } catch(e) {}
-        dfBookInstance = null;
-    }
-
-    bookEl.innerHTML       = '';
-    bookWrap.style.display = 'none';
-    loading.style.display  = 'none';
-    nofile.style.display   = 'none';
-}
-
-// Klik backdrop → tutup flipbook
-document.getElementById('df-overlay').addEventListener('click', function(e) {
-    if (e.target === this) closeDearFlip();
-});
-
-// ─────────────────────────────────────────────────────────────
-// 3. Video Sambutan Modal MULTIPLE VIDEO
-// ─────────────────────────────────────────────────────────────
 @if (count($youtubeEmbedIds) > 0)
 var videoIds = @json($youtubeEmbedIds);
 var currentVideoIndex = 0;

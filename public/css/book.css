@@ -1,0 +1,41 @@
+    #df-flipbook {
+    background: transparent !important; /* Warna kertas */
+    border-radius: 12px;
+
+}
+    /* Filter tabs */
+    .active-filter {
+        background: #6366f1 !important;
+        color: white !important;
+        border-color: #6366f1 !important;
+        box-shadow: 0 4px 14px rgba(99,102,241,0.3);
+    }
+    .filter-btn:not(.active-filter) {
+        background: white;
+        color: #6b7280;
+        border-color: rgba(0,0,0,0.07);
+    }
+
+    /* Category sections */
+    .category-section { transition: opacity 0.3s ease; }
+    .category-section.hidden-cat { display: none; }
+
+    /* DearFlip overlay */
+    #df-overlay.df-active {
+        opacity: 1 !important;
+        pointer-events: all !important;
+    }
+    #df-flipbook .df-container,
+    #df-flipbook .dflip-container,
+    .dflip-container { background: transparent !important; }
+
+    /* Video modal active state */
+    #video-modal.vm-active {
+        opacity: 1 !important;
+        pointer-events: all !important;
+    }
+
+    /* Hover effect untuk tombol navigasi */
+    #video-modal:hover .absolute {
+        opacity: 1;
+    }
