@@ -1,4 +1,6 @@
 @extends('layouts.index')
+
+@section('title', 'BTS | Angkatan ' . $year)
 {{-- viewbook page --}}
 @section('content')
 
@@ -158,7 +160,7 @@
                     data-aos="zoom-in" data-aos-duration="500" data-aos-delay="{{ $bi * 60 }}">
 
                     {{-- Book cover --}}
-                    <div class="relative w-full aspect-[3/4] rounded-xl overflow-hidden
+                    <div class="relative w-full aspect-[9/16] rounded-xl overflow-hidden
                                 border {{ $c['border'] }} bg-white
                                 shadow-[0_2px_12px_rgba(0,0,0,0.07)]
                                 transition-all duration-300
@@ -227,11 +229,11 @@
         {{-- Footer deco --}}
         <div class="flex items-center justify-center gap-5 pt-4 pb-8"
             data-aos="fade-up" data-aos-duration="600">
-            <div class="h-px w-16 bg-gradient-to-r from-transparent to-gray-300"></div>
-            <span class="font-mono text-[10px] tracking-[0.25em] uppercase text-gray-300">
-                SMKN 1 &mdash; Angkatan {{ $year }}
+            <div class="h-px w-16 bg-gradient-to-r from-transparent to-gray-600"></div>
+            <span class="font-mono text-[10px] tracking-[0.25em] uppercase text-gray-600">
+                Digital Yearbook SMKN 1 LUMAJANG
             </span>
-            <div class="h-px w-16 bg-gradient-to-l from-transparent to-gray-300"></div>
+            <div class="h-px w-16 bg-gradient-to-l from-transparent to-gray-600"></div>
         </div>
 
     </div>

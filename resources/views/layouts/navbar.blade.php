@@ -17,7 +17,10 @@
 
             {{-- Desktop links --}}
             <div class="hidden md:flex items-center gap-1">
-                @foreach ([['/', 'Home'], ['#angkatan', 'Angkatan'], ['#galeri', 'Galeri'], ['#tentang', 'Tentang']] as [$href, $label])
+                @foreach ([['/', 'Home'],
+                // ['#galeri', 'Galeri'],
+                ['#tentang', 'Tentang']
+                ] as [$href, $label])
                 <a href="{{ $href }}"
                    class="relative px-4 py-2 rounded-lg font-mono text-[11px] font-bold tracking-[0.15em] uppercase text-gray-500
                           transition-all duration-200 hover:text-indigo-600 hover:bg-indigo-50 no-underline
