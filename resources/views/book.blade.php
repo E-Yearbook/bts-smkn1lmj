@@ -229,11 +229,21 @@
         {{-- Footer deco --}}
         <div class="flex items-center justify-center gap-5 pt-4 pb-8"
             data-aos="fade-up" data-aos-duration="600">
-            <div class="h-px w-16 bg-gradient-to-r from-transparent to-gray-600"></div>
+            @if ($year == '2026')
+
+             <div class="h-px w-16 bg-gradient-to-r from-transparent to-gray-600"></div>
+            <span class="font-mono text-[10px] tracking-[0.25em] uppercase text-gray-600">
+                CUSTOM FOOTER
+            </span>
+            <div class="h-px w-16 bg-gradient-to-l from-transparent to-gray-600"></div>
+            @else
+             <div class="h-px w-16 bg-gradient-to-r from-transparent to-gray-600"></div>
             <span class="font-mono text-[10px] tracking-[0.25em] uppercase text-gray-600">
                 Digital Yearbook SMKN 1 LUMAJANG
             </span>
             <div class="h-px w-16 bg-gradient-to-l from-transparent to-gray-600"></div>
+            @endif
+
         </div>
 
     </div>
