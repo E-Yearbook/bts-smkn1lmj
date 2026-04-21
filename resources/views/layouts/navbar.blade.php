@@ -17,20 +17,17 @@
 
             {{-- Desktop links --}}
             <div class="hidden md:flex items-center gap-1">
-                @foreach ([['/', 'Home'],
-                // ['#galeri', 'Galeri'],
-                ['#tentang', 'Tentang']
-                ] as [$href, $label])
-                <a href="{{ $href }}"
-                   class="relative px-4 py-2 rounded-lg font-mono text-[11px] font-bold tracking-[0.15em] uppercase text-gray-500
-                          transition-all duration-200 hover:text-indigo-600 hover:bg-indigo-50 no-underline
-                          after:absolute after:bottom-1 after:left-4 after:right-4 after:h-[1.5px] after:bg-indigo-500
-                          after:scale-x-0 after:transition-transform after:duration-200 after:origin-left
-                          hover:after:scale-x-100">
-                    {{ $label }}
-                </a>
-                @endforeach
-            </div>
+    <!-- Link Home -->
+    <a href="/" class="relative px-4 py-2 rounded-lg font-mono text-[11px] font-bold tracking-[0.15em] uppercase text-gray-500 transition-all duration-200 hover:text-indigo-600 hover:bg-indigo-50 no-underline after:absolute after:bottom-1 after:left-4 after:right-4 after:h-[1.5px] after:bg-indigo-500 after:scale-x-0 after:transition-transform after:duration-200 after:origin-left hover:after:scale-x-100">
+        Home
+    </a>
+
+    <!-- Link Tentang -->
+    <a href="{{ route('about') }}" class="relative px-4 py-2 rounded-lg font-mono text-[11px] font-bold tracking-[0.15em] uppercase text-gray-500 transition-all duration-200 hover:text-indigo-600 hover:bg-indigo-50 no-underline after:absolute after:bottom-1 after:left-4 after:right-4 after:h-[1.5px] after:bg-indigo-500 after:scale-x-0 after:transition-transform after:duration-200 after:origin-left hover:after:scale-x-100">
+        Tentang
+    </a>
+</div>
+
 
             {{-- Hamburger --}}
             <button @click="open = !open"

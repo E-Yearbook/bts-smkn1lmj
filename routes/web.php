@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Book\BookCategoryController;
 use App\Http\Controllers\Book\BookController;
 use App\Http\Controllers\Book\YearBookController;
+use App\Http\Controllers\View\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\View\ViewBookController;
 
@@ -21,6 +22,8 @@ Route::get('/relink', function () {
 Route::get('/', [YearBookController::class, 'home']);
 
 Route::get('/book/{year}', [ViewBookController::class, 'ViewBook'])->name('book');
+
+Route::get('/about', [HomeController::class, 'about'])->name('about');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
