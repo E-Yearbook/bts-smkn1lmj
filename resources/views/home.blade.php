@@ -52,6 +52,7 @@
             <div class="flex-1 flex flex-col justify-center min-h-0 py-2" data-aos="fade-up" data-aos-duration="700" data-aos-delay="120">
 
                 @if ($count === 0)
+                    {{-- Empty state --}}
                     <div class="flex flex-col items-center justify-center gap-5">
                         <div class="w-[80px] h-[80px] rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center">
                             <svg class="w-9 h-9 text-indigo-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
@@ -66,27 +67,42 @@
                             <p class="font-mono text-[11px] text-[#a3a3a3] tracking-[0.06em]">Admin belum menambahkan data tahun angkatan</p>
                         </div>
                     </div>
+
                 @else
+                    {{-- Carousel row --}}
                     <div class="ybk-row">
+
+                        {{-- Prev button --}}
                         <div class="ybk-arrow-col">
-                            <button id="ybkPrev" class="ybk-btn-arrow">
+                            <button id="ybkPrev" class="ybk-btn-arrow" aria-label="Sebelumnya">
                                 <svg class="w-[15px] h-[15px] pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="15 18 9 12 15 6"/>
                                 </svg>
                             </button>
                         </div>
 
+                        {{-- Stage / viewport --}}
                         <div class="ybk-stage" id="ybkStage">
                             <div class="ybk-track" id="ybkTrack">
+
+                                {{-- ── Items (no infinite clone, mentok di ujung) ── --}}
                                 @foreach ($years as $year)
                                     @php $cover = $covers->firstWhere('year', $year); @endphp
-                                    <div class="ybk-item" data-year="{{ $year }}" data-href="{{ route('book', $year) }}">
+                                    <div class="ybk-item"
+                                         data-year="{{ $year }}"
+                                         data-href="{{ route('book', $year) }}">
+
+                                        {{-- Cover --}}
                                         <div class="ybk-cover rounded-[14px] overflow-hidden bg-[#f0f0f0] border border-black/[0.07] relative">
+
                                             <img src="{{ $cover ? asset('storage/' . $cover->cover_path) : '' }}"
                                                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
                                                  class="w-full h-full object-cover block"
-                                                 alt="Cover {{ $year }}">
-                                            <div class="absolute inset-0 hidden flex-col items-center justify-center bg-gradient-to-br from-[#eef2ff] to-[#e0e7ff]">
+                                                 alt="Cover {{ $year }}"
+                                                 draggable="false">
+
+                                            {{-- Fallback cover --}}
+                                            <div class="ybk-fallback absolute inset-0 hidden flex-col items-center justify-center bg-gradient-to-br from-[#eef2ff] to-[#e0e7ff]">
                                                 <svg class="w-[52px] h-[52px] text-indigo-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
                                                     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
                                                     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
@@ -94,6 +110,8 @@
                                                     <line x1="9" y1="11" x2="13" y2="11"/>
                                                 </svg>
                                             </div>
+
+                                            {{-- Hover overlay --}}
                                             <div class="ybk-overlay absolute inset-0 flex items-end justify-center pb-[18px]">
                                                 <span class="ybk-buka-btn inline-flex items-center gap-[5px] px-4 py-[7px] rounded-full bg-white/[0.92] backdrop-blur-[8px] font-mono text-[10px] font-bold tracking-[0.14em] uppercase text-indigo-600 shadow-[0_2px_12px_rgba(0,0,0,0.12)]">
                                                     Buka
@@ -102,27 +120,37 @@
                                                     </svg>
                                                 </span>
                                             </div>
+
+                                            {{-- Shine sweep --}}
                                             <div class="ybk-shine absolute top-[-50%] left-[-75%] w-1/2 h-[200%] bg-gradient-to-r from-transparent via-white/35 to-transparent -skew-x-[20deg] pointer-events-none"></div>
                                         </div>
+
+                                        {{-- Label --}}
                                         <div class="flex flex-col items-center gap-[3px] text-center" style="margin-top:clamp(10px,1.5vh,18px)">
                                             <span class="ybk-lbl-top font-mono text-[9px] font-bold tracking-[0.28em] uppercase text-[#a3a3a3]">Angkatan</span>
                                             <span class="ybk-lbl-year font-bold italic tracking-[-0.04em] leading-none text-[#1a1a1a]" style="font-size:clamp(1.2rem,3vw,1.7rem)">{{ $year }}</span>
                                         </div>
+
                                     </div>
                                 @endforeach
+
                             </div>
                         </div>
 
+                        {{-- Next button --}}
                         <div class="ybk-arrow-col">
-                            <button id="ybkNext" class="ybk-btn-arrow">
+                            <button id="ybkNext" class="ybk-btn-arrow" aria-label="Berikutnya">
                                 <svg class="w-[15px] h-[15px] pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="9 6 15 12 9 18"/>
                                 </svg>
                             </button>
                         </div>
+
                     </div>
 
+                    {{-- Dots --}}
                     <div class="flex justify-center gap-[6px] mt-4" id="ybkDots"></div>
+
                 @endif
             </div>
 
@@ -138,295 +166,389 @@
 
 </body>
 
+{{-- ═══════════════════════════════════════
+     CSS
+═══════════════════════════════════════ --}}
 <style>
-    .ybk-row { display:flex; align-items:center; width:100%; }
+/* ── Layout ───────────────────────────────────────────────── */
+.ybk-row        { display:flex; align-items:center; width:100%; }
+.ybk-arrow-col  { flex:0 0 64px; display:flex; align-items:center; justify-content:center; }
 
-    .ybk-arrow-col { flex:0 0 64px; display:flex; align-items:center; justify-content:center; }
+/* ── Arrow buttons ────────────────────────────────────────── */
+.ybk-btn-arrow {
+    width:42px; height:42px; border-radius:99px;
+    background:white; border:1px solid rgba(0,0,0,0.08);
+    box-shadow:0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06);
+    display:flex; align-items:center; justify-content:center;
+    color:#737373; cursor:pointer;
+    transition:background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.15s, opacity 0.2s;
+    flex-shrink:0;
+}
+.ybk-btn-arrow:hover:not(:disabled) {
+    background:#6366f1; color:white; border-color:#6366f1;
+    box-shadow:0 4px 20px rgba(99,102,241,0.35);
+    transform:scale(1.08);
+}
+.ybk-btn-arrow:active:not(:disabled) { transform:scale(0.96); }
+/* Disabled state when at edge */
+.ybk-btn-arrow:disabled {
+    opacity:0.3; cursor:not-allowed;
+    transform:none !important;
+    box-shadow:none !important;
+}
 
-    .ybk-btn-arrow {
-        width:42px; height:42px; border-radius:99px; background:white;
-        border:1px solid rgba(0,0,0,0.08);
-        box-shadow:0 1px 4px rgba(0,0,0,0.06),0 4px 16px rgba(0,0,0,0.06);
-        display:flex; align-items:center; justify-content:center;
-        color:#737373; cursor:pointer; transition:all 0.2s; flex-shrink:0;
-    }
-    .ybk-btn-arrow:hover { background:#6366f1; color:white; border-color:#6366f1; box-shadow:0 4px 20px rgba(99,102,241,0.35); transform:scale(1.08); }
-    .ybk-btn-arrow:active { transform:scale(0.96); }
+/* ── Stage (viewport) ─────────────────────────────────────── */
+.ybk-stage {
+    flex:1; min-width:0; overflow:hidden;
+    position:relative; padding:10px 0;
+    cursor:grab;
+}
+.ybk-stage.is-dragging { cursor:grabbing; }
 
-    /* Stage clips */
-    .ybk-stage { flex:1; min-width:0; overflow:hidden; position:relative; padding:10px 0; cursor:grab; }
-    .ybk-stage:active { cursor:grabbing; }
+/* ── Track ────────────────────────────────────────────────── */
+.ybk-track {
+    display:flex; align-items:center;
+    gap:24px;
+    will-change:transform;
+    transition:transform 0.5s cubic-bezier(0.25,1,0.5,1);
+    user-select:none;
+}
+.ybk-track.no-transition { transition:none !important; }
 
-    /* Track */
-    .ybk-track {
-        display:flex; align-items:center; gap:24px;
-        will-change:transform;
-        transition:transform 0.55s cubic-bezier(0.25,1,0.5,1);
-        user-select:none;
-    }
+/* ── Items ────────────────────────────────────────────────── */
+.ybk-item {
+    flex:0 0 auto;
+    display:flex; flex-direction:column; align-items:center;
+    cursor:pointer;
+    /* Always transition smoothly */
+    transition:opacity 0.4s ease, transform 0.4s cubic-bezier(0.25,1,0.5,1);
+}
+.ybk-item.is-inactive {
+    opacity:0.36;
+    transform:scale(0.84);
+}
+.ybk-item.is-active {
+    opacity:1;
+    transform:scale(1);
+}
 
-    /* Items */
-    .ybk-item { flex:0 0 auto; display:flex; flex-direction:column; align-items:center; cursor:pointer; }
+/* ── Cover box ────────────────────────────────────────────── */
+.ybk-cover {
+    width:clamp(130px,18vh,200px);
+    height:clamp(180px,26vh,280px);
+    box-shadow:
+        0 2px 4px rgba(0,0,0,0.04),
+        0 6px 20px rgba(0,0,0,0.08),
+        0 20px 40px rgba(0,0,0,0.06);
+    transition:box-shadow 0.35s ease, border-color 0.35s ease;
+}
 
-    .ybk-item.is-inactive { opacity:0.36; transform:scale(0.84); transition:opacity 0.4s,transform 0.4s cubic-bezier(0.25,1,0.5,1); }
-    .ybk-item.is-active   { opacity:1;    transform:scale(1);    transition:opacity 0.4s,transform 0.4s cubic-bezier(0.25,1,0.5,1); }
+/* Cover hover — ONLY when item is active */
+.ybk-item.is-active:hover .ybk-cover {
+    box-shadow:
+        0 4px 8px rgba(0,0,0,0.04),
+        0 16px 40px rgba(99,102,241,0.18),
+        0 32px 64px rgba(99,102,241,0.10);
+    border-color:rgba(129,140,248,0.25) !important;
+}
 
-    /* Cover */
-    .ybk-cover {
-        width:clamp(130px,18vh,200px); height:clamp(180px,26vh,280px);
-        box-shadow:0 2px 4px rgba(0,0,0,0.04),0 6px 20px rgba(0,0,0,0.08),0 20px 40px rgba(0,0,0,0.06);
-        transition:box-shadow 0.35s,border-color 0.35s;
-    }
-    .ybk-item.is-active:hover .ybk-cover {
-        box-shadow:0 4px 8px rgba(0,0,0,0.04),0 16px 40px rgba(99,102,241,0.18),0 32px 64px rgba(99,102,241,0.10);
-        border-color:rgba(129,140,248,0.25) !important;
-    }
+/* ── Labels ───────────────────────────────────────────────── */
+.ybk-lbl-top  { transition:color 0.2s ease; }
+.ybk-lbl-year { transition:color 0.25s ease; }
+.ybk-item.is-active:hover .ybk-lbl-top  { color:#818cf8; }
+.ybk-item.is-active:hover .ybk-lbl-year { color:#4f46e5; }
 
-    /* Labels */
-    .ybk-lbl-top  { transition:color 0.2s; }
-    .ybk-lbl-year { transition:color 0.25s; }
-    .ybk-item.is-active:hover .ybk-lbl-top  { color:#818cf8; }
-    .ybk-item.is-active:hover .ybk-lbl-year { color:#4f46e5; }
+/* ── Overlay & Buka badge ─────────────────────────────────── */
+.ybk-overlay {
+    background:rgba(79,70,229,0);
+    transition:background 0.3s ease;
+}
+.ybk-item.is-active:hover .ybk-overlay {
+    background:rgba(79,70,229,0.08);
+}
 
-    /* Overlay */
-    .ybk-overlay { background:rgba(79,70,229,0); transition:background 0.3s; }
-    .ybk-item.is-active:hover .ybk-overlay { background:rgba(79,70,229,0.08); }
+.ybk-buka-btn {
+    opacity:0;
+    transform:translateY(6px);
+    transition:opacity 0.25s ease, transform 0.25s ease;
+    pointer-events:none;
+}
+.ybk-item.is-active:hover .ybk-buka-btn {
+    opacity:1;
+    transform:translateY(0);
+}
 
-    /* Buka btn */
-    .ybk-buka-btn { opacity:0; transform:translateY(6px); transition:opacity 0.25s,transform 0.25s; }
-    .ybk-item.is-active:hover .ybk-buka-btn { opacity:1; transform:translateY(0); }
+/* ── Shine sweep ──────────────────────────────────────────── */
+.ybk-shine { transition:left 0.7s ease; }
+.ybk-item.is-active:hover .ybk-shine { left:130% !important; }
 
-    /* Shine */
-    .ybk-shine { transition:left 0.7s; }
-    .ybk-item.is-active:hover .ybk-shine { left:130% !important; }
+/* ── Dots ─────────────────────────────────────────────────── */
+.ybk-dot {
+    width:5px; height:5px; border-radius:99px;
+    background:#d4d4d4; cursor:pointer;
+    transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    border:none; padding:0; flex-shrink:0;
+}
+.ybk-dot.is-active {
+    background:#6366f1; width:24px;
+    box-shadow:0 0 8px rgba(99,102,241,0.45);
+}
 
-    /* Dots */
-    .ybk-dot {
-        width:5px; height:5px; border-radius:99px; background:#d4d4d4;
-        cursor:pointer; transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-        border:none; padding:0; flex-shrink:0;
-    }
-    .ybk-dot.is-active { background:#6366f1; width:24px; box-shadow:0 0 8px rgba(99,102,241,0.45); }
-
-    @media (max-width:540px) {
-        .ybk-arrow-col { flex:0 0 44px; }
-        .ybk-btn-arrow { width:36px; height:36px; }
-        .ybk-track { gap:18px; }
-    }
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width:540px) {
+    .ybk-arrow-col { flex:0 0 44px; }
+    .ybk-btn-arrow { width:36px; height:36px; }
+    .ybk-track     { gap:18px; }
+}
 </style>
 
+{{-- ═══════════════════════════════════════
+     JavaScript
+═══════════════════════════════════════ --}}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 @if ($count > 0)
 
-    const years      = @json($years->values());
-    const activeYear = {{ $activeYear }};
-    const GAP        = 24; // matches CSS gap (px)
+    /* ── Config ─────────────────────────────────────────────── */
+    const GAP        = parseInt(getComputedStyle(document.documentElement)
+                            .getPropertyValue('--ybk-gap') || '24');
+    const AUTOPLAY_MS = 3200;
 
+    /* ── DOM refs ────────────────────────────────────────────── */
     const stage   = document.getElementById('ybkStage');
     const track   = document.getElementById('ybkTrack');
     const btnPrev = document.getElementById('ybkPrev');
     const btnNext = document.getElementById('ybkNext');
     const dotsEl  = document.getElementById('ybkDots');
+    const items   = Array.from(track.querySelectorAll('.ybk-item'));
+    const n       = items.length;
 
-    // ── 1. Clone nodes for infinite buffer ──────────────────────────────────
-    const origItems = Array.from(track.children);
-    const n = origItems.length;
+    /* ── State ───────────────────────────────────────────────── */
+    // Start at the year matching $activeYear, fallback to last item
+    const activeYear  = {{ $activeYear ?? 'null' }};
+    const years       = @json($years->values());
+    let   currentIdx  = years.indexOf(activeYear);
+    if (currentIdx < 0) currentIdx = 0;
 
-    // Clone enough sets so viewport is always filled on both sides.
-    // With n items and typical viewport showing ~5 cards, 3 copies each side is safe.
-    const SIDE = Math.max(3, Math.ceil(10 / n));
+    let itemW    = 0;   // measured width of one item
+    let busy     = false;
+    let autoTimer = null;
 
-    for (let c = 0; c < SIDE; c++) {
-        // Prepend (insert in reverse so order is preserved)
-        for (let i = n - 1; i >= 0; i--) {
-            const cl = origItems[i].cloneNode(true);
-            track.insertBefore(cl, track.firstChild);
-        }
-        // Append
-        for (let i = 0; i < n; i++) {
-            track.appendChild(origItems[i].cloneNode(true));
-        }
-    }
-
-    const allItems = Array.from(track.children);
-    // Real items start at index SIDE * n
-    const REAL_START = SIDE * n;
-
-    // ── 2. Helpers ───────────────────────────────────────────────────────────
-    let itemW = 0;
-
+    /* ── Measure ─────────────────────────────────────────────── */
     function measure() {
-        itemW = allItems[0].getBoundingClientRect().width;
+        itemW = items[0] ? items[0].getBoundingClientRect().width : 0;
     }
 
+    /* ── Compute translateX so currentIdx is centered ─────────── */
     function centerOffset(idx) {
-        return -(idx * (itemW + GAP)) + (stage.offsetWidth / 2 - itemW / 2);
+        // Clamp idx to valid range
+        const clamped = Math.max(0, Math.min(n - 1, idx));
+        const stageW  = stage.offsetWidth;
+        return -(clamped * (itemW + GAP)) + (stageW / 2 - itemW / 2);
     }
 
-    function setPos(offset, anim) {
-        if (!anim) {
-            track.style.transition = 'none';
-            track.style.transform  = `translateX(${offset}px)`;
-            track.getBoundingClientRect(); // flush
-            track.style.transition = '';
+    /* ── Apply transform ─────────────────────────────────────── */
+    function applyTransform(offset, animated) {
+        if (!animated) {
+            track.classList.add('no-transition');
+            track.style.transform = `translateX(${offset}px)`;
+            // Force reflow to flush the no-transition state
+            void track.offsetWidth;
+            track.classList.remove('no-transition');
         } else {
             track.style.transform = `translateX(${offset}px)`;
         }
     }
 
-    // Logical index 0..n-1
-    let currentIdx = REAL_START + Math.max(0, years.indexOf(activeYear));
-
-    function logicalIdx() {
-        return ((currentIdx - REAL_START) % n + n) % n;
-    }
-
-    // ── 3. Refresh visual state ──────────────────────────────────────────────
-    // Only the EXACT currentIdx gets is-active — not all clones with same logical index
+    /* ── Update active/inactive classes + dots + arrow state ──── */
     function refresh() {
-        const li = logicalIdx();
-        allItems.forEach((item, i) => {
-            const act = i === currentIdx;
-            item.classList.toggle('is-active',   act);
-            item.classList.toggle('is-inactive', !act);
+        items.forEach((item, i) => {
+            item.classList.toggle('is-active',   i === currentIdx);
+            item.classList.toggle('is-inactive', i !== currentIdx);
         });
+
+        // Dots
         Array.from(dotsEl.children).forEach((dot, i) => {
-            dot.classList.toggle('is-active', i === li);
+            dot.classList.toggle('is-active', i === currentIdx);
         });
+
+        // Arrow disabled state (mentok di ujung)
+        btnPrev.disabled = currentIdx === 0;
+        btnNext.disabled = currentIdx === n - 1;
     }
 
-    // ── 4. Teleport silently if we're running out of clones ──────────────────
-    function rebase() {
-        // Stay within [REAL_START - n*(SIDE-1), REAL_START + n*SIDE]
-        const lo = REAL_START - n * (SIDE - 1);
-        const hi = REAL_START + n * SIDE;
-        if (currentIdx < lo) {
-            currentIdx += n;
-            setPos(centerOffset(currentIdx), false);
-        } else if (currentIdx > hi) {
-            currentIdx -= n;
-            setPos(centerOffset(currentIdx), false);
-        }
-    }
-
-    // ── 5. Navigate ───────────────────────────────────────────────────────────
-    let busy = false;
-
-    function go(idx, anim = true) {
-        currentIdx = idx;
-        setPos(centerOffset(currentIdx), anim);
+    /* ── Go to index ─────────────────────────────────────────── */
+    function goTo(idx, animated = true) {
+        // Hard clamp — tidak looping, mentok di ujung
+        currentIdx = Math.max(0, Math.min(n - 1, idx));
+        applyTransform(centerOffset(currentIdx), animated);
         refresh();
     }
 
+    /* ── Step navigation ─────────────────────────────────────── */
     function step(dir) {
         if (busy) return;
+        // Sudah di ujung — abaikan
+        if (dir < 0 && currentIdx === 0)     return;
+        if (dir > 0 && currentIdx === n - 1) return;
+
         busy = true;
-        go(currentIdx + dir);
-        setTimeout(() => { busy = false; rebase(); }, 580);
+        goTo(currentIdx + dir);
+        setTimeout(() => { busy = false; }, 520);
     }
 
-    btnPrev.addEventListener('click', () => step(-1));
-    btnNext.addEventListener('click', () => step(+1));
-
-    // ── 6. Dots ───────────────────────────────────────────────────────────────
+    /* ── Build dots ──────────────────────────────────────────── */
     years.forEach((_, i) => {
         const dot = document.createElement('button');
-        dot.className = 'ybk-dot';
+        dot.className  = 'ybk-dot';
+        dot.setAttribute('aria-label', `Angkatan ${years[i]}`);
         dot.addEventListener('click', () => {
-            if (busy) return;
-            busy = true;
-            const diff = ((i - logicalIdx()) + n) % n;
-            const step_  = diff <= n / 2 ? diff : diff - n;
-            go(currentIdx + step_);
-            setTimeout(() => { busy = false; rebase(); }, 580);
+            if (busy || i === currentIdx) return;
+            stopAutoplay();
+            goTo(i);
         });
         dotsEl.appendChild(dot);
     });
 
-    // ── 7 & 8. Drag / swipe (mouse + touch) ──────────────────────────────────
-    let dragStartX = 0, dragCurX = 0, dragStartOffset = 0;
-    let isDragging = false, hasDragged = false;
-    let clickedItem = null;
+    /* ── Arrow buttons ───────────────────────────────────────── */
+    btnPrev.addEventListener('click', () => { stopAutoplay(); step(-1); });
+    btnNext.addEventListener('click', () => { stopAutoplay(); step(+1); });
 
-    function currentOffset() {
+    /* ── Keyboard navigation ─────────────────────────────────── */
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowLeft')  { stopAutoplay(); step(-1); }
+        if (e.key === 'ArrowRight') { stopAutoplay(); step(+1); }
+    });
+
+    /* ── Click on item ───────────────────────────────────────── */
+    items.forEach((item, i) => {
+        item.addEventListener('click', () => {
+            if (hasDragged) return;            // ignore drag-release
+            if (i === currentIdx) {
+                window.location.href = item.dataset.href;
+            } else {
+                stopAutoplay();
+                goTo(i);
+            }
+        });
+    });
+
+    /* ── Drag / swipe (pointer events) ──────────────────────── */
+    let isDragging = false;
+    let hasDragged = false;
+    let dragStartX = 0;
+    let trackStartOffset = 0;
+
+    function getCurrentOffset() {
         const mat = new DOMMatrix(getComputedStyle(track).transform);
         return mat.m41;
     }
 
     stage.addEventListener('pointerdown', e => {
-        // Ignore button clicks
         if (e.target.closest('.ybk-btn-arrow')) return;
-        isDragging  = true;
-        hasDragged  = false;
-        dragStartX  = e.clientX;
-        dragCurX    = e.clientX;
-        dragStartOffset = currentOffset();
-        clickedItem = e.target.closest('.ybk-item');
-        track.style.transition = 'none';
+        isDragging       = true;
+        hasDragged       = false;
+        dragStartX       = e.clientX;
+        trackStartOffset = getCurrentOffset();
+        track.classList.add('no-transition');
+        stage.classList.add('is-dragging');
         stage.setPointerCapture(e.pointerId);
     });
 
     stage.addEventListener('pointermove', e => {
         if (!isDragging) return;
         const dx = e.clientX - dragStartX;
-        if (Math.abs(dx) > 5) hasDragged = true;
-        dragCurX = e.clientX;
-        track.style.transform = `translateX(${dragStartOffset + dx}px)`;
+        if (Math.abs(dx) > 6) hasDragged = true;
+
+        // Drag resistance at edges
+        let offset = trackStartOffset + dx;
+        const minOffset = centerOffset(n - 1);
+        const maxOffset = centerOffset(0);
+
+        if (offset > maxOffset) {
+            // Beyond left edge — apply rubber-band resistance
+            offset = maxOffset + (offset - maxOffset) * 0.25;
+        } else if (offset < minOffset) {
+            // Beyond right edge — rubber-band
+            offset = minOffset + (offset - minOffset) * 0.25;
+        }
+
+        track.style.transform = `translateX(${offset}px)`;
     });
 
     stage.addEventListener('pointerup', e => {
         if (!isDragging) return;
         isDragging = false;
-        track.style.transition = '';
+        track.classList.remove('no-transition');
+        stage.classList.remove('is-dragging');
 
         const dx = e.clientX - dragStartX;
 
-        if (!hasDragged) {
-            // It's a click
-            if (!clickedItem) return;
-            if (clickedItem.classList.contains('is-active')) {
-                window.location.href = clickedItem.dataset.href;
-            } else {
-                if (busy) return;
-                busy = true;
-                const idx = allItems.indexOf(clickedItem);
-                go(idx);
-                setTimeout(() => { busy = false; rebase(); }, 580);
-            }
+        if (!hasDragged) return; // handled by click listener
+
+        // Decide: step or snap back
+        const threshold = Math.max(40, itemW * 0.25);
+        if (Math.abs(dx) >= threshold) {
+            step(dx < 0 ? 1 : -1);
         } else {
-            // It's a drag — snap to nearest or step
-            if (Math.abs(dx) > 40) {
-                step(dx < 0 ? 1 : -1);
-            } else {
-                // Snap back to current
-                setPos(centerOffset(currentIdx), true);
-            }
+            // Snap back to current without triggering busy
+            applyTransform(centerOffset(currentIdx), true);
         }
+
+        // Reset hasDragged after a tick so the click handler can check it
+        setTimeout(() => { hasDragged = false; }, 0);
     });
 
     stage.addEventListener('pointercancel', () => {
         if (!isDragging) return;
         isDragging = false;
-        track.style.transition = '';
-        setPos(centerOffset(currentIdx), true);
+        track.classList.remove('no-transition');
+        stage.classList.remove('is-dragging');
+        applyTransform(centerOffset(currentIdx), true);
+        setTimeout(() => { hasDragged = false; }, 0);
     });
 
-    // ── 9. Autoplay ────────────────────────────────────────────────────────
-    let timer = setInterval(() => step(1), 3200);
-    stage.addEventListener('pointerenter', () => clearInterval(timer));
-    stage.addEventListener('pointerleave', () => { timer = setInterval(() => step(1), 3200); });
+    /* ── Autoplay ────────────────────────────────────────────── */
+    function startAutoplay() {
+        stopAutoplay();
+        // Only autoplay if there are more than 1 item
+        if (n <= 1) return;
+        autoTimer = setInterval(() => {
+            // Reverse direction at edges
+            if (currentIdx >= n - 1) {
+                step(-1);
+            } else {
+                step(1);
+            }
+        }, AUTOPLAY_MS);
+    }
 
-    // ── 10. Init ───────────────────────────────────────────────────────────
-    requestAnimationFrame(() => requestAnimationFrame(() => {
+    function stopAutoplay() {
+        clearInterval(autoTimer);
+        autoTimer = null;
+    }
+
+    stage.addEventListener('pointerenter', stopAutoplay);
+    stage.addEventListener('pointerleave', startAutoplay);
+
+    /* ── Init ────────────────────────────────────────────────── */
+    function init() {
         measure();
-        go(currentIdx, false);
-    }));
+        goTo(currentIdx, false);
+        startAutoplay();
+    }
 
-    let resizeT;
+    // Wait two frames so layout is fully painted
+    requestAnimationFrame(() => requestAnimationFrame(init));
+
+    /* ── Resize ──────────────────────────────────────────────── */
+    let resizeTimer;
     window.addEventListener('resize', () => {
-        clearTimeout(resizeT);
-        resizeT = setTimeout(() => { measure(); setPos(centerOffset(currentIdx), false); }, 80);
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            measure();
+            applyTransform(centerOffset(currentIdx), false);
+        }, 80);
     });
 
 @endif

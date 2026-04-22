@@ -261,12 +261,12 @@
     {{-- Header --}}
     <div class="flex items-center justify-between w-full px-6" style="max-width: 980px;">
         <span id="df-title"
-            class="font-mono text-sm font-bold tracking-widest uppercase text-white/80 truncate"
+            class="font-mono text-sm font-bold tracking-widest uppercase text-gray-600 truncate"
             style="max-width: 70%;">
         </span>
         <button onclick="closeDearFlip()"
-            class="w-9 h-9 rounded-full bg-white/10 hover:bg-red-500/80 border border-white/20
-                   flex items-center justify-center text-white transition-all duration-200 shrink-0">
+            class="w-9 h-9 rounded-full bg-white/10 hover:bg-red-500/80 border border-gray-600/20
+                   flex items-center justify-center text-gray-600 hover:text-white transition-all duration-200 shrink-0">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
