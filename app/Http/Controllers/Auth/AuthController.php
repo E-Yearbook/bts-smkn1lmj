@@ -48,7 +48,7 @@ class AuthController extends Controller
         }
 
         RateLimiter::hit($throttleKey, 60);
-        return back()->with('error', 'Login gagal! Periksa kembali Email dan Password/NIS anda.');
+        return back()->with('error', 'Login gagal! Periksa kembali Email dan Password anda.');
     }
 
     public function logout(Request $request)

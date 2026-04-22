@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
     <link rel="stylesheet" href="{{ asset('admin/css/style.css') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/smkn1logo.png') }}">
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>@yield('title', 'Dashboard') | Admin Panel</title>
     @stack('styles')
@@ -26,11 +27,12 @@
         @include('admin.partials.overlay')
         @include('admin.partials.header')
 
-        <main>
+        <main class="flex-1">
           <div class="p-4 mx-auto max-w-screen-2xl md:p-6">
             @yield('content')
           </div>
         </main>
+        @include('admin.partials.footer')
       </div>
     </div>
 

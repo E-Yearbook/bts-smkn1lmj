@@ -69,7 +69,7 @@
                                 </svg>
                                 <span>Edit</span>
                             </a>
-                            <button onclick="confirmDelete({{ $cover->id }}, {{ $cover->year }})"
+                            <button onclick="confirmDelete({{ $cover->id }}, {{ $cover->year }}, '{{ route('yearcover.destroy', $cover->id) }}')"
                                 class="inline-flex items-center justify-center gap-1 rounded-lg bg-error-50 px-2.5 py-2 text-xs font-medium text-error-500 hover:bg-error-100 transition-colors whitespace-nowrap">
                                 <svg class="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -89,35 +89,7 @@
     </form>
 
     @push('scripts')
-        <script>
-            function confirmDelete(id, year) {
-                Swal.fire({
-                    title: 'Delete Cover?',
-                    html: `Year <strong>${year}</strong> cover will be permanently deleted.<br>This action cannot be undone.`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#f04438',
-                    cancelButtonColor: '#6b7280',
-                    confirmButtonText: 'Yes, Delete!',
-                    cancelButtonText: 'Cancel',
-                    reverseButtons: true,
-                    focusCancel: true,
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const form = document.getElementById('deleteForm');
-                        form.action = `/yearcover/${id}`;
-                        form.submit();
-                    }
-                });
-            }
-
-            @if (session('success'))
-                Swal.fire({ icon: 'success', title: 'Success!', text: '{{ session('success') }}', timer: 2500, showConfirmButton: false, toast: true, position: 'top-end' });
-            @endif
-            @if (session('error'))
-                Swal.fire({ icon: 'error', title: 'Failed!', text: '{{ session('error') }}', timer: 3000, showConfirmButton: false, toast: true, position: 'top-end' });
-            @endif
-        </script>
+        @include('admin.partials.sweetalert')
     @endpush
 
 @endsection
