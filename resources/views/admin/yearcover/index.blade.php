@@ -37,50 +37,102 @@
             <p class="mt-1 text-sm text-gray-400">Click "Add Cover" to create the first annual cover.</p>
         </div>
     @else
-        <div class="grid gap-4" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr))">
-            @foreach ($covers as $cover)
-                @php $ytId = getYoutubeId($cover->youtube_link); @endphp
+        {{-- Table --}}
+        <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-3 text-center font-semibold text-gray-600 w-12">#</th>
+                        <th class="px-4 py-3 text-center font-semibold text-gray-600 w-20">Cover</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-600">Year</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-600">YouTube Link</th>
+                        <th class="px-4 py-3 text-center font-semibold text-gray-600 w-40">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @foreach ($covers as $cover)
+                        @php $ytId = getYoutubeId($cover->youtube_link); @endphp
+                        <tr class="hover:bg-gray-50 transition-colors">
 
-                <div class="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:border-brand-200 hover:shadow-lg hover:shadow-brand-50">
-                    <div class="relative h-44 overflow-hidden bg-gradient-to-br from-blue-50 to-gray-100">
-                        <img src="{{ Storage::url($cover->cover_path) }}" alt="Cover {{ $cover->year }}"
-                            class="h-full w-full object-contain p-3 transition-transform duration-500 group-hover:scale-105">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                        <span class="absolute top-2 right-2 rounded-lg bg-brand-500 px-2.5 py-1 text-xs font-bold text-white shadow">
-                            {{ $cover->year }}
-                        </span>
-                    </div>
+                            {{-- No --}}
+                            <td class="px-4 py-3 text-center text-gray-400">
+                                {{ $covers->firstItem() + $loop->index }}
+                            </td>
 
-                    <div class="flex flex-col gap-3 p-4 border-t border-gray-100">
-                        <p class="text-sm font-semibold text-center text-gray-900">Year Cover {{ $cover->year }}</p>
-                        <div class="grid grid-cols-3 gap-2">
-                            <a href="{{ route('yearcover.show', $cover->id) }}"
-                                class="inline-flex items-center justify-center gap-1 rounded-lg bg-brand-50 px-2.5 py-2 text-xs font-medium text-brand-500 hover:bg-brand-100 transition-colors whitespace-nowrap">
-                                <svg class="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                </svg>
-                                <span>Detail</span>
-                            </a>
-                            <a href="{{ route('yearcover.edit', $cover->id) }}"
-                                class="inline-flex items-center justify-center gap-1 rounded-lg bg-warning-50 px-2.5 py-2 text-xs font-medium text-warning-500 hover:bg-warning-100 transition-colors whitespace-nowrap">
-                                <svg class="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                </svg>
-                                <span>Edit</span>
-                            </a>
-                            <button onclick="confirmDelete({{ $cover->id }}, {{ $cover->year }}, '{{ route('yearcover.destroy', $cover->id) }}')"
-                                class="inline-flex items-center justify-center gap-1 rounded-lg bg-error-50 px-2.5 py-2 text-xs font-medium text-error-500 hover:bg-error-100 transition-colors whitespace-nowrap">
-                                <svg class="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                </svg>
-                                <span>Delete</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
+                            {{-- Thumbnail --}}
+                            <td class="px-4 py-3">
+                                <img src="{{ Storage::url($cover->cover_path) }}"
+                                    alt="Cover {{ $cover->year }}"
+                                    class="h-12 w-10 rounded-lg object-contain border border-gray-100 bg-gray-50 mx-auto">
+                            </td>
+
+                            {{-- Year --}}
+                            <td class="px-4 py-3 font-semibold text-gray-800">
+                                <span class="inline-flex items-center rounded-lg bg-brand-50 px-2.5 py-1 text-xs font-bold text-brand-600">
+                                    {{ $cover->year }}
+                                </span>
+                            </td>
+
+                            {{-- YouTube Link --}}
+                            <td class="px-4 py-3 text-gray-500 max-w-xs">
+                                @if ($cover->youtube_link)
+                                    <a href="{{ $cover->youtube_link }}" target="_blank"
+                                        class="inline-flex items-center gap-1.5 text-brand-500 hover:text-brand-700 hover:underline truncate max-w-[220px]">
+                                        <svg class="h-4 w-4 flex-shrink-0 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                        </svg>
+                                        <span class="truncate">{{ $cover->youtube_link }}</span>
+                                    </a>
+                                @else
+                                    <span class="text-gray-300 italic">No link</span>
+                                @endif
+                            </td>
+
+                            {{-- Actions --}}
+                            <td class="px-4 py-3">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <a href="{{ route('yearcover.show', $cover->id) }}"
+                                        class="inline-flex items-center justify-center gap-1 rounded-lg bg-brand-50 px-2.5 py-1.5 text-xs font-medium text-brand-500 hover:bg-brand-100 transition-colors">
+                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                        Detail
+                                    </a>
+                                    <a href="{{ route('yearcover.edit', $cover->id) }}"
+                                        class="inline-flex items-center justify-center gap-1 rounded-lg bg-warning-50 px-2.5 py-1.5 text-xs font-medium text-warning-500 hover:bg-warning-100 transition-colors">
+                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                        </svg>
+                                        Edit
+                                    </a>
+                                    <button onclick="confirmDelete({{ $cover->id }}, {{ $cover->year }}, '{{ route('yearcover.destroy', $cover->id) }}')"
+                                        class="inline-flex items-center justify-center gap-1 rounded-lg bg-error-50 px-2.5 py-1.5 text-xs font-medium text-error-500 hover:bg-error-100 transition-colors">
+                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                        Delete
+                                    </button>
+                                </div>
+                            </td>
+
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
+
+        {{-- Pagination --}}
+        @if ($covers->hasPages())
+            <div class="mt-6 flex items-center justify-between text-sm text-gray-500">
+                <p>
+                    Showing <span class="font-medium text-gray-700">{{ $covers->firstItem() }}</span>
+                    to <span class="font-medium text-gray-700">{{ $covers->lastItem() }}</span>
+                    of <span class="font-medium text-gray-700">{{ $covers->total() }}</span> results
+                </p>
+                {{ $covers->links() }}
+            </div>
+        @endif
     @endif
 
     <form id="deleteForm" method="POST" class="hidden">

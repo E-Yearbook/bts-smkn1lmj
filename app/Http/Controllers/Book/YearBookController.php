@@ -12,7 +12,7 @@ class YearBookController extends Controller
 {
     public function index()
     {
-        $covers = YearCover::orderBy('year', 'desc')->get();
+        $covers = YearCover::orderBy('year', 'desc')->paginate(10);
         return view('admin.yearcover.index', compact('covers'));
     }
 
