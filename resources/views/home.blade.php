@@ -8,6 +8,7 @@
     <title>DIGITAL YEARBOOK</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/smkn1logo.png') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -82,15 +83,15 @@
                         </div>
 
                         {{-- Stage / viewport --}}
-                        <div class="ybk-stage" id="ybkStage">
-                            <div class="ybk-track" id="ybkTrack">
+                        <div class="ybk-stage swiper" id="ybkStage">
+                            <div class="ybk-track swiper-wrapper" id="ybkTrack">
 
                                 {{-- ── Items (no infinite clone, mentok di ujung) ── --}}
                                 @foreach ($years as $year)
                                     @php $cover = $covers->firstWhere('year', $year); @endphp
-                                    <div class="ybk-item"
-                                         data-year="{{ $year }}"
-                                         data-href="{{ route('book', $year) }}">
+                                    <div class="ybk-item swiper-slide"
+                 data-year="{{ $year }}"
+                 data-href="{{ route('book', $year) }}">
 
                                         {{-- Cover --}}
                                         <div class="ybk-cover rounded-[14px] overflow-hidden bg-[#f0f0f0] border border-black/[0.07] relative">
@@ -166,6 +167,7 @@
 
 </body>
 
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 {{-- ═══════════════════════════════════════
      CSS
 ═══════════════════════════════════════ --}}
@@ -199,106 +201,105 @@
 
 /* ── Stage (viewport) ─────────────────────────────────────── */
 .ybk-stage {
-    flex:1; min-width:0; overflow:hidden;
-    position:relative; padding:10px 0;
-    cursor:grab;
+    flex: 1; min-width: 0;
+    overflow: hidden;
+    position: relative;
+    padding: 10px 0;
+    cursor: grab;
 }
-.ybk-stage.is-dragging { cursor:grabbing; }
+.ybk-stage.swiper-container-pointer-events { cursor: grabbing; }
 
-/* ── Track ────────────────────────────────────────────────── */
-.ybk-track {
-    display:flex; align-items:center;
-    gap:24px;
-    will-change:transform;
-    transition:transform 0.5s cubic-bezier(0.25,1,0.5,1);
-    user-select:none;
-}
-.ybk-track.no-transition { transition:none !important; }
+/* ── Swiper reset — buang style bawaan yang bentrok ──────────── */
+.swiper { overflow: visible !important; }
+.swiper-wrapper { align-items: center; }
 
 /* ── Items ────────────────────────────────────────────────── */
-.ybk-item {
-    flex:0 0 auto;
-    display:flex; flex-direction:column; align-items:center;
-    cursor:pointer;
-    /* Always transition smoothly */
-    transition:opacity 0.4s ease, transform 0.4s cubic-bezier(0.25,1,0.5,1);
+.swiper-slide {
+    width: auto !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.25,1,0.5,1);
+    opacity: 0.36;
+    transform: scale(0.84);
 }
-.ybk-item.is-inactive {
-    opacity:0.36;
-    transform:scale(0.84);
-}
-.ybk-item.is-active {
-    opacity:1;
-    transform:scale(1);
+.swiper-slide-active {
+    opacity: 1;
+    transform: scale(1);
 }
 
 /* ── Cover box ────────────────────────────────────────────── */
 .ybk-cover {
-    width:clamp(130px,18vh,200px);
-    height:clamp(180px,26vh,280px);
+    width: clamp(130px, 18vh, 200px);
+    height: clamp(180px, 26vh, 280px);
     box-shadow:
         0 2px 4px rgba(0,0,0,0.04),
         0 6px 20px rgba(0,0,0,0.08),
         0 20px 40px rgba(0,0,0,0.06);
-    transition:box-shadow 0.35s ease, border-color 0.35s ease;
+    transition: box-shadow 0.35s ease, border-color 0.35s ease;
 }
-
-/* Cover hover — ONLY when item is active */
-.ybk-item.is-active:hover .ybk-cover {
+.swiper-slide-active:hover .ybk-cover {
     box-shadow:
         0 4px 8px rgba(0,0,0,0.04),
         0 16px 40px rgba(99,102,241,0.18),
         0 32px 64px rgba(99,102,241,0.10);
-    border-color:rgba(129,140,248,0.25) !important;
+    border-color: rgba(129,140,248,0.25) !important;
 }
 
 /* ── Labels ───────────────────────────────────────────────── */
-.ybk-lbl-top  { transition:color 0.2s ease; }
-.ybk-lbl-year { transition:color 0.25s ease; }
-.ybk-item.is-active:hover .ybk-lbl-top  { color:#818cf8; }
-.ybk-item.is-active:hover .ybk-lbl-year { color:#4f46e5; }
+.ybk-lbl-top  { transition: color 0.2s ease; }
+.ybk-lbl-year { transition: color 0.25s ease; }
+.swiper-slide-active:hover .ybk-lbl-top  { color: #818cf8; }
+.swiper-slide-active:hover .ybk-lbl-year { color: #4f46e5; }
 
 /* ── Overlay & Buka badge ─────────────────────────────────── */
 .ybk-overlay {
-    background:rgba(79,70,229,0);
-    transition:background 0.3s ease;
+    background: rgba(79,70,229,0);
+    transition: background 0.3s ease;
 }
-.ybk-item.is-active:hover .ybk-overlay {
-    background:rgba(79,70,229,0.08);
-}
+.swiper-slide-active:hover .ybk-overlay { background: rgba(79,70,229,0.08); }
 
 .ybk-buka-btn {
-    opacity:0;
-    transform:translateY(6px);
-    transition:opacity 0.25s ease, transform 0.25s ease;
-    pointer-events:none;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    pointer-events: none;
 }
-.ybk-item.is-active:hover .ybk-buka-btn {
-    opacity:1;
-    transform:translateY(0);
+.swiper-slide-active:hover .ybk-buka-btn {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* ── Shine sweep ──────────────────────────────────────────── */
-.ybk-shine { transition:left 0.7s ease; }
-.ybk-item.is-active:hover .ybk-shine { left:130% !important; }
+.ybk-shine { transition: left 0.7s ease; }
+.swiper-slide-active:hover .ybk-shine { left: 130% !important; }
 
 /* ── Dots ─────────────────────────────────────────────────── */
 .ybk-dot {
-    width:5px; height:5px; border-radius:99px;
-    background:#d4d4d4; cursor:pointer;
-    transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-    border:none; padding:0; flex-shrink:0;
+    width: 5px; height: 5px; border-radius: 99px;
+    background: #d4d4d4; cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    border: none; padding: 0; flex-shrink: 0;
+    display: inline-block;
 }
 .ybk-dot.is-active {
-    background:#6366f1; width:24px;
-    box-shadow:0 0 8px rgba(99,102,241,0.45);
+    background: #6366f1; width: 24px;
+    box-shadow: 0 0 8px rgba(99,102,241,0.45);
+}
+
+/* ── Arrow disabled via Swiper ────────────────────────────── */
+.ybk-btn-arrow.swiper-button-disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
 }
 
 /* ── Responsive ───────────────────────────────────────────── */
-@media (max-width:540px) {
-    .ybk-arrow-col { flex:0 0 44px; }
-    .ybk-btn-arrow { width:36px; height:36px; }
-    .ybk-track     { gap:18px; }
+@media (max-width: 540px) {
+    .ybk-arrow-col { flex: 0 0 44px; }
+    .ybk-btn-arrow { width: 36px; height: 36px; }
 }
 </style>
 
@@ -307,252 +308,54 @@
 ═══════════════════════════════════════ --}}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-@if ($count > 0)
+    @if ($count > 0)
+    
+        const activeYear = {{ $activeYear ?? 'null' }};
+        const years = @json($years->values());
+        let initialIdx = years.indexOf(activeYear);
+        if (initialIdx < 0) initialIdx = 0;
 
-    /* ── Config ─────────────────────────────────────────────── */
-    const GAP        = parseInt(getComputedStyle(document.documentElement)
-                            .getPropertyValue('--ybk-gap') || '24');
-    const AUTOPLAY_MS = 3200;
+        const swiper = new Swiper('#ybkStage', {
+            slidesPerView: 'auto',
+            centeredSlides: true,
+            spaceBetween: 24, // Sama seperti GAP var milikmu
+            initialSlide: initialIdx,
+            speed: 500, // Durasi transisi swipe
+            keyboard: {
+                enabled: true, // Bisa digeser pakai panah keyboard
+            },
+            navigation: {
+                nextEl: '#ybkNext',
+                prevEl: '#ybkPrev',
+            },
+            pagination: {
+                el: '#ybkDots',
+                clickable: true,
+                bulletClass: 'ybk-dot',
+                bulletActiveClass: 'is-active', // Sesuaikan dengan CSS dot milikmu
+            },
+            autoplay: {
+                delay: 3200,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true // Berhenti saat di-hover
+            },
+            on: {
+                click(swiper, event) {
+                    const clickedSlide = swiper.clickedSlide;
+                    if (!clickedSlide) return;
 
-    /* ── DOM refs ────────────────────────────────────────────── */
-    const stage   = document.getElementById('ybkStage');
-    const track   = document.getElementById('ybkTrack');
-    const btnPrev = document.getElementById('ybkPrev');
-    const btnNext = document.getElementById('ybkNext');
-    const dotsEl  = document.getElementById('ybkDots');
-    const items   = Array.from(track.querySelectorAll('.ybk-item'));
-    const n       = items.length;
-
-    /* ── State ───────────────────────────────────────────────── */
-    // Start at the year matching $activeYear, fallback to last item
-    const activeYear  = {{ $activeYear ?? 'null' }};
-    const years       = @json($years->values());
-    let   currentIdx  = years.indexOf(activeYear);
-    if (currentIdx < 0) currentIdx = 0;
-
-    let itemW    = 0;   // measured width of one item
-    let busy     = false;
-    let autoTimer = null;
-
-    /* ── Measure ─────────────────────────────────────────────── */
-    function measure() {
-        itemW = items[0] ? items[0].getBoundingClientRect().width : 0;
-    }
-
-    /* ── Compute translateX so currentIdx is centered ─────────── */
-    function centerOffset(idx) {
-        // Clamp idx to valid range
-        const clamped = Math.max(0, Math.min(n - 1, idx));
-        const stageW  = stage.offsetWidth;
-        return -(clamped * (itemW + GAP)) + (stageW / 2 - itemW / 2);
-    }
-
-    /* ── Apply transform ─────────────────────────────────────── */
-    function applyTransform(offset, animated) {
-        if (!animated) {
-            track.classList.add('no-transition');
-            track.style.transform = `translateX(${offset}px)`;
-            // Force reflow to flush the no-transition state
-            void track.offsetWidth;
-            track.classList.remove('no-transition');
-        } else {
-            track.style.transform = `translateX(${offset}px)`;
-        }
-    }
-
-    /* ── Update active/inactive classes + dots + arrow state ──── */
-    function refresh() {
-        items.forEach((item, i) => {
-            item.classList.toggle('is-active',   i === currentIdx);
-            item.classList.toggle('is-inactive', i !== currentIdx);
-        });
-
-        // Dots
-        Array.from(dotsEl.children).forEach((dot, i) => {
-            dot.classList.toggle('is-active', i === currentIdx);
-        });
-
-        // Arrow disabled state (mentok di ujung)
-        btnPrev.disabled = currentIdx === 0;
-        btnNext.disabled = currentIdx === n - 1;
-    }
-
-    /* ── Go to index ─────────────────────────────────────────── */
-    function goTo(idx, animated = true) {
-        // Hard clamp — tidak looping, mentok di ujung
-        currentIdx = Math.max(0, Math.min(n - 1, idx));
-        applyTransform(centerOffset(currentIdx), animated);
-        refresh();
-    }
-
-    /* ── Step navigation ─────────────────────────────────────── */
-    function step(dir) {
-        if (busy) return;
-        // Sudah di ujung — abaikan
-        if (dir < 0 && currentIdx === 0)     return;
-        if (dir > 0 && currentIdx === n - 1) return;
-
-        busy = true;
-        goTo(currentIdx + dir);
-        setTimeout(() => { busy = false; }, 520);
-    }
-
-    /* ── Build dots ──────────────────────────────────────────── */
-    years.forEach((_, i) => {
-        const dot = document.createElement('button');
-        dot.className  = 'ybk-dot';
-        dot.setAttribute('aria-label', `Angkatan ${years[i]}`);
-        dot.addEventListener('click', () => {
-            if (busy || i === currentIdx) return;
-            stopAutoplay();
-            goTo(i);
-        });
-        dotsEl.appendChild(dot);
-    });
-
-    /* ── Arrow buttons ───────────────────────────────────────── */
-    btnPrev.addEventListener('click', () => { stopAutoplay(); step(-1); });
-    btnNext.addEventListener('click', () => { stopAutoplay(); step(+1); });
-
-    /* ── Keyboard navigation ─────────────────────────────────── */
-    document.addEventListener('keydown', e => {
-        if (e.key === 'ArrowLeft')  { stopAutoplay(); step(-1); }
-        if (e.key === 'ArrowRight') { stopAutoplay(); step(+1); }
-    });
-
-    /* ── Click on item ───────────────────────────────────────── */
-    items.forEach((item, i) => {
-        item.addEventListener('click', () => {
-            if (hasDragged) return;            // ignore drag-release
-            if (i === currentIdx) {
-                window.location.href = item.dataset.href;
-            } else {
-                stopAutoplay();
-                goTo(i);
+                    // Jika yang diklik adalah item yang sedang ditengah (aktif)
+                    if (clickedSlide.classList.contains('swiper-slide-active')) {
+                        window.location.href = clickedSlide.dataset.href;
+                    } else {
+                        // Jika klik item di pinggir, geser ke tengah
+                        swiper.slideTo(swiper.clickedIndex);
+                    }
+                }
             }
         });
-    });
 
-    /* ── Drag / swipe (pointer events) ──────────────────────── */
-    let isDragging = false;
-    let hasDragged = false;
-    let dragStartX = 0;
-    let trackStartOffset = 0;
-
-    function getCurrentOffset() {
-        const mat = new DOMMatrix(getComputedStyle(track).transform);
-        return mat.m41;
-    }
-
-    stage.addEventListener('pointerdown', e => {
-        if (e.target.closest('.ybk-btn-arrow')) return;
-        isDragging       = true;
-        hasDragged       = false;
-        dragStartX       = e.clientX;
-        trackStartOffset = getCurrentOffset();
-        track.classList.add('no-transition');
-        stage.classList.add('is-dragging');
-        stage.setPointerCapture(e.pointerId);
-    });
-
-    stage.addEventListener('pointermove', e => {
-        if (!isDragging) return;
-        const dx = e.clientX - dragStartX;
-        if (Math.abs(dx) > 6) hasDragged = true;
-
-        // Drag resistance at edges
-        let offset = trackStartOffset + dx;
-        const minOffset = centerOffset(n - 1);
-        const maxOffset = centerOffset(0);
-
-        if (offset > maxOffset) {
-            // Beyond left edge — apply rubber-band resistance
-            offset = maxOffset + (offset - maxOffset) * 0.25;
-        } else if (offset < minOffset) {
-            // Beyond right edge — rubber-band
-            offset = minOffset + (offset - minOffset) * 0.25;
-        }
-
-        track.style.transform = `translateX(${offset}px)`;
-    });
-
-    stage.addEventListener('pointerup', e => {
-        if (!isDragging) return;
-        isDragging = false;
-        track.classList.remove('no-transition');
-        stage.classList.remove('is-dragging');
-
-        const dx = e.clientX - dragStartX;
-
-        if (!hasDragged) return; // handled by click listener
-
-        // Decide: step or snap back
-        const threshold = Math.max(40, itemW * 0.25);
-        if (Math.abs(dx) >= threshold) {
-            step(dx < 0 ? 1 : -1);
-        } else {
-            // Snap back to current without triggering busy
-            applyTransform(centerOffset(currentIdx), true);
-        }
-
-        // Reset hasDragged after a tick so the click handler can check it
-        setTimeout(() => { hasDragged = false; }, 0);
-    });
-
-    stage.addEventListener('pointercancel', () => {
-        if (!isDragging) return;
-        isDragging = false;
-        track.classList.remove('no-transition');
-        stage.classList.remove('is-dragging');
-        applyTransform(centerOffset(currentIdx), true);
-        setTimeout(() => { hasDragged = false; }, 0);
-    });
-
-    /* ── Autoplay ────────────────────────────────────────────── */
-    function startAutoplay() {
-        stopAutoplay();
-        // Only autoplay if there are more than 1 item
-        if (n <= 1) return;
-        autoTimer = setInterval(() => {
-            // Reverse direction at edges
-            if (currentIdx >= n - 1) {
-                step(-1);
-            } else {
-                step(1);
-            }
-        }, AUTOPLAY_MS);
-    }
-
-    function stopAutoplay() {
-        clearInterval(autoTimer);
-        autoTimer = null;
-    }
-
-    stage.addEventListener('pointerenter', stopAutoplay);
-    stage.addEventListener('pointerleave', startAutoplay);
-
-    /* ── Init ────────────────────────────────────────────────── */
-    function init() {
-        measure();
-        goTo(currentIdx, false);
-        startAutoplay();
-    }
-
-    // Wait two frames so layout is fully painted
-    requestAnimationFrame(() => requestAnimationFrame(init));
-
-    /* ── Resize ──────────────────────────────────────────────── */
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-            measure();
-            applyTransform(centerOffset(currentIdx), false);
-        }, 80);
-    });
-
-@endif
+    @endif
 });
 </script>
-
 </html>
