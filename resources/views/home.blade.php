@@ -174,7 +174,7 @@
 <style>
 /* ── Layout ───────────────────────────────────────────────── */
 .ybk-row        { display:flex; align-items:center; width:100%; }
-.ybk-arrow-col  { flex:0 0 64px; display:flex; align-items:center; justify-content:center; }
+.ybk-arrow-col  { flex:0 0 64px; display:flex; align-items:center; justify-content:center; position: relative; z-index: 10; }
 
 /* ── Arrow buttons ────────────────────────────────────────── */
 .ybk-btn-arrow {
@@ -204,14 +204,13 @@
     flex: 1; min-width: 0;
     overflow: hidden;
     position: relative;
-    padding: 10px 0;
+    padding: 20px 0;
     cursor: grab;
 }
-.ybk-stage.swiper-container-pointer-events { cursor: grabbing; }
 
-/* ── Swiper reset — buang style bawaan yang bentrok ──────────── */
+/* ── Swiper reset ─────────────────────────────────────────── */
 .swiper { overflow: visible !important; }
-.swiper-wrapper { align-items: center; }
+.swiper-wrapper { align-items: center; transition-timing-function: cubic-bezier(0.25,1,0.5,1) !important; }
 
 /* ── Items ────────────────────────────────────────────────── */
 .swiper-slide {
@@ -220,9 +219,10 @@
     flex-direction: column;
     align-items: center;
     cursor: pointer;
-    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.25,1,0.5,1);
+    transition: opacity 0.45s cubic-bezier(0.25,1,0.5,1), transform 0.45s cubic-bezier(0.25,1,0.5,1);
     opacity: 0.36;
-    transform: scale(0.84);
+    transform: scale(0.82);
+    will-change: transform, opacity;
 }
 .swiper-slide-active {
     opacity: 1;
@@ -231,13 +231,21 @@
 
 /* ── Cover box ────────────────────────────────────────────── */
 .ybk-cover {
-    width: clamp(130px, 18vh, 200px);
-    height: clamp(180px, 26vh, 280px);
+    width: clamp(110px, 15vh, 170px);
+    height: clamp(155px, 21vh, 238px);
     box-shadow:
         0 2px 4px rgba(0,0,0,0.04),
         0 6px 20px rgba(0,0,0,0.08),
         0 20px 40px rgba(0,0,0,0.06);
-    transition: box-shadow 0.35s ease, border-color 0.35s ease;
+    transition:
+        width  0.45s cubic-bezier(0.25,1,0.5,1),
+        height 0.45s cubic-bezier(0.25,1,0.5,1),
+        box-shadow 0.35s ease,
+        border-color 0.35s ease;
+}
+.swiper-slide-active .ybk-cover {
+    width: clamp(160px, 22vh, 240px);
+    height: clamp(220px, 31vh, 336px);
 }
 .swiper-slide-active:hover .ybk-cover {
     box-shadow:
@@ -318,12 +326,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const swiper = new Swiper('#ybkStage', {
             slidesPerView: 'auto',
             centeredSlides: true,
-            spaceBetween: 24, // Sama seperti GAP var milikmu
+            spaceBetween: 24,
             initialSlide: initialIdx,
-            speed: 500, // Durasi transisi swipe
-            keyboard: {
-                enabled: true, // Bisa digeser pakai panah keyboard
-            },
+            speed: 650,
+            grabCursor: true,
+            keyboard: { enabled: true },
             navigation: {
                 nextEl: '#ybkNext',
                 prevEl: '#ybkPrev',
@@ -332,23 +339,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 el: '#ybkDots',
                 clickable: true,
                 bulletClass: 'ybk-dot',
-                bulletActiveClass: 'is-active', // Sesuaikan dengan CSS dot milikmu
+                bulletActiveClass: 'is-active',
             },
             autoplay: {
                 delay: 3200,
                 disableOnInteraction: false,
-                pauseOnMouseEnter: true // Berhenti saat di-hover
+                pauseOnMouseEnter: true,
             },
             on: {
                 click(swiper, event) {
                     const clickedSlide = swiper.clickedSlide;
                     if (!clickedSlide) return;
-
-                    // Jika yang diklik adalah item yang sedang ditengah (aktif)
                     if (clickedSlide.classList.contains('swiper-slide-active')) {
                         window.location.href = clickedSlide.dataset.href;
                     } else {
-                        // Jika klik item di pinggir, geser ke tengah
                         swiper.slideTo(swiper.clickedIndex);
                     }
                 }
