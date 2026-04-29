@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>@yield('title', 'Dashboard') | Admin Panel</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/admin.css', 'resources/js/admin.js']) {{--CUSTOM RESOURCE AGAR TIDAK TABRAKAN DENGAN FRONT END--}}
     @stack('styles')
   </head>
   <body
