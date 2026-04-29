@@ -44,7 +44,7 @@ class AuthController extends Controller
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $request->session()->regenerate();
             RateLimiter::clear($throttleKey);
-            return redirect()->intended('/dashboard');
+            return redirect()->intended('/categories');
         }
 
         RateLimiter::hit($throttleKey, 60);

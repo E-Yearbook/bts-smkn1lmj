@@ -26,9 +26,9 @@ Route::get('/book/{year}', [ViewBookController::class, 'ViewBook'])->name('book'
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard.dashboard');
-    })->name('dashboard');
+    // Route::get('/dashboard', function () {
+    //     return view('admin.dashboard.dashboard');
+    // })->name('dashboard');
 
     // Year Cover CRUD
     Route::get('/yearcover', [YearBookController::class, 'index'])->name('yearcover');

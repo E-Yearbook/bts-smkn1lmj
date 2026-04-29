@@ -31,7 +31,7 @@
                 </svg>
             </button>
 
-            <a href="{{ route('dashboard') }}" class="lg:hidden">
+            <a href="#" class="lg:hidden">
                 <img class="h-10" src="{{ asset('img/smk.png') }}" alt="SMK Logo" />
             </a>
 

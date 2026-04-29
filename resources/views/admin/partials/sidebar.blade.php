@@ -3,7 +3,7 @@
     <!-- SIDEBAR HEADER -->
     <div :class="sidebarToggle ? 'justify-center' : 'justify-between'"
         class="flex items-center gap-2 pt-8 sidebar-header pb-7">
-        <a href="{{ route('dashboard') }}">
+        <a href="#">
             <span class="logo" :class="sidebarToggle ? 'hidden' : 'block'">
                 <img class="h-10" src="{{ asset('img/smk.png') }}" alt="SMK Logo" />
             </span>
@@ -15,7 +15,7 @@
     <div class="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
         <nav x-data="{ selected: $persist('Dashboard') }">
 
-            <div class="mb-6">
+            {{-- <div class="mb-6">
                 <h3 class="mb-4 text-xs uppercase leading-[20px] text-gray-400">
                     <span class="menu-group-title" :class="sidebarToggle ? 'lg:hidden' : ''">Menu</span>
                     <svg :class="sidebarToggle ? 'lg:block hidden' : 'hidden'"
@@ -40,7 +40,7 @@
                         </a>
                     </li>
                 </ul>
-            </div>
+            </div> --}}
 
             <div class="mb-6">
                 <h3 class="mb-4 text-xs uppercase leading-[20px] text-gray-400">
