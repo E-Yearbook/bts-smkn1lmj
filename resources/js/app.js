@@ -1,40 +1,52 @@
+// resources/js/app.js
+
 import './bootstrap';
+import './bundle';
+import './fix-debugger';
 
-import Alpine from 'alpinejs'
-window.Alpine = Alpine
-Alpine.start()
 
-// Smooth Scroll (Lenis)
-import Lenis from '@studio-freight/lenis'
+// === TailAdmin + Alpine.js ===
+import Alpine from 'alpinejs';
+import persist from '@alpinejs/persist';   // kalau TailAdmin pakai persist
 
-const lenis = new Lenis()
+Alpine.plugin(persist);   // tambahkan ini jika ada error persist
+
+window.Alpine = Alpine;
+Alpine.start();
+
+// === Kode Frontend Kamu ===
+import Lenis from '@studio-freight/lenis';
+
+const lenis = new Lenis();
 
 function raf(time) {
-    lenis.raf(time)
-    requestAnimationFrame(raf)
+    lenis.raf(time);
+    requestAnimationFrame(raf);
 }
-
-requestAnimationFrame(raf)
-
+requestAnimationFrame(raf);
 
 // Scroll Animation (AOS)
-import AOS from 'aos'
-import 'aos/dist/aos.css'
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 AOS.init({
     duration: 800,
     once: true
-})
+});
 
+// Swiper
+import Swiper from 'swiper';
+import { EffectCoverflow, Pagination, Navigation, Autoplay } from 'swiper/modules';
 
-import Swiper from 'swiper'
-import { EffectCoverflow, Pagination, Navigation, Autoplay } from 'swiper/modules'
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 
-import 'swiper/css'
-import 'swiper/css/effect-coverflow'
-import 'swiper/css/pagination'
-import 'swiper/css/navigation'
+Swiper.use([EffectCoverflow, Pagination, Navigation, Autoplay]);
+window.Swiper = Swiper;
 
-Swiper.use([EffectCoverflow, Pagination, Navigation, Autoplay])
-
-window.Swiper = Swiper
+// Tambahkan kode custom kamu di sini jika perlu
+document.addEventListener('alpine:init', () => {
+    console.log('Alpine.js + Frontend siap');
+});
