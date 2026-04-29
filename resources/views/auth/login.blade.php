@@ -6,7 +6,7 @@
     <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link rel="stylesheet" href="{{ asset('admin/css/style.css') }}">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/smkn1logo.png') }}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Sign In | Admin Panel</title>
@@ -173,9 +173,6 @@
             </svg>
         </button>
     </div>
-
-    <script src="{{ asset('admin/js/bundle.js') }}"></script>
-    <script src="{{ asset('admin/js/fix-debugger.js') }}"></script>
 
     @if (session('error'))
         <script>
