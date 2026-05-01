@@ -309,7 +309,7 @@
 <div id="video-modal"
     class="fixed inset-0 z-[1000] bg-black/90 backdrop-blur-sm
            flex flex-col items-center justify-center gap-4
-           opacity-0 pointer-events-none"
+           opacity-0 pointer-events-none "
     style="transition: opacity 0.35s ease;">
 
     {{-- Header modal dengan navigasi --}}
@@ -366,6 +366,7 @@
                 src=""
                 style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;"
                 allow="autoplay; encrypted-media; picture-in-picture"
+                referrerpolicy="strict-origin-when-cross-origin"
                 allowfullscreen>
             </iframe>
         </div>

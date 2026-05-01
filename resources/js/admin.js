@@ -1,7 +1,7 @@
 // resources/js/admin.js - Admin Panel Only
 
 import './bootstrap';
-import './bundle';
+// import './bundle';
 import './fix-debugger';
 
 // === TailAdmin + Alpine.js ===

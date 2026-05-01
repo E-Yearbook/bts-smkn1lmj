@@ -1,7 +1,7 @@
 // resources/js/app.js
 
 import './bootstrap';
-import './bundle';
+// import './bundle';
 import './fix-debugger';
 
 

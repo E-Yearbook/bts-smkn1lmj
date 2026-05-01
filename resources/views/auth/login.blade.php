@@ -145,7 +145,7 @@
                 <img
                     src="{{ asset('img/smkn1lmj.jpg') }}"
                     alt="SMKN 1 Lumajang"
-                    class="w-full h-full object-contain object-center"
+                    class="w-full h-full object-cover"
                 />
             </div>
             <!-- ===== Foto Kanan End ===== -->
