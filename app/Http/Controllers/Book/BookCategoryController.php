@@ -34,7 +34,7 @@ class BookCategoryController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('categories.index')->with('success', 'Category added successfully.');
+        return redirect()->route('categories.index')->with('success', 'Category "' . $request->name . '" added successfully!');
     }
 
     public function edit($id)
@@ -57,12 +57,14 @@ class BookCategoryController extends Controller
         $category = BookCategory::findOrFail($id);
         $category->update(['name' => $request->name]);
 
-        return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
+        return redirect()->route('categories.index')->with('success', 'Category "' . $request->name . '" updated successfully!');
     }
 
     public function destroy($id)
     {
-        BookCategory::destroy($id);
-        return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
+        $category = BookCategory::findOrFail($id);
+        $name = $category->name;
+        $category->delete();
+        return redirect()->route('categories.index')->with('success', 'category "' . $name . '" deleted successfully!');
     }
 }
