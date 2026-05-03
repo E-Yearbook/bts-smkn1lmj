@@ -164,13 +164,20 @@
                     class="{{ $yearcover->youtube_link ? '' : 'hidden' }} rounded-2xl border border-gray-200 bg-white p-5">
                     <h3 class="mb-3 text-sm font-semibold text-gray-700">YouTube Video Preview</h3>
                     <div id="yt-iframe-container" class="overflow-hidden rounded-xl bg-black flex flex-col gap-2">
-@php
-    preg_match_all('/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $yearcover->youtube_link, $matches);
-    $ytIds = array_unique($matches[1] ?? []);
-@endphp
-@foreach($ytIds as $ytId)
-                        <iframe src="https://www.youtube.com/embed/{{ $ytId }}" width="100%" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="block" style="aspect-ratio:16/9;"></iframe>
-@endforeach
+                        @php
+                            preg_match_all(
+                                '/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/',
+                                $yearcover->youtube_link,
+                                $matches,
+                            );
+                            $ytIds = array_unique($matches[1] ?? []);
+                        @endphp
+                        @foreach ($ytIds as $ytId)
+                            <iframe src="https://www.youtube.com/embed/{{ $ytId }}" width="100%" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen referrerpolicy="strict-origin-when-cross-origin "class="block"
+                                style="aspect-ratio:16/9;"></iframe>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -265,7 +272,7 @@
                     this.on('uploadprogress', (file, progress) => {
                         if (file.previewElement) {
                             file.previewElement.querySelector('.progress-bar-wrapper').classList.add(
-                            'show');
+                                'show');
                             file.previewElement.querySelector('.progress-bar').style.width = progress + '%';
                         }
                     });
@@ -284,8 +291,8 @@
                 const ids = [];
                 const regex = /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/g;
                 let match;
-                while((match = regex.exec(text)) !== null) {
-                    if(!ids.includes(match[1])) ids.push(match[1]);
+                while ((match = regex.exec(text)) !== null) {
+                    if (!ids.includes(match[1])) ids.push(match[1]);
                 }
                 return ids;
             }
@@ -305,7 +312,8 @@
                             iframe.src = 'https://www.youtube.com/embed/' + id;
                             iframe.width = '100%';
                             iframe.frameBorder = '0';
-                            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+                            iframe.allow =
+                                'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
                             iframe.allowFullscreen = true;
                             iframe.className = 'block';
                             iframe.style.aspectRatio = '16/9';
