@@ -309,6 +309,7 @@
                             iframe.allowFullscreen = true;
                             iframe.className = 'block';
                             iframe.style.aspectRatio = '16/9';
+                            iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
                             container.appendChild(iframe);
                         });
                         preview.classList.remove('hidden');

@@ -117,7 +117,7 @@
                         <div class="overflow-hidden rounded-xl bg-gray-900 shadow-md ring-1 ring-gray-900/5 mx-auto max-w-4xl w-full">
                             <iframe src="https://www.youtube.com/embed/{{ $ytId }}" width="100%" frameborder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                allowfullscreen class="block aspect-video w-full"></iframe>
+                                allowfullscreen referrerpolicy="strict-origin-when-cross-origin" class="block aspect-video w-full"></iframe>
                         </div>
 
                         <div
