@@ -215,10 +215,16 @@
                     </div>
 
                     {{-- Book title --}}
-                    <p class="font-mono text-[11px] font-bold tracking-[0.08em] text-gray-600 text-center leading-tight
-                               group-hover:text-gray-900 transition-colors duration-200 line-clamp-2">
-                        {{ $book['title'] }}
-                    </p>
+                    <!-- Judul Buku: Lebih tegas dan terbaca -->
+<p class="text-sm font-semibold text-gray-800 text-center leading-snug group-hover:text-black transition-colors duration-200 line-clamp-2">
+    {{ $book['title'] }}
+</p>
+
+<!-- Penerbit: Lebih halus sebagai informasi pendukung -->
+<p class="mt-1 text-xs font-medium text-gray-500 text-center leading-tight group-hover:text-gray-700 transition-colors duration-200 line-clamp-1">
+    {{ $book['publisher'] }}
+</p>
+
 
                 </div>
                 @endforeach

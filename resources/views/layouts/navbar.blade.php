@@ -50,7 +50,7 @@
         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0" class="md:hidden border-t border-black/[0.06] bg-white/95">
         <div class="flex flex-col px-6 py-3 gap-1">
-            @foreach ([['/', 'Home'], ['#angkatan', 'Angkatan'], ['#galeri', 'Galeri'], ['#tentang', 'Tentang']] as [$href, $label])
+            @foreach ([['/', 'Home']] as [$href, $label])
                 <a href="{{ $href }}" @click="open = false"
                     class="px-4 py-3 rounded-xl font-mono text-xs font-bold tracking-[0.15em] uppercase text-gray-600
                       hover:bg-indigo-50 hover:text-indigo-600 transition-all duration-200 no-underline">
