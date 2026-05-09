@@ -37,7 +37,7 @@
             <header class="text-center px-8 pt-6 pb-2 flex-shrink-0" data-aos="fade-down" data-aos-duration="600">
                 <div class="inline-flex items-center gap-2.5 font-mono text-[10px] font-bold tracking-[0.32em] uppercase text-indigo-500 mb-3">
                     <span class="w-[3px] h-[3px] rounded-full bg-indigo-500"></span>
-                    E-Yearbook
+                    TEST E-Yearbook
                     <span class="w-[3px] h-[3px] rounded-full bg-indigo-500"></span>
                 </div>
                 <h1 class="font-normal text-[#111] tracking-[-0.035em] leading-[1.1] mb-2" style="font-size:clamp(1.8rem,5vw,3.2rem)">
@@ -317,7 +317,7 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     @if ($count > 0)
-    
+
         const activeYear = {{ $activeYear ?? 'null' }};
         const years = @json($years->values());
         let initialIdx = years.indexOf(activeYear);
