@@ -1,0 +1,37 @@
+name: Deploy E-Yearbook
+
+on:
+  push:
+    branches: [ cicd-test ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.REMOTE_PORT }}
+          script: |
+            cd /www/wwwroot/bts-testing.smakensa.my.id
+            git pull origin cicd-test
+
+            # Use absolute paths for aaPanel PHP/Composer versions if necessary
+            composer install --no-dev --optimize-autoloader
+
+            # Build Tailwind Assets
+            npm install
+            npm run build
+
+            # Database and Optimization
+            # php artisan migrate --force
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+
+            # Set Permissions for aaPanel 'www' user
+            chown -R www:www .
+            chmod -R 775 storage bootstrap/cache
