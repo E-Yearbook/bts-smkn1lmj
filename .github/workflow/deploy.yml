@@ -1,0 +1,40 @@
+name: Deploy E-Yearbook
+
+on:
+  push:
+    branches: [ devel ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Connect to Tailscale Network
+        uses: tailscale/github-action@v2
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+      - name: SSH Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.REMOTE_PORT }}
+          script: |
+            cd /www/wwwroot/bts.smakensa.my.id
+            git pull origin devel
+
+            # Install/Update Composer Dependencies
+            composer install --no-dev --optimize-autoloader
+
+            # Build Tailwind Assets
+            npm install
+            npm run build
+
+            # Database and Optimization
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+
+            # Set Permissions for 'www' user
+            chown -R www:www .
+            chmod -R 775 storage bootstrap/cache
