@@ -16,7 +16,10 @@ class YearCover extends Model
     protected $fillable = [
         'year',
         'cover_path',
-        'youtube_link',
+        'title_video_sambutan',
+        'youtube_link_sambutan',
+        'title_video_angkatan',
+        'youtube_link_angkatan'
     ];
 
     public function books() {

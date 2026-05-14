@@ -43,20 +43,20 @@
         </div>
     @else
         {{-- Table --}}
-        <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+        <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 text-sm">
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-4 py-3 text-center font-semibold text-gray-600 w-12">#</th>
                         <th class="px-4 py-3 text-center font-semibold text-gray-600 w-20">Cover</th>
                         <th class="px-4 py-3 text-left font-semibold text-gray-600">Year</th>
-                        <th class="px-4 py-3 text-left font-semibold text-gray-600">YouTube Link</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-600">Video Sambutan</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-600">Video Angkatan</th>
                         <th class="px-4 py-3 text-center font-semibold text-gray-600 w-40">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @foreach ($covers as $cover)
-                        @php $ytId = getYoutubeId($cover->youtube_link); @endphp
                         <tr class="hover:bg-gray-50 transition-colors">
 
                             {{-- No --}}
@@ -78,20 +78,39 @@
                                 </span>
                             </td>
 
-                            {{-- YouTube Link --}}
+                            {{-- Video Sambutan --}}
                             <td class="px-4 py-3 text-gray-500 max-w-xs">
-                                @if ($cover->youtube_link)
-                                    <a href="{{ $cover->youtube_link }}" target="_blank"
-                                        class="inline-flex items-center gap-1.5 text-brand-500 hover:text-brand-700 hover:underline truncate max-w-[220px]">
-                                        <svg class="h-4 w-4 flex-shrink-0 text-red-500" fill="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path
-                                                d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                                @if ($cover->youtube_link_sambutan)
+                                    <div class="mb-1">
+                                        <strong class="text-xs text-gray-700">{{ $cover->title_video_sambutan ?: 'Sambutan' }}</strong>
+                                    </div>
+                                    <a href="{{ $cover->youtube_link_sambutan }}" target="_blank"
+                                        class="inline-flex items-center gap-1.5 text-brand-500 hover:text-brand-700 hover:underline truncate max-w-[200px]">
+                                        <svg class="h-3 w-3 flex-shrink-0 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                                         </svg>
-                                        <span class="truncate">{{ $cover->youtube_link }}</span>
+                                        <span class="truncate">{{ $cover->youtube_link_sambutan }}</span>
                                     </a>
                                 @else
-                                    <span class="text-gray-300 italic">No link</span>
+                                    <span class="text-gray-300 italic text-xs">No link</span>
+                                @endif
+                            </td>
+
+                            {{-- Video Angkatan --}}
+                            <td class="px-4 py-3 text-gray-500 max-w-xs">
+                                @if ($cover->youtube_link_angkatan)
+                                    <div class="mb-1">
+                                        <strong class="text-xs text-gray-700">{{ $cover->title_video_angkatan ?: 'Angkatan' }}</strong>
+                                    </div>
+                                    <a href="{{ $cover->youtube_link_angkatan }}" target="_blank"
+                                        class="inline-flex items-center gap-1.5 text-brand-500 hover:text-brand-700 hover:underline truncate max-w-[200px]">
+                                        <svg class="h-3 w-3 flex-shrink-0 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                        </svg>
+                                        <span class="truncate">{{ $cover->youtube_link_angkatan }}</span>
+                                    </a>
+                                @else
+                                    <span class="text-gray-300 italic text-xs">No link</span>
                                 @endif
                             </td>
 

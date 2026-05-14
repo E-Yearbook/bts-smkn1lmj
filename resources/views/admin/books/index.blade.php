@@ -36,7 +36,8 @@
     </div>
 @else
     <div class="rounded-2xl border border-gray-200 bg-white overflow-hidden">
-        <table class="w-full text-sm text-left">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left min-w-max">
             <thead class="bg-gray-50 text-xs uppercase text-gray-500">
                 <tr>
                     <th class="px-4 py-3">#</th>
@@ -103,6 +104,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
     </div>
 
     <div class="mt-6">

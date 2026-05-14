@@ -51,10 +51,21 @@
                     </div>
                     <div class="mt-3">
                         <label class="mb-1.5 block text-sm font-medium text-gray-700">
-                            YouTube Link <span class="text-error-500">*</span>
+                            Video Sambutan
                         </label>
-                        <textarea name="youtube_link" id="youtube_link" rows="3" placeholder="https://youtu.be/xxxxxx, https://youtu.be/yyyyyy"
-                        class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none">{{ old('youtube_link') }}</textarea>
+                        <input type="text" name="title_video_sambutan" id="title_video_sambutan" value="{{ old('title_video_sambutan') }}" placeholder="Judul Video Sambutan"
+                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none mb-2" />
+                        <textarea name="youtube_link_sambutan" id="youtube_link_sambutan" rows="2" placeholder="https://youtu.be/xxxxxx"
+                        class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none">{{ old('youtube_link_sambutan') }}</textarea>
+                    </div>
+                    <div class="mt-3">
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700">
+                            Video Angkatan
+                        </label>
+                        <input type="text" name="title_video_angkatan" id="title_video_angkatan" value="{{ old('title_video_angkatan') }}" placeholder="Judul Video Angkatan"
+                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none mb-2" />
+                        <textarea name="youtube_link_angkatan" id="youtube_link_angkatan" rows="2" placeholder="https://youtu.be/yyyyyy"
+                        class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none">{{ old('youtube_link_angkatan') }}</textarea>
                         <p class="mt-1 text-xs text-gray-400">Video preview appears automatically after entering the link.</p>
                     </div>
                 </div>
@@ -149,46 +160,63 @@ function extractYoutubeIds(text) {
     return ids;
 }
 
-let ytTimer;
-document.getElementById('youtube_link').addEventListener('input', function () {
-    clearTimeout(ytTimer);
-    const val = this.value.trim();
-    ytTimer = setTimeout(() => {
-        const ytIds = extractYoutubeIds(val).slice(0, 2);
-        const preview = document.getElementById('yt-preview');
-        const container = document.getElementById('yt-iframe-container');
-        container.innerHTML = '';
-        if (ytIds.length > 0) {
-            ytIds.forEach(id => {
-                const iframe = document.createElement('iframe');
-                iframe.src = 'https://www.youtube.com/embed/' + id;
-                iframe.width = '100%';
-                iframe.frameBorder = '0';
-                iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-                iframe.allowFullscreen = true;
-                iframe.className = 'block';
-                iframe.style.aspectRatio = '16/9';
-                iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
-                container.appendChild(iframe);
-            });
-            preview.classList.remove('hidden');
-        } else {
+let ytTimerSambutan, ytTimerAngkatan;
+
+function updatePreview(fieldId, containerId) {
+    const val = document.getElementById(fieldId).value.trim();
+    const ytIds = extractYoutubeIds(val).slice(0, 2);
+    const preview = document.getElementById('yt-preview');
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    if (ytIds.length > 0) {
+        ytIds.forEach(id => {
+            const iframe = document.createElement('iframe');
+            iframe.src = 'https://www.youtube.com/embed/' + id;
+            iframe.width = '100%';
+            iframe.frameBorder = '0';
+            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+            iframe.allowFullscreen = true;
+            iframe.className = 'block';
+            iframe.style.aspectRatio = '16/9';
+            iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+            container.appendChild(iframe);
+        });
+        preview.classList.remove('hidden');
+    } else {
+        // Check if other field has content
+        const sambutanVal = document.getElementById('youtube_link_sambutan').value.trim();
+        const angkatanVal = document.getElementById('youtube_link_angkatan').value.trim();
+        if (!sambutanVal && !angkatanVal) {
             preview.classList.add('hidden');
         }
-    }, 600);
+    }
+}
+
+document.getElementById('youtube_link_sambutan').addEventListener('input', function () {
+    clearTimeout(ytTimerSambutan);
+    ytTimerSambutan = setTimeout(() => updatePreview('youtube_link_sambutan', 'yt-iframe-container'), 600);
+});
+
+document.getElementById('youtube_link_angkatan').addEventListener('input', function () {
+    clearTimeout(ytTimerAngkatan);
+    ytTimerAngkatan = setTimeout(() => updatePreview('youtube_link_angkatan', 'yt-iframe-container'), 600);
 });
 
 document.getElementById('yearCoverForm').addEventListener('submit', function (e) {
     e.preventDefault();
     const year = document.getElementById('year').value.trim();
-    const ytLink = document.getElementById('youtube_link').value.trim();
-    const extractedYtIds = extractYoutubeIds(ytLink);
+    const ytLinkSambutan = document.getElementById('youtube_link_sambutan').value.trim();
+    const ytLinkAngkatan = document.getElementById('youtube_link_angkatan').value.trim();
+    const extractedYtIdsSambutan = extractYoutubeIds(ytLinkSambutan);
+    const extractedYtIdsAngkatan = extractYoutubeIds(ytLinkAngkatan);
     if (!year) return Swal.fire({ icon: 'warning', title: 'Attention!', text: 'Year is required.', confirmButtonColor: '#465fff' });
     if (year < 2000 || year > 2100) return Swal.fire({ icon: 'warning', title: 'Attention!', text: 'Year must be between 2000–2100.', confirmButtonColor: '#465fff' });
     if (!droppedFile) return Swal.fire({ icon: 'warning', title: 'Attention!', text: 'Cover not selected.', confirmButtonColor: '#465fff' });
-    if (!ytLink) return Swal.fire({ icon: 'warning', title: 'Attention!', text: 'YouTube link is required.', confirmButtonColor: '#465fff' });
-    if (extractedYtIds.length === 0) return Swal.fire({ icon: 'warning', title: 'Invalid Link!', text: 'Enter valid YouTube links.', confirmButtonColor: '#465fff' });
-    if (extractedYtIds.length > 2) return Swal.fire({ icon: 'warning', title: 'Limit Exceeded!', text: 'You can only add a maximum of 2 YouTube links.', confirmButtonColor: '#465fff' });
+    if (!ytLinkSambutan && !ytLinkAngkatan) return Swal.fire({ icon: 'warning', title: 'Attention!', text: 'At least one YouTube link is required.', confirmButtonColor: '#465fff' });
+    if (ytLinkSambutan && extractedYtIdsSambutan.length === 0) return Swal.fire({ icon: 'warning', title: 'Invalid Link!', text: 'Enter valid YouTube links for Sambutan.', confirmButtonColor: '#465fff' });
+    if (ytLinkAngkatan && extractedYtIdsAngkatan.length === 0) return Swal.fire({ icon: 'warning', title: 'Invalid Link!', text: 'Enter valid YouTube links for Angkatan.', confirmButtonColor: '#465fff' });
+    if (extractedYtIdsSambutan.length > 2) return Swal.fire({ icon: 'warning', title: 'Limit Exceeded!', text: 'You can only add a maximum of 2 YouTube links for Sambutan.', confirmButtonColor: '#465fff' });
+    if (extractedYtIdsAngkatan.length > 2) return Swal.fire({ icon: 'warning', title: 'Limit Exceeded!', text: 'You can only add a maximum of 2 YouTube links for Angkatan.', confirmButtonColor: '#465fff' });
 
     Swal.fire({
         title: 'Save Cover?', html: `Year <strong>${year}</strong> cover will be saved.`, icon: 'question',

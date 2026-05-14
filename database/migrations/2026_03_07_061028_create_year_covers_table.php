@@ -15,7 +15,10 @@ return new class extends Migration
             $table->id();
             $table->integer('year');
             $table->string('cover_path');
-            $table->text('youtube_link');
+            $table->string('title_video_sambutan');
+            $table->text('youtube_link_sambutan');
+            $table->string('title_video_angkatan');
+            $table->text('youtube_link_angkatan');
             $table->timestamps();
         });
     }
