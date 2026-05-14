@@ -26,14 +26,31 @@ class YearBookController extends Controller
         $request->validate([
             'year'         => 'required|integer|min:2000|max:2100|unique:year_covers,year',
             'cover'        => 'required|file|mimes:jpg,jpeg,png|max:5120',
-            'youtube_link' => [
-                'required',
+            'title_video_sambutan' => 'nullable|string|max:255',
+            'youtube_link_sambutan' => [
+                'nullable',
                 'string',
                 function ($attribute, $value, $fail) {
-                    preg_match_all('/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $value, $matches);
-                    $uniqueIds = array_unique($matches[1]);
-                    if (count($uniqueIds) > 2) {
-                        $fail('You cannot submit more than 2 YouTube links.');
+                    if ($value) {
+                        preg_match_all('/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $value, $matches);
+                        $uniqueIds = array_unique($matches[1]);
+                        if (count($uniqueIds) > 2) {
+                            $fail('You cannot submit more than 2 YouTube links for Sambutan.');
+                        }
+                    }
+                },
+            ],
+            'title_video_angkatan' => 'nullable|string|max:255',
+            'youtube_link_angkatan' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) {
+                    if ($value) {
+                        preg_match_all('/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $value, $matches);
+                        $uniqueIds = array_unique($matches[1]);
+                        if (count($uniqueIds) > 2) {
+                            $fail('You cannot submit more than 2 YouTube links for Angkatan.');
+                        }
                     }
                 },
             ],
@@ -46,7 +63,8 @@ class YearBookController extends Controller
             'cover.required'        => 'Cover is required.',
             'cover.mimes'           => 'Cover must be in JPG or PNG format.',
             'cover.max'             => 'Cover size must not exceed 5MB.',
-            'youtube_link.required' => 'YouTube link is required.',
+            'title_video_sambutan.max' => 'Title for Sambutan must not exceed 255 characters.',
+            'title_video_angkatan.max' => 'Title for Angkatan must not exceed 255 characters.',
         ]);
 
         // Secure file upload
@@ -58,7 +76,10 @@ class YearBookController extends Controller
         YearCover::create([
             'year'         => $request->year,
             'cover_path'   => $path,
-            'youtube_link' => $request->youtube_link,
+            'title_video_sambutan' => $request->title_video_sambutan,
+            'youtube_link_sambutan' => $request->youtube_link_sambutan,
+            'title_video_angkatan' => $request->title_video_angkatan,
+            'youtube_link_angkatan' => $request->youtube_link_angkatan,
         ]);
 
         return redirect()->route('yearcover')->with('success', 'Cover for year ' . $request->year . ' added successfully!');
@@ -79,14 +100,31 @@ class YearBookController extends Controller
         $request->validate([
             'year'         => 'required|integer|min:2000|max:2100|unique:year_covers,year,' . $yearcover->id,
             'cover'        => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
-            'youtube_link' => [
-                'required',
+            'title_video_sambutan' => 'nullable|string|max:255',
+            'youtube_link_sambutan' => [
+                'nullable',
                 'string',
                 function ($attribute, $value, $fail) {
-                    preg_match_all('/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $value, $matches);
-                    $uniqueIds = array_unique($matches[1]);
-                    if (count($uniqueIds) > 2) {
-                        $fail('You cannot submit more than 2 YouTube links.');
+                    if ($value) {
+                        preg_match_all('/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $value, $matches);
+                        $uniqueIds = array_unique($matches[1]);
+                        if (count($uniqueIds) > 2) {
+                            $fail('You cannot submit more than 2 YouTube links for Sambutan.');
+                        }
+                    }
+                },
+            ],
+            'title_video_angkatan' => 'nullable|string|max:255',
+            'youtube_link_angkatan' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) {
+                    if ($value) {
+                        preg_match_all('/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $value, $matches);
+                        $uniqueIds = array_unique($matches[1]);
+                        if (count($uniqueIds) > 2) {
+                            $fail('You cannot submit more than 2 YouTube links for Angkatan.');
+                        }
                     }
                 },
             ],
@@ -96,12 +134,16 @@ class YearBookController extends Controller
             'year.unique'           => 'A cover for this year already exists.',
             'cover.mimes'           => 'Cover must be in JPG or PNG format.',
             'cover.max'             => 'Cover size must not exceed 5MB.',
-            'youtube_link.required' => 'YouTube link is required.',
+            'title_video_sambutan.max' => 'Title for Sambutan must not exceed 255 characters.',
+            'title_video_angkatan.max' => 'Title for Angkatan must not exceed 255 characters.',
         ]);
 
         $data = [
             'year'         => $request->year,
-            'youtube_link' => $request->youtube_link,
+            'title_video_sambutan' => $request->title_video_sambutan,
+            'youtube_link_sambutan' => $request->youtube_link_sambutan,
+            'title_video_angkatan' => $request->title_video_angkatan,
+            'youtube_link_angkatan' => $request->youtube_link_angkatan,
         ];
 
         if ($request->hasFile('cover')) {
@@ -141,8 +183,8 @@ class YearBookController extends Controller
 
         // Cari tahun sekarang, jika tidak ada ambil yang terbaru
         $activeYear = $covers->firstWhere('year', $currentYear)
-                        ? $currentYear
-                        : ($covers->first()->year ?? $currentYear);
+            ? $currentYear
+            : ($covers->first()->year ?? $currentYear);
 
         return view('home', compact('covers', 'activeYear'));
     }
