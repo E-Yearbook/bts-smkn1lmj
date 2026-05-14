@@ -14,17 +14,22 @@
     ];
 
     // Parse multiple YouTube embed IDs from comma or newline separated links
-    $youtubeEmbedIds = [];
-    if ($youtubeLink) {
-        // Split by comma or newline
-        $links = preg_split('/[\s,]+/', $youtubeLink, -1, PREG_SPLIT_NO_EMPTY);
-        foreach ($links as $link) {
-            preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/', $link, $m);
-            if ($id = $m[1] ?? null) {
-                $youtubeEmbedIds[] = $id;
+    $parseYoutubeIds = function($rawLink) {
+        $ids = [];
+        if ($rawLink) {
+            $links = preg_split('/[\s,]+/', $rawLink, -1, PREG_SPLIT_NO_EMPTY);
+            foreach ($links as $link) {
+                preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/', $link, $m);
+                if ($id = $m[1] ?? null) {
+                    $ids[] = $id;
+                }
             }
         }
-    }
+        return $ids;
+    };
+
+    $youtubeEmbedIds         = $parseYoutubeIds($youtubeLink ?? null);          // Video Sambutan
+    $youtubeEmbedIdsAngkatan = $parseYoutubeIds($youtubeLinkAngkatan ?? null);  // Video Angkatan
     $currentVideoIndex = 0;
 @endphp
 
@@ -81,7 +86,7 @@
 
                 {{-- Tombol Video Sambutan (hanya jika ada link) --}}
                 @if (count($youtubeEmbedIds) > 0)
-                <button onclick="openVideoModal()"
+                <button onclick="openVideoModal('sambutan')"
                     class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl
                            bg-indigo-500 border border-indigo-400 shadow-sm
                            font-mono text-[11px] font-bold tracking-[0.15em] uppercase text-white
@@ -93,6 +98,24 @@
                     Video Sambutan
                     @if (count($youtubeEmbedIds) > 1)
                     <span class="ml-1 text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full">{{ count($youtubeEmbedIds) }}</span>
+                    @endif
+                </button>
+                @endif
+
+                {{-- Tombol Video Angkatan (hanya jika ada link) --}}
+                @if (count($youtubeEmbedIdsAngkatan) > 0)
+                <button onclick="openVideoModal('angkatan')"
+                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl
+                           bg-violet-500 border border-violet-400 shadow-sm
+                           font-mono text-[11px] font-bold tracking-[0.15em] uppercase text-white
+                           transition-all duration-200 hover:bg-violet-600 hover:shadow-[0_6px_20px_rgba(139,92,246,0.35)]
+                           hover:-translate-y-0.5 active:translate-y-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    Video Angkatan
+                    @if (count($youtubeEmbedIdsAngkatan) > 1)
+                    <span class="ml-1 text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full">{{ count($youtubeEmbedIdsAngkatan) }}</span>
                     @endif
                 </button>
                 @endif
@@ -222,7 +245,7 @@
 
 <!-- Penerbit: Lebih halus sebagai informasi pendukung -->
 <p class="mt-1 text-xs font-medium text-gray-500 text-center leading-tight group-hover:text-gray-700 transition-colors duration-200 line-clamp-1">
-    {{ $book['publisher'] }}
+    Publisher : {{ $book['publisher'] }}
 </p>
 
 
@@ -413,6 +436,111 @@
 </div>
 @endif
 
+{{-- ══════════════════════════════════════════
+     Modal: Video Angkatan MULTIPLE with CAROUSEL
+══════════════════════════════════════════ --}}
+@if (count($youtubeEmbedIdsAngkatan) > 0)
+<div id="video-modal-angkatan"
+    class="fixed inset-0 z-[1000] bg-black/90 backdrop-blur-sm
+           flex flex-col items-center justify-center gap-4
+           opacity-0 pointer-events-none"
+    style="transition: opacity 0.35s ease;">
+
+    {{-- Header modal dengan navigasi --}}
+    <div class="flex items-center justify-between w-full px-6" style="max-width: 860px;">
+        <div>
+            <span class="font-mono text-[10px] font-bold tracking-[0.3em] text-violet-400 uppercase">
+                ▶ Video Angkatan
+            </span>
+            <p class="font-mono text-sm text-white/60 tracking-wider mt-0.5">
+                Angkatan {{ $year }}
+            </p>
+        </div>
+
+        {{-- Counter indicator (jika lebih dari 1 video) --}}
+        @if (count($youtubeEmbedIdsAngkatan) > 1)
+        <div class="flex items-center gap-2">
+            <span id="video-counter-angkatan" class="font-mono text-xs text-white/40 tracking-wider">
+                1 / {{ count($youtubeEmbedIdsAngkatan) }}
+            </span>
+        </div>
+        @endif
+
+        <button onclick="closeVideoModalAngkatan()"
+            class="w-9 h-9 rounded-full bg-white/10 hover:bg-red-500/80 border border-white/20
+                   flex items-center justify-center text-white transition-all duration-200 shrink-0">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        </button>
+    </div>
+
+    {{-- Video container dengan tombol prev/next --}}
+    <div class="relative w-full" style="max-width: 860px; padding: 0 1.5rem;">
+
+        {{-- Tombol Previous --}}
+        @if (count($youtubeEmbedIdsAngkatan) > 1)
+        <button id="video-prev-angkatan"
+            class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-6
+                   w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm
+                   flex items-center justify-center text-white transition-all duration-200
+                   opacity-0 group-hover:opacity-100 z-10 disabled:opacity-30 disabled:cursor-not-allowed"
+            style="display: none;">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"/>
+            </svg>
+        </button>
+        @endif
+
+        {{-- YouTube iframe (16:9) --}}
+        <div style="position:relative; padding-bottom:56.25%; height:0; border-radius:16px; overflow:hidden; background:#000;
+                    box-shadow: 0 32px 80px rgba(0,0,0,0.6);">
+            <iframe id="video-iframe-angkatan"
+                src=""
+                style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        {{-- Tombol Next --}}
+        @if (count($youtubeEmbedIdsAngkatan) > 1)
+        <button id="video-next-angkatan"
+            class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-6
+                   w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm
+                   flex items-center justify-center text-white transition-all duration-200
+                   opacity-0 group-hover:opacity-100 z-10">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"/>
+            </svg>
+        </button>
+        @endif
+    </div>
+
+    {{-- Thumbnail navigator (opsional, untuk multi video) --}}
+    @if (count($youtubeEmbedIdsAngkatan) > 1)
+    <div class="flex items-center justify-center gap-2 mt-3 flex-wrap" id="video-thumbnails-angkatan">
+        @foreach ($youtubeEmbedIdsAngkatan as $idx => $vidId)
+        <button class="video-thumb-btn-angkatan w-2 h-2 rounded-full transition-all duration-200
+                       bg-white/30 hover:bg-white/60"
+                data-index="{{ $idx }}"
+                style="width: {{ $idx == 0 ? '24px' : '8px' }}; {{ $idx == 0 ? 'background-color: rgba(255,255,255,0.8);' : '' }}">
+        </button>
+        @endforeach
+    </div>
+    @endif
+
+    <p class="font-mono text-white/25 tracking-widest" style="font-size:10px;">
+        @if (count($youtubeEmbedIdsAngkatan) > 1)
+        ◀  Geser atau klik tombol  ▶  &nbsp;·&nbsp;
+        @endif
+        Klik luar area video &nbsp;·&nbsp; ESC untuk menutup
+    </p>
+</div>
+@endif
+
 {{-- Style --}}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@dearhive/dearflip-jquery-flipbook@1.7.3/dflip/css/dflip.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@dearhive/dearflip-jquery-flipbook@1.7.3/dflip/css/themify-icons.min.css">
@@ -425,123 +553,149 @@
 <script src="{{ asset('_func/book.js') }}"></script>
 
 <script>
-// script Video Sambutan Modal MULTIPLE VIDEO
+// ── Video Modal: Sambutan & Angkatan ──────────────────────────────────────
 
 @if (count($youtubeEmbedIds) > 0)
 var videoIds = @json($youtubeEmbedIds);
-var currentVideoIndex = 0;
-var videoModal = document.getElementById('video-modal');
-var videoIframe = document.getElementById('video-iframe');
-var videoPrevBtn = document.getElementById('video-prev');
-var videoNextBtn = document.getElementById('video-next');
-var videoCounter = document.getElementById('video-counter');
+@else
+var videoIds = [];
+@endif
 
-function loadVideo(index) {
-    if (!videoIds[index]) return;
-    var videoId = videoIds[index];
-    videoIframe.src = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1&rel=0&enablejsapi=1';
+@if (count($youtubeEmbedIdsAngkatan) > 0)
+var videoIdsAngkatan = @json($youtubeEmbedIdsAngkatan);
+@else
+var videoIdsAngkatan = [];
+@endif
 
-    // Update counter
-    if (videoCounter) {
-        videoCounter.textContent = (index + 1) + ' / ' + videoIds.length;
+// ── Helper: generic video modal player ───────────────────────────────────
+function createVideoPlayer(modalId, iframeId, prevBtnId, nextBtnId, counterId, thumbClass, ids) {
+    var modal    = document.getElementById(modalId);
+    var iframe   = document.getElementById(iframeId);
+    var prevBtn  = document.getElementById(prevBtnId);
+    var nextBtn  = document.getElementById(nextBtnId);
+    var counter  = document.getElementById(counterId);
+    var curIdx   = 0;
+
+    function loadVideo(index) {
+        if (!ids[index]) return;
+        iframe.src = 'https://www.youtube.com/embed/' + ids[index] + '?autoplay=1&rel=0&enablejsapi=1';
+
+        if (counter) counter.textContent = (index + 1) + ' / ' + ids.length;
+        if (prevBtn) prevBtn.style.display = index === 0 ? 'none' : 'flex';
+        if (nextBtn) nextBtn.style.display = index === ids.length - 1 ? 'none' : 'flex';
+
+        document.querySelectorAll('.' + thumbClass).forEach(function(btn, i) {
+            btn.style.width = i === index ? '24px' : '8px';
+            btn.style.backgroundColor = i === index ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.3)';
+        });
     }
 
-    // Update tombol prev/next state
-    if (videoPrevBtn) {
-        videoPrevBtn.style.display = index === 0 ? 'none' : 'flex';
+// SESUDAH — pakai style langsung, tidak bergantung CSS eksternal
+function open() {
+    curIdx = 0;
+    loadVideo(curIdx);
+    if (modal) {
+        modal.classList.add('vm-active');
+        modal.style.opacity = '1';
+        modal.style.pointerEvents = 'all';
+        document.body.style.overflow = 'hidden';
     }
-    if (videoNextBtn) {
-        videoNextBtn.style.display = index === videoIds.length - 1 ? 'none' : 'flex';
-    }
+}
 
-    // Update thumbnail indicators
-    document.querySelectorAll('.video-thumb-btn').forEach((btn, i) => {
-        if (i === index) {
-            btn.style.width = '24px';
-            btn.style.backgroundColor = 'rgba(255,255,255,0.8)';
-        } else {
-            btn.style.width = '8px';
-            btn.style.backgroundColor = 'rgba(255,255,255,0.3)';
-        }
+function close() {
+    if (iframe) iframe.src = '';
+    if (modal) {
+        modal.classList.remove('vm-active');
+        modal.style.opacity = '0';
+        modal.style.pointerEvents = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+    function next() { if (curIdx < ids.length - 1) { curIdx++; loadVideo(curIdx); } }
+    function prev() { if (curIdx > 0) { curIdx--; loadVideo(curIdx); } }
+
+    if (prevBtn) prevBtn.addEventListener('click', prev);
+    if (nextBtn) nextBtn.addEventListener('click', next);
+
+    document.querySelectorAll('.' + thumbClass).forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var idx = parseInt(this.dataset.index);
+            if (!isNaN(idx) && idx !== curIdx) { curIdx = idx; loadVideo(curIdx); }
+        });
     });
-}
 
-function nextVideo() {
-    if (currentVideoIndex < videoIds.length - 1) {
-        currentVideoIndex++;
-        loadVideo(currentVideoIndex);
+    if (modal) {
+        modal.addEventListener('click', function(e) { if (e.target === this) close(); });
     }
+
+    document.addEventListener('keydown', function(e) {
+        if (!modal || !modal.classList.contains('vm-active')) return;
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); prev(); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+        else if (e.key === 'Escape') { close(); }
+    });
+
+    return { open, close };
 }
 
-function prevVideo() {
-    if (currentVideoIndex > 0) {
-        currentVideoIndex--;
-        loadVideo(currentVideoIndex);
+// ── Inisialisasi player Sambutan ──────────────────────────────────────────
+@if (count($youtubeEmbedIds) > 0)
+var playerSambutan = createVideoPlayer(
+    'video-modal', 'video-iframe', 'video-prev', 'video-next', 'video-counter',
+    'video-thumb-btn', videoIds
+);
+@endif
+
+// ── Inisialisasi player Angkatan ──────────────────────────────────────────
+@if (count($youtubeEmbedIdsAngkatan) > 0)
+var playerAngkatan = createVideoPlayer(
+    'video-modal-angkatan', 'video-iframe-angkatan',
+    'video-prev-angkatan', 'video-next-angkatan', 'video-counter-angkatan',
+    'video-thumb-btn-angkatan', videoIdsAngkatan
+);
+@endif
+
+// ── Fungsi publik yang dipanggil tombol ──────────────────────────────────
+function openVideoModal(type) {
+    type = type || 'sambutan';
+    if (type === 'angkatan') {
+        @if (count($youtubeEmbedIdsAngkatan) > 0)
+        playerAngkatan.open();
+        @endif
+    } else {
+        @if (count($youtubeEmbedIds) > 0)
+        playerSambutan.open();
+        @endif
     }
-}
-
-function openVideoModal() {
-    currentVideoIndex = 0;
-    loadVideo(currentVideoIndex);
-    videoModal.classList.add('vm-active');
-    document.body.style.overflow = 'hidden';
 }
 
 function closeVideoModal() {
-    videoIframe.src = ''; // stop video
-    videoModal.classList.remove('vm-active');
-    document.body.style.overflow = '';
+    @if (count($youtubeEmbedIds) > 0)
+    playerSambutan.close();
+    @endif
 }
 
-// Event listeners untuk tombol navigasi
-if (videoPrevBtn) videoPrevBtn.addEventListener('click', prevVideo);
-if (videoNextBtn) videoNextBtn.addEventListener('click', nextVideo);
+function closeVideoModalAngkatan() {
+    @if (count($youtubeEmbedIdsAngkatan) > 0)
+    playerAngkatan.close();
+    @endif
+}
 
-// Thumbnail click
-document.querySelectorAll('.video-thumb-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        var idx = parseInt(this.dataset.index);
-        if (!isNaN(idx) && idx !== currentVideoIndex) {
-            currentVideoIndex = idx;
-            loadVideo(currentVideoIndex);
-        }
-    });
-});
-
-// Klik backdrop → tutup video
-videoModal.addEventListener('click', function(e) {
-    if (e.target === this) closeVideoModal();
-});
-
-// Keyboard navigasi (panah kiri/kanan) saat modal aktif
-document.addEventListener('keydown', function(e) {
-    if (!videoModal.classList.contains('vm-active')) return;
-
-    if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        if (currentVideoIndex > 0) prevVideo();
-    } else if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        if (currentVideoIndex < videoIds.length - 1) nextVideo();
-    } else if (e.key === 'Escape') {
-        closeVideoModal();
-    }
-});
-
-// Auto popup saat halaman pertama dibuka
+// ── Auto popup: Video Sambutan duluan saat halaman dibuka ─────────────────
+@if (count($youtubeEmbedIds) > 0)
 window.addEventListener('DOMContentLoaded', function() {
-    setTimeout(openVideoModal, 700);
+    setTimeout(function() { openVideoModal('sambutan'); }, 700);
 });
 @endif
 
-// ESC → tutup modal yang sedang aktif (fallback)
+// ── ESC fallback untuk DearFlip ───────────────────────────────────────────
 document.addEventListener('keydown', function(e) {
     if (e.key !== 'Escape') return;
-    @if (count($youtubeEmbedIds) > 0)
-    if (document.getElementById('video-modal').classList.contains('vm-active')) {
-        closeVideoModal(); return;
-    }
-    @endif
+    var sambutanModal  = document.getElementById('video-modal');
+    var angkatanModal  = document.getElementById('video-modal-angkatan');
+    if (sambutanModal  && sambutanModal.classList.contains('vm-active'))  { closeVideoModal(); return; }
+    if (angkatanModal  && angkatanModal.classList.contains('vm-active'))  { closeVideoModalAngkatan(); return; }
     closeDearFlip();
 });
 </script>
