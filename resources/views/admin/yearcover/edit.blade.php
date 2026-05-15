@@ -302,10 +302,19 @@
 
             function extractYoutubeIds(text) {
                 const ids = [];
-                const regex = /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/g;
+                // Regex for direct URLs
+                const urlRegex = /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/g;
+                // Regex for iframe src
+                const iframeRegex = /src=["'](?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})["']/g;
+
                 let match;
-                while ((match = regex.exec(text)) !== null) {
-                    if (!ids.includes(match[1])) ids.push(match[1]);
+                // Extract from URLs
+                while((match = urlRegex.exec(text)) !== null) {
+                    if(!ids.includes(match[1])) ids.push(match[1]);
+                }
+                // Extract from iframe tags
+                while((match = iframeRegex.exec(text)) !== null) {
+                    if(!ids.includes(match[1])) ids.push(match[1]);
                 }
                 return ids;
             }
@@ -313,8 +322,10 @@
             let ytTimerSambutan, ytTimerAngkatan;
 
             function updatePreview(fieldId, containerId) {
-                const val = document.getElementById(fieldId).value.trim();
-                const ytIds = extractYoutubeIds(val).slice(0, 2);
+                const sambutanVal = document.getElementById('youtube_link_sambutan').value.trim();
+                const angkatanVal = document.getElementById('youtube_link_angkatan').value.trim();
+                const allText = sambutanVal + '\n' + angkatanVal;
+                const ytIds = extractYoutubeIds(allText);
                 const preview = document.getElementById('yt-preview');
                 const container = document.getElementById(containerId);
                 container.innerHTML = '';
@@ -333,12 +344,7 @@
                     });
                     preview.classList.remove('hidden');
                 } else {
-                    // Check if other field has content
-                    const sambutanVal = document.getElementById('youtube_link_sambutan').value.trim();
-                    const angkatanVal = document.getElementById('youtube_link_angkatan').value.trim();
-                    if (!sambutanVal && !angkatanVal) {
-                        preview.classList.add('hidden');
-                    }
+                    preview.classList.add('hidden');
                 }
             }
 
@@ -350,27 +356,6 @@
             document.getElementById('youtube_link_angkatan').addEventListener('input', function () {
                 clearTimeout(ytTimerAngkatan);
                 ytTimerAngkatan = setTimeout(() => updatePreview('youtube_link_angkatan', 'yt-iframe-container'), 600);
-            });
-                    container.innerHTML = '';
-                    if (ytIds.length > 0) {
-                        ytIds.forEach(id => {
-                            const iframe = document.createElement('iframe');
-                            iframe.src = 'https://www.youtube.com/embed/' + id;
-                            iframe.width = '100%';
-                            iframe.frameBorder = '0';
-                            iframe.allow =
-                                'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-                            iframe.allowFullscreen = true;
-                            iframe.className = 'block';
-                            iframe.style.aspectRatio = '16/9';
-                            iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
-                            container.appendChild(iframe);
-                        });
-                        preview.classList.remove('hidden');
-                    } else {
-                        preview.classList.add('hidden');
-                    }
-                }, 600);
             });
 
             document.getElementById('editForm').addEventListener('submit', function(e) {
