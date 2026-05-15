@@ -32,10 +32,10 @@ class YearBookController extends Controller
                 'string',
                 function ($attribute, $value, $fail) {
                     if ($value) {
-                        preg_match_all('/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $value, $matches);
+                        preg_match_all('/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/|src=["\'](?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/', $value, $matches);
                         $uniqueIds = array_unique($matches[1]);
-                        if (count($uniqueIds) > 2) {
-                            $fail('You cannot submit more than 2 YouTube links for Sambutan.');
+                        if (count($uniqueIds) == 0) {
+                            $fail('Invalid YouTube link for Sambutan.');
                         }
                     }
                 },
@@ -48,8 +48,8 @@ class YearBookController extends Controller
                     if ($value) {
                         preg_match_all('/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $value, $matches);
                         $uniqueIds = array_unique($matches[1]);
-                        if (count($uniqueIds) > 2) {
-                            $fail('You cannot submit more than 2 YouTube links for Angkatan.');
+                        if (count($uniqueIds) == 0) {
+                            $fail('Invalid YouTube link for Angkatan.');
                         }
                     }
                 },
@@ -106,10 +106,10 @@ class YearBookController extends Controller
                 'string',
                 function ($attribute, $value, $fail) {
                     if ($value) {
-                        preg_match_all('/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $value, $matches);
+                        preg_match_all('/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/|src=["\'](?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/', $value, $matches);
                         $uniqueIds = array_unique($matches[1]);
-                        if (count($uniqueIds) > 2) {
-                            $fail('You cannot submit more than 2 YouTube links for Sambutan.');
+                        if (count($uniqueIds) == 0) {
+                            $fail('Invalid YouTube link for Sambutan.');
                         }
                     }
                 },
@@ -122,8 +122,8 @@ class YearBookController extends Controller
                     if ($value) {
                         preg_match_all('/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $value, $matches);
                         $uniqueIds = array_unique($matches[1]);
-                        if (count($uniqueIds) > 2) {
-                            $fail('You cannot submit more than 2 YouTube links for Angkatan.');
+                        if (count($uniqueIds) == 0) {
+                            $fail('Invalid YouTube link for Angkatan.');
                         }
                     }
                 },

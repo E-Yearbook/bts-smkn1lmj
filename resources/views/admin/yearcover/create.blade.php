@@ -55,7 +55,7 @@
                         </label>
                         <input type="text" name="title_video_sambutan" id="title_video_sambutan" value="{{ old('title_video_sambutan') }}" placeholder="Judul Video Sambutan"
                             class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none mb-2" />
-                        <textarea name="youtube_link_sambutan" id="youtube_link_sambutan" rows="2" placeholder="https://youtu.be/xxxxxx"
+                            <textarea name="youtube_link_sambutan" id="youtube_link_sambutan" rows="2" placeholder="https://youtu.be/xxxxxx"
                         class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none">{{ old('youtube_link_sambutan') }}</textarea>
                     </div>
                     <div class="mt-3">
@@ -64,7 +64,7 @@
                         </label>
                         <input type="text" name="title_video_angkatan" id="title_video_angkatan" value="{{ old('title_video_angkatan') }}" placeholder="Judul Video Angkatan"
                             class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none mb-2" />
-                        <textarea name="youtube_link_angkatan" id="youtube_link_angkatan" rows="2" placeholder="https://youtu.be/yyyyyy"
+                            <textarea name="youtube_link_angkatan" id="youtube_link_angkatan" rows="2" placeholder="https://youtu.be/yyyyyy"
                         class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none">{{ old('youtube_link_angkatan') }}</textarea>
                         <p class="mt-1 text-xs text-gray-400">Video preview appears automatically after entering the link.</p>
                     </div>
@@ -152,9 +152,18 @@ const myDropzone = new Dropzone('#coverDropzone', {
 
 function extractYoutubeIds(text) {
     const ids = [];
-    const regex = /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/g;
+    // Regex for direct URLs
+    const urlRegex = /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/g;
+    // Regex for iframe src
+    const iframeRegex = /src=["'](?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})["']/g;
+
     let match;
-    while((match = regex.exec(text)) !== null) {
+    // Extract from URLs
+    while((match = urlRegex.exec(text)) !== null) {
+        if(!ids.includes(match[1])) ids.push(match[1]);
+    }
+    // Extract from iframe tags
+    while((match = iframeRegex.exec(text)) !== null) {
         if(!ids.includes(match[1])) ids.push(match[1]);
     }
     return ids;
@@ -163,8 +172,10 @@ function extractYoutubeIds(text) {
 let ytTimerSambutan, ytTimerAngkatan;
 
 function updatePreview(fieldId, containerId) {
-    const val = document.getElementById(fieldId).value.trim();
-    const ytIds = extractYoutubeIds(val).slice(0, 2);
+    const sambutanVal = document.getElementById('youtube_link_sambutan').value.trim();
+    const angkatanVal = document.getElementById('youtube_link_angkatan').value.trim();
+    const allText = sambutanVal + '\n' + angkatanVal;
+    const ytIds = extractYoutubeIds(allText);
     const preview = document.getElementById('yt-preview');
     const container = document.getElementById(containerId);
     container.innerHTML = '';
@@ -183,12 +194,7 @@ function updatePreview(fieldId, containerId) {
         });
         preview.classList.remove('hidden');
     } else {
-        // Check if other field has content
-        const sambutanVal = document.getElementById('youtube_link_sambutan').value.trim();
-        const angkatanVal = document.getElementById('youtube_link_angkatan').value.trim();
-        if (!sambutanVal && !angkatanVal) {
-            preview.classList.add('hidden');
-        }
+        preview.classList.add('hidden');
     }
 }
 
@@ -215,8 +221,6 @@ document.getElementById('yearCoverForm').addEventListener('submit', function (e)
     if (!ytLinkSambutan && !ytLinkAngkatan) return Swal.fire({ icon: 'warning', title: 'Attention!', text: 'At least one YouTube link is required.', confirmButtonColor: '#465fff' });
     if (ytLinkSambutan && extractedYtIdsSambutan.length === 0) return Swal.fire({ icon: 'warning', title: 'Invalid Link!', text: 'Enter valid YouTube links for Sambutan.', confirmButtonColor: '#465fff' });
     if (ytLinkAngkatan && extractedYtIdsAngkatan.length === 0) return Swal.fire({ icon: 'warning', title: 'Invalid Link!', text: 'Enter valid YouTube links for Angkatan.', confirmButtonColor: '#465fff' });
-    if (extractedYtIdsSambutan.length > 2) return Swal.fire({ icon: 'warning', title: 'Limit Exceeded!', text: 'You can only add a maximum of 2 YouTube links for Sambutan.', confirmButtonColor: '#465fff' });
-    if (extractedYtIdsAngkatan.length > 2) return Swal.fire({ icon: 'warning', title: 'Limit Exceeded!', text: 'You can only add a maximum of 2 YouTube links for Angkatan.', confirmButtonColor: '#465fff' });
 
     Swal.fire({
         title: 'Save Cover?', html: `Year <strong>${year}</strong> cover will be saved.`, icon: 'question',
