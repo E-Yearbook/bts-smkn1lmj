@@ -50,8 +50,6 @@
                         <th class="px-4 py-3 text-center font-semibold text-gray-600 w-12">#</th>
                         <th class="px-4 py-3 text-center font-semibold text-gray-600 w-20">Cover</th>
                         <th class="px-4 py-3 text-left font-semibold text-gray-600">Year</th>
-                        <th class="px-4 py-3 text-left font-semibold text-gray-600">Video Sambutan</th>
-                        <th class="px-4 py-3 text-left font-semibold text-gray-600">Video Angkatan</th>
                         <th class="px-4 py-3 text-center font-semibold text-gray-600 w-40">Actions</th>
                     </tr>
                 </thead>
