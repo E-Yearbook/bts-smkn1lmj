@@ -49,7 +49,7 @@
                     <tr>
                         <th class="px-4 py-3 text-center font-semibold text-gray-600 w-12">#</th>
                         <th class="px-4 py-3 text-center font-semibold text-gray-600 w-20">Cover</th>
-                        <th class="px-4 py-3 text-left font-semibold text-gray-600">Year</th>
+                        <th class="px-4 py-3 text-center font-semibold text-gray-600">Year</th>
                         <th class="px-4 py-3 text-center font-semibold text-gray-600 w-40">Actions</th>
                     </tr>
                 </thead>
@@ -69,7 +69,7 @@
                             </td>
 
                             {{-- Year --}}
-                            <td class="px-4 py-3 font-semibold text-gray-800">
+                            <td class="px-4 py-3 text-center font-semibold text-gray-800">
                                 <span
                                     class="inline-flex items-center rounded-lg bg-brand-50 px-2.5 py-1 text-xs font-bold text-brand-600">
                                     {{ $cover->year }}
