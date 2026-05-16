@@ -106,9 +106,9 @@
                 @if (count($youtubeEmbedIdsAngkatan) > 0)
                 <button onclick="openVideoModal('angkatan')"
                     class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl
-                           bg-violet-500 border border-violet-400 shadow-sm
+                           bg-blue-600 border border-blue-500 shadow-sm
                            font-mono text-[11px] font-bold tracking-[0.15em] uppercase text-white
-                           transition-all duration-200 hover:bg-violet-600 hover:shadow-[0_6px_20px_rgba(139,92,246,0.35)]
+                           transition-all duration-200 hover:bg-blue-700 hover:shadow-[0_6px_20px_rgba(37,99,235,0.35)]
                            hover:-translate-y-0.5 active:translate-y-0">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M8 5v14l11-7z"/>
@@ -118,6 +118,7 @@
                     <span class="ml-1 text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full">{{ count($youtubeEmbedIdsAngkatan) }}</span>
                     @endif
                 </button>
+
                 @endif
 
                 {{-- Tombol Kembali --}}
