@@ -13,7 +13,6 @@
         'rose'    => ['bg' => 'bg-rose-50',    'text' => 'text-rose-500',    'border' => 'border-rose-200/60',    'badge' => 'bg-rose-100 text-rose-600',      'hover_shadow' => 'hover:shadow-[0_12px_36px_rgba(244,63,94,0.18)]',   'hover_border' => 'hover:border-rose-300/60'],
     ];
 
-    // Parse multiple YouTube embed IDs from comma or newline separated links
     $parseYoutubeIds = function($rawLink) {
         $ids = [];
         if ($rawLink) {
@@ -28,13 +27,30 @@
         return $ids;
     };
 
-    $youtubeEmbedIds         = $parseYoutubeIds($youtubeLink ?? null);          // Video Sambutan
-    $youtubeEmbedIdsAngkatan = $parseYoutubeIds($youtubeLinkAngkatan ?? null);  // Video Angkatan
-    $currentVideoIndex = 0;
+    $youtubeEmbedIds         = $parseYoutubeIds($youtubeLink ?? null);
+    $youtubeEmbedIdsAngkatan = $parseYoutubeIds($youtubeLinkAngkatan ?? null);
 @endphp
 
 {{-- DearFlip CSS --}}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@dearhive/dearflip-jquery-flipbook@1.7.3/dflip/css/dflip.min.css">
+
+<style>
+    .books-slider::-webkit-scrollbar {
+    height: 4px;
+}
+.books-slider::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 99px;
+}
+.books-slider::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.10);
+    border-radius: 99px;
+}
+.books-slider::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+</style>
+
 
 {{-- ══════════════════════════════════════════
      Main Page
@@ -84,7 +100,6 @@
             {{-- Kanan: tombol-tombol --}}
             <div class="flex items-center gap-3 flex-wrap self-start md:self-auto">
 
-                {{-- Tombol Video Sambutan (hanya jika ada link) --}}
                 @if (count($youtubeEmbedIds) > 0)
                 <button onclick="openVideoModal('sambutan')"
                     class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl
@@ -102,7 +117,6 @@
                 </button>
                 @endif
 
-                {{-- Tombol Video Angkatan (hanya jika ada link) --}}
                 @if (count($youtubeEmbedIdsAngkatan) > 0)
                 <button onclick="openVideoModal('angkatan')"
                     class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl
@@ -120,7 +134,6 @@
                 </button>
                 @endif
 
-                {{-- Tombol Kembali --}}
                 <a href="/"
                     class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl
                            bg-white border border-black/[0.07] shadow-sm
@@ -159,6 +172,7 @@
         {{-- ── Categories & Books ── --}}
         @foreach ($categories as $i => $cat)
         @php $c = $colorMap[$cat['color']]; @endphp
+
         <div class="category-section mb-14" data-category="{{ $cat['slug'] }}"
             data-aos="fade-up" data-aos-duration="700" data-aos-delay="{{ $i * 80 }}">
 
@@ -175,108 +189,133 @@
                 <div class="flex-1 h-px bg-gradient-to-r from-gray-200 to-transparent ml-2"></div>
             </div>
 
-            {{-- Books grid --}}
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
-                @foreach ($cat['books'] as $bi => $book)
-                <div onclick="openDearFlip({{ json_encode($book['title']) }}, {{ json_encode($book['file'] ?? '') }})"
-                    class="book-card group flex flex-col items-center gap-3 cursor-pointer"
-                    data-aos="zoom-in" data-aos-duration="500" data-aos-delay="{{ $bi * 60 }}">
+            {{-- Books slider --}}
+            <div class="relative">
 
-                    {{-- Book cover --}}
-                    <div class="relative w-full aspect-[9/16] rounded-xl overflow-hidden
-                                border {{ $c['border'] }} bg-white
-                                shadow-[0_2px_12px_rgba(0,0,0,0.07)]
-                                transition-all duration-300
-                                group-hover:-translate-y-2
-                                {{ $c['hover_shadow'] }} {{ $c['hover_border'] }}">
+                {{-- Tombol kiri --}}
+                <button onclick="slideLeft(this)"
+                    class="absolute -left-4 top-1/2 -translate-y-1/2 z-10
+                           w-8 h-8 rounded-full bg-white border border-gray-200
+                           shadow-md flex items-center justify-center
+                           hover:bg-gray-50 transition-all duration-200
+                           opacity-0 pointer-events-none slider-btn-left">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                </button>
 
-                        @if (!empty($book['cover']))
-                        <img src="{{ asset($book['cover']) }}"
-                            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            alt="{{ $book['title'] }}">
-                        @else
-                        <div class="w-full h-full flex flex-col items-center justify-center {{ $c['bg'] }} relative">
-                            <div class="absolute left-2.5 top-3 bottom-3 w-1.5 rounded-full
-                                        bg-gradient-to-b from-current opacity-20 {{ $c['text'] }}"></div>
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                class="w-8 h-8 {{ $c['text'] }} opacity-40 mb-2 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-                                <line x1="9" y1="7" x2="15" y2="7"/>
-                                <line x1="9" y1="11" x2="13" y2="11"/>
-                            </svg>
-                            <span class="font-mono text-[9px] font-bold tracking-[0.15em] uppercase {{ $c['text'] }} opacity-50 text-center px-2 leading-relaxed">
-                                {{ $book['title'] }}
-                            </span>
-                        </div>
-                        @endif
+                {{-- Scrollable track --}}
+                <div class="books-slider flex gap-4 overflow-x-auto pb-3 scroll-smooth"
+                    style="scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.15) rgba(0,0,0,0.04);"
+                    onscroll="updateSliderButtons(this)">
 
-                        {{-- Hover overlay --}}
-                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/[0.06] transition-all duration-300"></div>
+                    @foreach ($cat['books'] as $bi => $book)
+                    <div onclick="openDearFlip({{ json_encode($book['title']) }}, {{ json_encode($book['file'] ?? '') }})"
+                        class="book-card group flex flex-col items-center gap-3 cursor-pointer flex-shrink-0 w-36"
+                        data-aos="zoom-in" data-aos-duration="500" data-aos-delay="{{ $bi * 60 }}">
 
-                        {{-- "Buka" badge on hover --}}
-                        <div class="absolute bottom-2 left-1/2 -translate-x-1/2
-                                    opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0
-                                    transition-all duration-250">
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full
-                                         {{ $c['badge'] }} font-mono text-[9px] font-bold tracking-[0.1em] uppercase
-                                         shadow-sm backdrop-blur-sm whitespace-nowrap">
-                                Buka
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="9 6 15 12 9 18"/>
+                        {{-- Book cover --}}
+                        <div class="relative w-full aspect-[9/16] rounded-xl overflow-hidden
+                                    border {{ $c['border'] }} bg-white
+                                    shadow-[0_2px_12px_rgba(0,0,0,0.07)]
+                                    transition-all duration-300
+                                    group-hover:-translate-y-2
+                                    {{ $c['hover_shadow'] }} {{ $c['hover_border'] }}">
+
+                            @if (!empty($book['cover']))
+                            <img src="{{ asset($book['cover']) }}"
+                                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                alt="{{ $book['title'] }}"
+                                loading="lazy">
+                            @else
+                            <div class="w-full h-full flex flex-col items-center justify-center {{ $c['bg'] }} relative">
+                                <div class="absolute left-2.5 top-3 bottom-3 w-1.5 rounded-full
+                                            bg-gradient-to-b from-current opacity-20 {{ $c['text'] }}"></div>
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="w-8 h-8 {{ $c['text'] }} opacity-40 mb-2 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                                    <line x1="9" y1="7" x2="15" y2="7"/>
+                                    <line x1="9" y1="11" x2="13" y2="11"/>
                                 </svg>
-                            </span>
+                                <span class="font-mono text-[9px] font-bold tracking-[0.15em] uppercase {{ $c['text'] }} opacity-50 text-center px-2 leading-relaxed">
+                                    {{ $book['title'] }}
+                                </span>
+                            </div>
+                            @endif
+
+                            {{-- Hover overlay --}}
+                            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/[0.06] transition-all duration-300"></div>
+
+                            {{-- "Buka" badge on hover --}}
+                            <div class="absolute bottom-2 left-1/2 -translate-x-1/2
+                                        opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0
+                                        transition-all duration-250">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full
+                                             {{ $c['badge'] }} font-mono text-[9px] font-bold tracking-[0.1em] uppercase
+                                             shadow-sm backdrop-blur-sm whitespace-nowrap">
+                                    Buka
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="9 6 15 12 9 18"/>
+                                    </svg>
+                                </span>
+                            </div>
+
+                            {{-- Shine sweep --}}
+                            <div class="absolute top-[-50%] left-[-75%] w-1/2 h-[200%]
+                                        bg-gradient-to-r from-transparent via-white/25 to-transparent
+                                        -skew-x-12 pointer-events-none
+                                        transition-[left] duration-700 group-hover:left-[125%]"></div>
                         </div>
 
-                        {{-- Shine sweep --}}
-                        <div class="absolute top-[-50%] left-[-75%] w-1/2 h-[200%]
-                                    bg-gradient-to-r from-transparent via-white/25 to-transparent
-                                    -skew-x-12 pointer-events-none
-                                    transition-[left] duration-700 group-hover:left-[125%]"></div>
+                        {{-- Book title --}}
+                        <p class="text-sm font-semibold text-gray-800 text-center leading-snug group-hover:text-black transition-colors duration-200 line-clamp-2 w-full">
+                            {{ $book['title'] }}
+                        </p>
+                        <p class="mt-1 text-xs font-medium text-gray-500 text-center leading-tight group-hover:text-gray-700 transition-colors duration-200 line-clamp-1 w-full">
+                            Publisher : {{ $book['publisher'] }}
+                        </p>
+
                     </div>
-
-                    {{-- Book title --}}
-                    <!-- Judul Buku: Lebih tegas dan terbaca -->
-<p class="text-sm font-semibold text-gray-800 text-center leading-snug group-hover:text-black transition-colors duration-200 line-clamp-2">
-    {{ $book['title'] }}
-</p>
-
-<!-- Penerbit: Lebih halus sebagai informasi pendukung -->
-<p class="mt-1 text-xs font-medium text-gray-500 text-center leading-tight group-hover:text-gray-700 transition-colors duration-200 line-clamp-1">
-    Publisher : {{ $book['publisher'] }}
-</p>
-
+                    @endforeach {{-- end books --}}
 
                 </div>
-                @endforeach
-            </div>
-        </div>
-        @endforeach
+
+                {{-- Tombol kanan --}}
+                <button onclick="slideRight(this)"
+                    class="absolute -right-4 top-1/2 -translate-y-1/2 z-10
+                           w-8 h-8 rounded-full bg-white border border-gray-200
+                           shadow-md flex items-center justify-center
+                           hover:bg-gray-50 transition-all duration-200
+                           slider-btn-right">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 6 15 12 9 18"/>
+                    </svg>
+                </button>
+
+            </div>{{-- end .relative (slider wrapper) --}}
+
+        </div>{{-- end .category-section --}}
+        @endforeach {{-- end categories --}}
 
         {{-- Footer deco --}}
         <div class="flex items-center justify-center gap-5 pt-4 pb-8"
             data-aos="fade-up" data-aos-duration="600">
-            @if ($year == '2026')
-
-             <div class="h-px w-16 bg-gradient-to-r from-transparent to-gray-600"></div>
+            <div class="h-px w-16 bg-gradient-to-r from-transparent to-gray-600"></div>
             <span class="font-mono text-[10px] tracking-[0.25em] uppercase text-gray-600">
+                @if ($year == '2026')
                 CUSTOM FOOTER
-            </span>
-            <div class="h-px w-16 bg-gradient-to-l from-transparent to-gray-600"></div>
-            @else
-             <div class="h-px w-16 bg-gradient-to-r from-transparent to-gray-600"></div>
-            <span class="font-mono text-[10px] tracking-[0.25em] uppercase text-gray-600">
+                @else
                 Digital Yearbook SMKN 1 LUMAJANG
+                @endif
             </span>
             <div class="h-px w-16 bg-gradient-to-l from-transparent to-gray-600"></div>
-            @endif
-
         </div>
 
-    </div>
-</div>
+    </div>{{-- end max-w-6xl --}}
+</div>{{-- end .relative.min-h-screen --}}
 
 {{-- ══════════════════════════════════════════
      Modal: DearFlip Flipbook
@@ -287,7 +326,6 @@
            opacity-0 pointer-events-none"
     style="transition: opacity 0.3s ease;">
 
-    {{-- Header --}}
     <div class="flex items-center justify-between w-full px-6" style="max-width: 980px;">
         <span id="df-title"
             class="font-mono text-sm font-bold tracking-widest uppercase text-white/80 truncate"
@@ -303,7 +341,6 @@
         </button>
     </div>
 
-    {{-- Loading spinner --}}
     <div id="df-loading" style="display:flex; flex-direction:column; align-items:center; gap:12px; color:rgba(255,255,255,0.5);">
         <svg class="w-8 h-8 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
@@ -311,7 +348,6 @@
         <span class="font-mono text-xs tracking-widest">Memuat buku...</span>
     </div>
 
-    {{-- No file --}}
     <div id="df-nofile" style="display:none; flex-direction:column; align-items:center; gap:12px; color:rgba(255,255,255,0.5);">
         <svg style="width:56px;height:56px;opacity:0.4;" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
@@ -321,7 +357,6 @@
         <p class="font-mono text-sm tracking-widest">File PDF belum tersedia</p>
     </div>
 
-    {{-- Flipbook container --}}
     <div id="df-book-wrap" style="display:none; width:100%; max-width:980px; padding:0 1rem;">
         <div id="df-flipbook" style="width:100%; height:72vh;"></div>
     </div>
@@ -332,16 +367,15 @@
 </div>
 
 {{-- ══════════════════════════════════════════
-     Modal: Video Sambutan MULTIPLE with CAROUSEL
+     Modal: Video Sambutan
 ══════════════════════════════════════════ --}}
 @if (count($youtubeEmbedIds) > 0)
 <div id="video-modal"
     class="fixed inset-0 z-[1000] bg-black/90 backdrop-blur-sm
            flex flex-col items-center justify-center gap-4
-           opacity-0 pointer-events-none "
+           opacity-0 pointer-events-none"
     style="transition: opacity 0.35s ease;">
 
-    {{-- Header modal dengan navigasi --}}
     <div class="flex items-center justify-between w-full px-6" style="max-width: 860px;">
         <div>
             <span class="font-mono text-[10px] font-bold tracking-[0.3em] text-indigo-400 uppercase">
@@ -351,16 +385,11 @@
                 Angkatan {{ $year }}
             </p>
         </div>
-
-        {{-- Counter indicator (jika lebih dari 1 video) --}}
         @if (count($youtubeEmbedIds) > 1)
-        <div class="flex items-center gap-2">
-            <span id="video-counter" class="font-mono text-xs text-white/40 tracking-wider">
-                1 / {{ count($youtubeEmbedIds) }}
-            </span>
-        </div>
+        <span id="video-counter" class="font-mono text-xs text-white/40 tracking-wider">
+            1 / {{ count($youtubeEmbedIds) }}
+        </span>
         @endif
-
         <button onclick="closeVideoModal()"
             class="w-9 h-9 rounded-full bg-white/10 hover:bg-red-500/80 border border-white/20
                    flex items-center justify-center text-white transition-all duration-200 shrink-0">
@@ -371,28 +400,21 @@
         </button>
     </div>
 
-    {{-- Video container dengan tombol prev/next --}}
     <div class="relative w-full" style="max-width: 860px; padding: 0 1.5rem;">
-
-        {{-- Tombol Previous --}}
         @if (count($youtubeEmbedIds) > 1)
-        <button id="video-prev"
+        <button id="video-prev" style="display:none;"
             class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-6
                    w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm
-                   flex items-center justify-center text-white transition-all duration-200
-                   opacity-0 group-hover:opacity-100 z-10 disabled:opacity-30 disabled:cursor-not-allowed"
-            style="display: none;">
+                   flex items-center justify-center text-white transition-all duration-200 z-10">
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="15 18 9 12 15 6"/>
             </svg>
         </button>
         @endif
 
-        {{-- YouTube iframe (16:9) --}}
         <div style="position:relative; padding-bottom:56.25%; height:0; border-radius:16px; overflow:hidden; background:#000;
                     box-shadow: 0 32px 80px rgba(0,0,0,0.6);">
-            <iframe id="video-iframe"
-                src=""
+            <iframe id="video-iframe" src=""
                 style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;"
                 allow="autoplay; encrypted-media; picture-in-picture"
                 referrerpolicy="strict-origin-when-cross-origin"
@@ -400,13 +422,11 @@
             </iframe>
         </div>
 
-        {{-- Tombol Next --}}
         @if (count($youtubeEmbedIds) > 1)
         <button id="video-next"
             class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-6
                    w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm
-                   flex items-center justify-center text-white transition-all duration-200
-                   opacity-0 group-hover:opacity-100 z-10">
+                   flex items-center justify-center text-white transition-all duration-200 z-10">
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="9 18 15 12 9 6"/>
             </svg>
@@ -414,30 +434,26 @@
         @endif
     </div>
 
-    {{-- Thumbnail navigator (opsional, untuk multi video) --}}
     @if (count($youtubeEmbedIds) > 1)
     <div class="flex items-center justify-center gap-2 mt-3 flex-wrap" id="video-thumbnails">
         @foreach ($youtubeEmbedIds as $idx => $vidId)
-        <button class="video-thumb-btn w-2 h-2 rounded-full transition-all duration-200
-                       bg-white/30 hover:bg-white/60"
+        <button class="video-thumb-btn rounded-full transition-all duration-200 bg-white/30 hover:bg-white/60"
                 data-index="{{ $idx }}"
-                style="width: {{ $idx == 0 ? '24px' : '8px' }}; {{ $idx == 0 ? 'background-color: rgba(255,255,255,0.8);' : '' }}">
+                style="width: {{ $idx == 0 ? '24px' : '8px' }}; height:8px; {{ $idx == 0 ? 'background-color: rgba(255,255,255,0.8);' : '' }}">
         </button>
         @endforeach
     </div>
     @endif
 
     <p class="font-mono text-white/25 tracking-widest" style="font-size:10px;">
-        @if (count($youtubeEmbedIds) > 1)
-        ◀  Geser atau klik tombol  ▶  &nbsp;·&nbsp;
-        @endif
+        @if (count($youtubeEmbedIds) > 1)◀  Geser atau klik tombol  ▶  &nbsp;·&nbsp;@endif
         Klik luar area video &nbsp;·&nbsp; ESC untuk menutup
     </p>
 </div>
 @endif
 
 {{-- ══════════════════════════════════════════
-     Modal: Video Angkatan MULTIPLE with CAROUSEL
+     Modal: Video Angkatan
 ══════════════════════════════════════════ --}}
 @if (count($youtubeEmbedIdsAngkatan) > 0)
 <div id="video-modal-angkatan"
@@ -446,7 +462,6 @@
            opacity-0 pointer-events-none"
     style="transition: opacity 0.35s ease;">
 
-    {{-- Header modal dengan navigasi --}}
     <div class="flex items-center justify-between w-full px-6" style="max-width: 860px;">
         <div>
             <span class="font-mono text-[10px] font-bold tracking-[0.3em] text-violet-400 uppercase">
@@ -456,16 +471,11 @@
                 Angkatan {{ $year }}
             </p>
         </div>
-
-        {{-- Counter indicator (jika lebih dari 1 video) --}}
         @if (count($youtubeEmbedIdsAngkatan) > 1)
-        <div class="flex items-center gap-2">
-            <span id="video-counter-angkatan" class="font-mono text-xs text-white/40 tracking-wider">
-                1 / {{ count($youtubeEmbedIdsAngkatan) }}
-            </span>
-        </div>
+        <span id="video-counter-angkatan" class="font-mono text-xs text-white/40 tracking-wider">
+            1 / {{ count($youtubeEmbedIdsAngkatan) }}
+        </span>
         @endif
-
         <button onclick="closeVideoModalAngkatan()"
             class="w-9 h-9 rounded-full bg-white/10 hover:bg-red-500/80 border border-white/20
                    flex items-center justify-center text-white transition-all duration-200 shrink-0">
@@ -476,28 +486,21 @@
         </button>
     </div>
 
-    {{-- Video container dengan tombol prev/next --}}
     <div class="relative w-full" style="max-width: 860px; padding: 0 1.5rem;">
-
-        {{-- Tombol Previous --}}
         @if (count($youtubeEmbedIdsAngkatan) > 1)
-        <button id="video-prev-angkatan"
+        <button id="video-prev-angkatan" style="display:none;"
             class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-6
                    w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm
-                   flex items-center justify-center text-white transition-all duration-200
-                   opacity-0 group-hover:opacity-100 z-10 disabled:opacity-30 disabled:cursor-not-allowed"
-            style="display: none;">
+                   flex items-center justify-center text-white transition-all duration-200 z-10">
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="15 18 9 12 15 6"/>
             </svg>
         </button>
         @endif
 
-        {{-- YouTube iframe (16:9) --}}
         <div style="position:relative; padding-bottom:56.25%; height:0; border-radius:16px; overflow:hidden; background:#000;
                     box-shadow: 0 32px 80px rgba(0,0,0,0.6);">
-            <iframe id="video-iframe-angkatan"
-                src=""
+            <iframe id="video-iframe-angkatan" src=""
                 style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;"
                 allow="autoplay; encrypted-media; picture-in-picture"
                 referrerpolicy="strict-origin-when-cross-origin"
@@ -505,13 +508,11 @@
             </iframe>
         </div>
 
-        {{-- Tombol Next --}}
         @if (count($youtubeEmbedIdsAngkatan) > 1)
         <button id="video-next-angkatan"
             class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-6
                    w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm
-                   flex items-center justify-center text-white transition-all duration-200
-                   opacity-0 group-hover:opacity-100 z-10">
+                   flex items-center justify-center text-white transition-all duration-200 z-10">
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="9 18 15 12 9 6"/>
             </svg>
@@ -519,42 +520,35 @@
         @endif
     </div>
 
-    {{-- Thumbnail navigator (opsional, untuk multi video) --}}
     @if (count($youtubeEmbedIdsAngkatan) > 1)
     <div class="flex items-center justify-center gap-2 mt-3 flex-wrap" id="video-thumbnails-angkatan">
         @foreach ($youtubeEmbedIdsAngkatan as $idx => $vidId)
-        <button class="video-thumb-btn-angkatan w-2 h-2 rounded-full transition-all duration-200
-                       bg-white/30 hover:bg-white/60"
+        <button class="video-thumb-btn-angkatan rounded-full transition-all duration-200 bg-white/30 hover:bg-white/60"
                 data-index="{{ $idx }}"
-                style="width: {{ $idx == 0 ? '24px' : '8px' }}; {{ $idx == 0 ? 'background-color: rgba(255,255,255,0.8);' : '' }}">
+                style="width: {{ $idx == 0 ? '24px' : '8px' }}; height:8px; {{ $idx == 0 ? 'background-color: rgba(255,255,255,0.8);' : '' }}">
         </button>
         @endforeach
     </div>
     @endif
 
     <p class="font-mono text-white/25 tracking-widest" style="font-size:10px;">
-        @if (count($youtubeEmbedIdsAngkatan) > 1)
-        ◀  Geser atau klik tombol  ▶  &nbsp;·&nbsp;
-        @endif
+        @if (count($youtubeEmbedIdsAngkatan) > 1)◀  Geser atau klik tombol  ▶  &nbsp;·&nbsp;@endif
         Klik luar area video &nbsp;·&nbsp; ESC untuk menutup
     </p>
 </div>
 @endif
 
-{{-- Style --}}
+{{-- ── Styles & Scripts ── --}}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@dearhive/dearflip-jquery-flipbook@1.7.3/dflip/css/dflip.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@dearhive/dearflip-jquery-flipbook@1.7.3/dflip/css/themify-icons.min.css">
 <link rel="stylesheet" href="{{ asset('css/book.css') }}">
 
-
-{{-- Scripts --}}
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@dearhive/dearflip-jquery-flipbook@1.7.3/dflip/js/dflip.min.js"></script>
 <script src="{{ asset('_func/book.js') }}"></script>
 
 <script>
-// ── Video Modal: Sambutan & Angkatan ──────────────────────────────────────
-
+// ── Video Modal ──────────────────────────────────────────────────────────
 @if (count($youtubeEmbedIds) > 0)
 var videoIds = @json($youtubeEmbedIds);
 @else
@@ -567,50 +561,46 @@ var videoIdsAngkatan = @json($youtubeEmbedIdsAngkatan);
 var videoIdsAngkatan = [];
 @endif
 
-// ── Helper: generic video modal player ───────────────────────────────────
 function createVideoPlayer(modalId, iframeId, prevBtnId, nextBtnId, counterId, thumbClass, ids) {
-    var modal    = document.getElementById(modalId);
-    var iframe   = document.getElementById(iframeId);
-    var prevBtn  = document.getElementById(prevBtnId);
-    var nextBtn  = document.getElementById(nextBtnId);
-    var counter  = document.getElementById(counterId);
-    var curIdx   = 0;
+    var modal   = document.getElementById(modalId);
+    var iframe  = document.getElementById(iframeId);
+    var prevBtn = document.getElementById(prevBtnId);
+    var nextBtn = document.getElementById(nextBtnId);
+    var counter = document.getElementById(counterId);
+    var curIdx  = 0;
 
     function loadVideo(index) {
         if (!ids[index]) return;
         iframe.src = 'https://www.youtube.com/embed/' + ids[index] + '?autoplay=1&rel=0&enablejsapi=1';
-
         if (counter) counter.textContent = (index + 1) + ' / ' + ids.length;
         if (prevBtn) prevBtn.style.display = index === 0 ? 'none' : 'flex';
         if (nextBtn) nextBtn.style.display = index === ids.length - 1 ? 'none' : 'flex';
-
         document.querySelectorAll('.' + thumbClass).forEach(function(btn, i) {
             btn.style.width = i === index ? '24px' : '8px';
             btn.style.backgroundColor = i === index ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.3)';
         });
     }
 
-// SESUDAH — pakai style langsung, tidak bergantung CSS eksternal
-function open() {
-    curIdx = 0;
-    loadVideo(curIdx);
-    if (modal) {
-        modal.classList.add('vm-active');
-        modal.style.opacity = '1';
-        modal.style.pointerEvents = 'all';
-        document.body.style.overflow = 'hidden';
+    function open() {
+        curIdx = 0;
+        loadVideo(curIdx);
+        if (modal) {
+            modal.classList.add('vm-active');
+            modal.style.opacity = '1';
+            modal.style.pointerEvents = 'all';
+            document.body.style.overflow = 'hidden';
+        }
     }
-}
 
-function close() {
-    if (iframe) iframe.src = '';
-    if (modal) {
-        modal.classList.remove('vm-active');
-        modal.style.opacity = '0';
-        modal.style.pointerEvents = 'none';
-        document.body.style.overflow = '';
+    function close() {
+        if (iframe) iframe.src = '';
+        if (modal) {
+            modal.classList.remove('vm-active');
+            modal.style.opacity = '0';
+            modal.style.pointerEvents = 'none';
+            document.body.style.overflow = '';
+        }
     }
-}
 
     function next() { if (curIdx < ids.length - 1) { curIdx++; loadVideo(curIdx); } }
     function prev() { if (curIdx > 0) { curIdx--; loadVideo(curIdx); } }
@@ -631,15 +621,14 @@ function close() {
 
     document.addEventListener('keydown', function(e) {
         if (!modal || !modal.classList.contains('vm-active')) return;
-        if (e.key === 'ArrowLeft')  { e.preventDefault(); prev(); }
+        if (e.key === 'ArrowLeft')       { e.preventDefault(); prev(); }
         else if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
-        else if (e.key === 'Escape') { close(); }
+        else if (e.key === 'Escape')     { close(); }
     });
 
     return { open, close };
 }
 
-// ── Inisialisasi player Sambutan ──────────────────────────────────────────
 @if (count($youtubeEmbedIds) > 0)
 var playerSambutan = createVideoPlayer(
     'video-modal', 'video-iframe', 'video-prev', 'video-next', 'video-counter',
@@ -647,7 +636,6 @@ var playerSambutan = createVideoPlayer(
 );
 @endif
 
-// ── Inisialisasi player Angkatan ──────────────────────────────────────────
 @if (count($youtubeEmbedIdsAngkatan) > 0)
 var playerAngkatan = createVideoPlayer(
     'video-modal-angkatan', 'video-iframe-angkatan',
@@ -656,47 +644,66 @@ var playerAngkatan = createVideoPlayer(
 );
 @endif
 
-// ── Fungsi publik yang dipanggil tombol ──────────────────────────────────
 function openVideoModal(type) {
     type = type || 'sambutan';
     if (type === 'angkatan') {
-        @if (count($youtubeEmbedIdsAngkatan) > 0)
-        playerAngkatan.open();
-        @endif
+        @if (count($youtubeEmbedIdsAngkatan) > 0) playerAngkatan.open(); @endif
     } else {
-        @if (count($youtubeEmbedIds) > 0)
-        playerSambutan.open();
-        @endif
+        @if (count($youtubeEmbedIds) > 0) playerSambutan.open(); @endif
     }
 }
 
 function closeVideoModal() {
-    @if (count($youtubeEmbedIds) > 0)
-    playerSambutan.close();
-    @endif
+    @if (count($youtubeEmbedIds) > 0) playerSambutan.close(); @endif
 }
 
 function closeVideoModalAngkatan() {
-    @if (count($youtubeEmbedIdsAngkatan) > 0)
-    playerAngkatan.close();
-    @endif
+    @if (count($youtubeEmbedIdsAngkatan) > 0) playerAngkatan.close(); @endif
 }
 
-// ── Auto popup: Video Sambutan duluan saat halaman dibuka ─────────────────
 @if (count($youtubeEmbedIds) > 0)
 window.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() { openVideoModal('sambutan'); }, 700);
 });
 @endif
 
-// ── ESC fallback untuk DearFlip ───────────────────────────────────────────
 document.addEventListener('keydown', function(e) {
     if (e.key !== 'Escape') return;
-    var sambutanModal  = document.getElementById('video-modal');
-    var angkatanModal  = document.getElementById('video-modal-angkatan');
-    if (sambutanModal  && sambutanModal.classList.contains('vm-active'))  { closeVideoModal(); return; }
-    if (angkatanModal  && angkatanModal.classList.contains('vm-active'))  { closeVideoModalAngkatan(); return; }
+    var sambutanModal = document.getElementById('video-modal');
+    var angkatanModal = document.getElementById('video-modal-angkatan');
+    if (sambutanModal && sambutanModal.classList.contains('vm-active')) { closeVideoModal(); return; }
+    if (angkatanModal && angkatanModal.classList.contains('vm-active')) { closeVideoModalAngkatan(); return; }
     closeDearFlip();
+});
+
+// ── Slider ───────────────────────────────────────────────────────────────
+function slideLeft(btn) {
+    const slider = btn.closest('.relative').querySelector('.books-slider');
+    slider.scrollBy({ left: -480, behavior: 'smooth' });
+}
+
+function slideRight(btn) {
+    const slider = btn.closest('.relative').querySelector('.books-slider');
+    slider.scrollBy({ left: 480, behavior: 'smooth' });
+}
+
+function updateSliderButtons(slider) {
+    const container = slider.closest('.relative');
+    const leftBtn   = container.querySelector('.slider-btn-left');
+    const rightBtn  = container.querySelector('.slider-btn-right');
+    const atStart   = slider.scrollLeft <= 0;
+    const atEnd     = slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 4;
+
+    leftBtn.classList.toggle('opacity-0', atStart);
+    leftBtn.classList.toggle('pointer-events-none', atStart);
+    rightBtn.classList.toggle('opacity-0', atEnd);
+    rightBtn.classList.toggle('pointer-events-none', atEnd);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.books-slider').forEach(function(slider) {
+        updateSliderButtons(slider);
+    });
 });
 </script>
 
