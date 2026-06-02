@@ -305,7 +305,7 @@
         <div class="flex items-center justify-center gap-5 pt-4 pb-8"
             data-aos="fade-up" data-aos-duration="600">
             <div class="h-px w-16 bg-gradient-to-r from-transparent to-gray-600"></div>
-            <span class="font-mono text-[10px] tracking-[0.25em] uppercase text-gray-600">
+            <span class="font-mono text-[10px] tracking-[0.25em] text-center uppercase text-gray-600">
                 @if ($year == '2026')
                 CUSTOM FOOTER
                 @else
