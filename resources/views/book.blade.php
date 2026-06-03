@@ -58,11 +58,11 @@
 <div class="relative min-h-screen bg-[#f8f7f4] overflow-x-hidden">
 
     {{-- Background orbs --}}
-    <div class="absolute top-[-120px] right-[-100px] w-[500px] h-[500px] rounded-full bg-blue-500/[0.07] blur-[90px] pointer-events-none"></div>
-    <div class="absolute bottom-[-100px] left-[-80px] w-[400px] h-[400px] rounded-full bg-indigo-500/[0.06] blur-[80px] pointer-events-none"></div>
+    <div class="fixed top-[-120px] right-[-100px] w-[500px] h-[500px] rounded-full bg-blue-500/[0.07] blur-[90px] pointer-events-none"></div>
+    <div class="fixed bottom-[-100px] left-[-80px] w-[400px] h-[400px] rounded-full bg-indigo-500/[0.06] blur-[80px] pointer-events-none"></div>
 
     {{-- Dot grid --}}
-    <div class="absolute inset-0 pointer-events-none"
+    <div class="fixed inset-0 pointer-events-none"
         style="background-image: linear-gradient(rgba(0,0,0,0.028) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.028) 1px, transparent 1px); background-size: 42px 42px;">
     </div>
 
