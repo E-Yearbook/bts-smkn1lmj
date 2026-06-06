@@ -9,6 +9,10 @@
     <title>@yield('title', 'Beranda')</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/smkn1logo.png') }}">
+    {{-- <style>
+        body {
+    overflow-x: hidden;}
+    </style> --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 

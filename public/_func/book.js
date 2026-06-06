@@ -47,7 +47,7 @@ function openDearFlip(title, fileUrl) {
         height              : '72vh',
         duration            : 800,
         scale               : 1.5,
-        webgl               : true,
+        webgl               : false,
         autoEnableOutline   : false,
         autoEnableThumbnail : false,
         controlsPosition    : 'bottom',
