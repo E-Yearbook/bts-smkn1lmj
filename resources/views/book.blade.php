@@ -307,9 +307,9 @@
             <div class="h-px w-16 bg-gradient-to-r from-transparent to-gray-600"></div>
             <span class="font-mono text-[10px] tracking-[0.25em] text-center uppercase text-gray-600">
                 @if ($year == '2026')
-                Digital Yearbook SMKN 1 LUMAJANG
+                © 2026 Digital Yearbook of SMKN 1 Lumajang By Rekayasa Perangkat Lunak
                 @else
-                Digital Yearbook SMKN 1 LUMAJANG
+                © 2026 Digital Yearbook of SMKN 1 Lumajang By Rekayasa Perangkat Lunak
                 @endif
             </span>
             <div class="h-px w-16 bg-gradient-to-l from-transparent to-gray-600"></div>
