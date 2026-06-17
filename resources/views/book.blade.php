@@ -307,7 +307,7 @@
             <div class="h-px w-16 bg-gradient-to-r from-transparent to-gray-600"></div>
             <span class="font-mono text-[10px] tracking-[0.25em] text-center uppercase text-gray-600">
                 @if ($year == '2026')
-                CUSTOM FOOTER
+                Digital Yearbook SMKN 1 LUMAJANG
                 @else
                 Digital Yearbook SMKN 1 LUMAJANG
                 @endif
