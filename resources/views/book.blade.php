@@ -275,7 +275,7 @@
                         <p class="text-sm font-semibold text-gray-800 text-center leading-snug group-hover:text-black transition-colors duration-200 line-clamp-2 w-full">
                             {{ $book['title'] }}
                         </p>
-                        <p class="mt-1 text-xs font-medium text-gray-500 text-center leading-tight group-hover:text-gray-700 transition-colors duration-200 line-clamp-1 w-full">
+                        <p class="-mt-2 text-xs font-medium text-gray-500 text-center leading-tight group-hover:text-gray-700 transition-colors duration-200 line-clamp-1 w-full">
                             Publisher : {{ $book['publisher'] }}
                         </p>
 
