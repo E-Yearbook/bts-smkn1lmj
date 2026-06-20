@@ -1,3 +1,7 @@
+@php
+    $years = $covers->pluck('year')->sort()->values();
+    $count = $years->count();
+@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -5,19 +9,87 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>DIGITAL YEARBOOK</title>
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+    @php
+        $seoTitle = $count > 0
+            ? 'Buku Tahunan Digital SMKN 1 Lumajang | Angkatan ' . $years->first() . '–' . $years->last()
+            : 'Buku Tahunan Digital SMKN 1 Lumajang | E-Yearbook Resmi';
+
+        $seoDescription = $count > 0
+            ? 'Jelajahi buku tahunan digital (e-yearbook) SMKN 1 Lumajang. Lihat foto, kenangan, dan momen setiap angkatan dari tahun ' . $years->first() . ' hingga ' . $years->last() . ' secara online, kapan saja.'
+            : 'Buku tahunan digital (e-yearbook) resmi SMKN 1 Lumajang. Arsip kenangan, foto, dan momen setiap angkatan siswa secara online.';
+
+        $canonicalUrl = request()->url();
+        $ogImage = $count > 0
+            ? asset('storage/' . $covers->firstWhere('year', $years->last())->cover_path)
+            : asset('img/smkn1logo.png');
+    @endphp
+
+    <title>{{ $seoTitle }}</title>
+    <meta name="description" content="{{ $seoDescription }}">
+    <meta name="keywords" content="buku tahunan digital, e-yearbook, yearbook SMKN 1 Lumajang, buku angkatan SMKN 1 Lumajang, kenangan sekolah, alumni SMKN 1 Lumajang">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="SMKN 1 Lumajang">
+    <link rel="canonical" href="{{ $canonicalUrl }}">
+
+    {{-- Open Graph --}}
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="E-Yearbook SMKN 1 Lumajang">
+    <meta property="og:title" content="{{ $seoTitle }}">
+    <meta property="og:description" content="{{ $seoDescription }}">
+    <meta property="og:url" content="{{ $canonicalUrl }}">
+    <meta property="og:image" content="{{ $ogImage }}">
+    <meta property="og:locale" content="id_ID">
+
+    {{-- Twitter Card --}}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $seoTitle }}">
+    <meta name="twitter:description" content="{{ $seoDescription }}">
+    <meta name="twitter:image" content="{{ $ogImage }}">
+
+    @if ($count > 0)
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "Buku Tahunan Digital SMKN 1 Lumajang",
+        "description": {!! json_encode($seoDescription) !!},
+        "url": {!! json_encode($canonicalUrl) !!},
+        "isPartOf": {
+            "@type": "EducationalOrganization",
+            "name": "SMKN 1 Lumajang",
+            "url": {!! json_encode(url('/')) !!}
+        },
+        "mainEntity": {
+            "@type": "ItemList",
+            "itemListElement": [
+                @foreach ($years as $i => $year)
+                    @php $cover = $covers->firstWhere('year', $year); @endphp
+                    {
+                        "@type": "ListItem",
+                        "position": {{ $i + 1 }},
+                        "url": {!! json_encode(route('book', $year)) !!},
+                        "name": "Buku Tahunan Digital SMKN 1 Lumajang Angkatan {{ $year }}"
+                        @if($cover), "image": {!! json_encode(asset('storage/' . $cover->cover_path)) !!} @endif
+                    }{{ $loop->last ? '' : ',' }}
+                @endforeach
+            ]
+        }
+    }
+    </script>
+    @endif
+
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/smkn1logo.png') }}">
+
+    {{-- Performance: preconnect ke CDN eksternal --}}
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="bg-[#fafaf9] m-0 overflow-hidden">
-
-    @php
-        $years = $covers->pluck('year')->sort()->values();
-        $count = $years->count();
-    @endphp
 
     <section class="relative font-serif" style="height:100dvh;overflow:hidden;display:flex;flex-direction:column;">
 
@@ -43,9 +115,14 @@
                 <h1 class="font-normal text-[#111] tracking-[-0.035em] leading-[1.1] mb-2" style="font-size:clamp(1.8rem,5vw,3.2rem)">
                     Pilih Buku<br>
                     <em class="text-indigo-500" style="font-style:italic">Angkatan</em>
+                    <span class="sr-only">SMKN 1 Lumajang</span>
                 </h1>
                 <p class="font-mono text-[11px] text-[#a3a3a3] tracking-[0.06em] m-0">
                     Jelajahi kenangan indah dari setiap generasi
+                </p>
+                {{-- Teks tambahan untuk konteks topikal (tersembunyi visual, terbaca crawler & screen reader) --}}
+                <p class="sr-only">
+                    Arsip buku tahunan digital SMKN 1 Lumajang. Pilih angkatan untuk membuka e-yearbook lengkap berisi foto dan kenangan siswa.
                 </p>
             </header>
 
@@ -89,9 +166,12 @@
                                 {{-- ── Items (no infinite clone, mentok di ujung) ── --}}
                                 @foreach ($years as $year)
                                     @php $cover = $covers->firstWhere('year', $year); @endphp
-                                    <div class="ybk-item swiper-slide"
-                 data-year="{{ $year }}"
-                 data-href="{{ route('book', $year) }}">
+                                    {{-- SEO FIX: pakai <a href> asli, bukan div + data-href, supaya
+                                         Googlebot bisa crawl & index link ke setiap halaman buku angkatan --}}
+                                    <a href="{{ route('book', $year) }}"
+                                       class="ybk-item swiper-slide"
+                                       data-year="{{ $year }}"
+                                       aria-label="Buka buku tahunan digital SMKN 1 Lumajang angkatan {{ $year }}">
 
                                         {{-- Cover --}}
                                         <div class="ybk-cover rounded-[14px] overflow-hidden bg-[#f0f0f0] border border-black/[0.07] relative">
@@ -99,7 +179,9 @@
                                             <img src="{{ $cover ? asset('storage/' . $cover->cover_path) : '' }}"
                                                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
                                                  class="w-full h-full object-cover block"
-                                                 alt="Cover {{ $year }}"
+                                                 alt="Sampul buku tahunan digital SMKN 1 Lumajang angkatan {{ $year }}"
+                                                 width="240" height="336"
+                                                 loading="{{ $loop->first ? 'eager' : 'lazy' }}"
                                                  draggable="false">
 
                                             {{-- Fallback cover --}}
@@ -132,7 +214,7 @@
                                             <span class="ybk-lbl-year font-bold italic tracking-[-0.04em] leading-none text-[#1a1a1a]" style="font-size:clamp(1.2rem,3vw,1.7rem)">{{ $year }}</span>
                                         </div>
 
-                                    </div>
+                                    </a>
                                 @endforeach
 
                             </div>
@@ -158,7 +240,7 @@
             {{-- Footer --}}
             <footer class="flex items-center justify-center gap-5 px-8 pb-5 flex-shrink-0" data-aos="fade-up" data-aos-duration="500" data-aos-delay="200">
                 <div class="h-px w-14 bg-gradient-to-r from-transparent to-[#d4d4d4]"></div>
-                <span class="font-mono text-[9.5px] tracking-[0.28em] uppercase text-[#c4c4c4]">SMKN 1 &mdash; Kenangan Terbaik</span>
+                <span class="font-mono text-[9.5px] tracking-[0.28em] uppercase text-[#c4c4c4]">SMKN 1 Lumajang &mdash; Kenangan Terbaik</span>
                 <div class="h-px w-14 bg-gradient-to-l from-transparent to-[#d4d4d4]"></div>
             </footer>
 
@@ -227,6 +309,16 @@
 .swiper-slide-active {
     opacity: 1;
     transform: scale(1);
+}
+
+/* ybk-item is now an <a> tag — strip default link styling */
+.ybk-item {
+    text-decoration: none;
+    color: inherit;
+}
+.ybk-item:focus-visible .ybk-cover {
+    outline: 2px solid #6366f1;
+    outline-offset: 2px;
 }
 
 /* ── Cover box ────────────────────────────────────────────── */
@@ -317,7 +409,7 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     @if ($count > 0)
-    
+
         const activeYear = {{ $activeYear ?? 'null' }};
         const years = @json($years->values());
         let initialIdx = years.indexOf(activeYear);
@@ -347,13 +439,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 pauseOnMouseEnter: true,
             },
             on: {
-                click(swiper, event) {
-                    const clickedSlide = swiper.clickedSlide;
+                click(swiperInstance, event) {
+                    // SEO/A11Y FIX: ybk-item sekarang <a href> asli.
+                    // Slide yang BELUM aktif: cegah navigasi langsung, geser dulu ke tengah.
+                    // Slide yang SUDAH aktif: biarkan link <a> bekerja secara native
+                    // (mendukung klik kanan "buka di tab baru", keyboard Enter, dan crawling).
+                    const clickedSlide = swiperInstance.clickedSlide;
                     if (!clickedSlide) return;
-                    if (clickedSlide.classList.contains('swiper-slide-active')) {
-                        window.location.href = clickedSlide.dataset.href;
-                    } else {
-                        swiper.slideTo(swiper.clickedIndex);
+                    if (!clickedSlide.classList.contains('swiper-slide-active')) {
+                        event.preventDefault();
+                        swiperInstance.slideTo(swiperInstance.clickedIndex);
                     }
                 }
             }
