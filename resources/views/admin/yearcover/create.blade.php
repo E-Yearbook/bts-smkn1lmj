@@ -218,7 +218,6 @@ document.getElementById('yearCoverForm').addEventListener('submit', function (e)
     if (!year) return Swal.fire({ icon: 'warning', title: 'Attention!', text: 'Year is required.', confirmButtonColor: '#465fff' });
     if (year < 2000 || year > 2100) return Swal.fire({ icon: 'warning', title: 'Attention!', text: 'Year must be between 2000–2100.', confirmButtonColor: '#465fff' });
     if (!droppedFile) return Swal.fire({ icon: 'warning', title: 'Attention!', text: 'Cover not selected.', confirmButtonColor: '#465fff' });
-    if (!ytLinkSambutan && !ytLinkAngkatan) return Swal.fire({ icon: 'warning', title: 'Attention!', text: 'At least one YouTube link is required.', confirmButtonColor: '#465fff' });
     if (ytLinkSambutan && extractedYtIdsSambutan.length === 0) return Swal.fire({ icon: 'warning', title: 'Invalid Link!', text: 'Enter valid YouTube links for Sambutan.', confirmButtonColor: '#465fff' });
     if (ytLinkAngkatan && extractedYtIdsAngkatan.length === 0) return Swal.fire({ icon: 'warning', title: 'Invalid Link!', text: 'Enter valid YouTube links for Angkatan.', confirmButtonColor: '#465fff' });
 
