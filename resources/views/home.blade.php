@@ -1,4 +1,5 @@
 @php
+    // Dipindah ke paling atas supaya tersedia untuk meta tags & JSON-LD di <head>
     $years = $covers->pluck('year')->sort()->values();
     $count = $years->count();
 @endphp
@@ -27,7 +28,7 @@
 
     <title>{{ $seoTitle }}</title>
     <meta name="description" content="{{ $seoDescription }}">
-    <meta name="keywords" content="buku tahunan digital, e-yearbook, yearbook SMKN 1 Lumajang, buku angkatan SMKN 1 Lumajang, kenangan sekolah, alumni SMKN 1 Lumajang">
+    <meta name="keywords" content="buku tahunan digital, buku tahunan online, e-yearbook, yearbook digital, yearbook SMKN 1 Lumajang, yearbook SMK Negeri 1 Lumajang, buku angkatan SMKN 1 Lumajang, buku tahunan SMK Lumajang, album kenangan sekolah, galeri foto angkatan, alumni SMKN 1 Lumajang, reuni alumni SMKN 1 Lumajang, SMK Negeri 1 Lumajang, SMKN 1 Lumajang Jawa Timur, sekolah menengah kejuruan Lumajang, yearbook angkatan {{ $count > 0 ? $years->first() . '-' . $years->last() : '2024-2026' }}">
     <meta name="robots" content="index, follow">
     <meta name="author" content="SMKN 1 Lumajang">
     <link rel="canonical" href="{{ $canonicalUrl }}">
@@ -47,6 +48,7 @@
     <meta name="twitter:description" content="{{ $seoDescription }}">
     <meta name="twitter:image" content="{{ $ogImage }}">
 
+    {{-- Structured data: membantu Google memahami ini koleksi buku tahunan per angkatan --}}
     @if ($count > 0)
     <script type="application/ld+json">
     {
@@ -54,11 +56,19 @@
         "@type": "CollectionPage",
         "name": "Buku Tahunan Digital SMKN 1 Lumajang",
         "description": {!! json_encode($seoDescription) !!},
+        "keywords": "buku tahunan digital, e-yearbook, yearbook SMK Negeri 1 Lumajang, buku angkatan, alumni SMKN 1 Lumajang",
         "url": {!! json_encode($canonicalUrl) !!},
         "isPartOf": {
             "@type": "EducationalOrganization",
             "name": "SMKN 1 Lumajang",
-            "url": {!! json_encode(url('/')) !!}
+            "alternateName": "SMK Negeri 1 Lumajang",
+            "url": {!! json_encode(url('/')) !!},
+            "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Lumajang",
+                "addressRegion": "Jawa Timur",
+                "addressCountry": "ID"
+            }
         },
         "mainEntity": {
             "@type": "ItemList",
@@ -122,7 +132,7 @@
                 </p>
                 {{-- Teks tambahan untuk konteks topikal (tersembunyi visual, terbaca crawler & screen reader) --}}
                 <p class="sr-only">
-                    Arsip buku tahunan digital SMKN 1 Lumajang. Pilih angkatan untuk membuka e-yearbook lengkap berisi foto dan kenangan siswa.
+                    Arsip buku tahunan digital (e-yearbook) SMK Negeri 1 Lumajang. Pilih angkatan untuk membuka buku tahunan online lengkap berisi foto, galeri kenangan, dan momen siswa setiap angkatan SMKN 1 Lumajang, Jawa Timur. Cocok untuk alumni yang ingin bernostalgia atau bersiap reuni.
                 </p>
             </header>
 
