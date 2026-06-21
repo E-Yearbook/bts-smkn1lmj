@@ -15,19 +15,54 @@
         $seoDescription = $count > 0
             ? 'Jelajahi buku tahunan digital SMKN 1 Lumajang. Lihat foto dan kenangan setiap angkatan dari tahun ' . $years->first() . ' hingga ' . $years->last() . ' secara online.'
             : 'Buku tahunan digital resmi SMKN 1 Lumajang. Arsip kenangan dan foto setiap angkatan siswa secara online.';
+        $seoKeywords = 'buku tahunan digital, buku tahunan smkn 1 lumajang, e-yearbook smkn 1 lumajang, yearbook online, yearbook sekolah, yearbook digital, album kenangan, foto angkatan, kenangan sekolah, alumni smkn 1 lumajang, smkn 1 lumajang, smk negeri 1 lumajang, sekolah menengah kejuruan lumajang, buku kenangan sekolah, archive foto siswa, angkatan smkn 1 lumajang, dokumentasi sekolah, foto siswa smkn 1 lumajang';
+        $ogImage = asset('img/smkn1logo.png');
+        $siteName = 'E-Yearbook SMKN 1 Lumajang';
     @endphp
 
+    {{-- Basic Meta Tags --}}
     <title>{{ $seoTitle }}</title>
     <meta name="description" content="{{ $seoDescription }}">
-    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="{{ $seoKeywords }}">
+    <meta name="author" content="SMKN 1 Lumajang">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="{{ request()->url() }}">
 
-    {{-- Open Graph dasar, biar tampilannya rapi kalau link dibagikan --}}
-    <meta property="og:title" content="{{ $seoTitle }}">
-    <meta property="og:description" content="{{ $seoDescription }}">
+    {{-- Open Graph / Facebook --}}
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ request()->url() }}">
-    <meta property="og:image" content="{{ asset('img/smkn1logo.png') }}">
+    <meta property="og:title" content="{{ $seoTitle }}">
+    <meta property="og:description" content="{{ $seoDescription }}">
+    <meta property="og:image" content="{{ $ogImage }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Logo SMKN 1 Lumajang">
+    <meta property="og:site_name" content="{{ $siteName }}">
+    <meta property="og:locale" content="id_ID">
+
+    {{-- Twitter Card --}}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ request()->url() }}">
+    <meta name="twitter:title" content="{{ $seoTitle }}">
+    <meta name="twitter:description" content="{{ $seoDescription }}">
+    <meta name="twitter:image" content="{{ $ogImage }}">
+    <meta name="twitter:image:alt" content="Logo SMKN 1 Lumajang">
+
+    {{-- Additional SEO --}}
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="{{ $siteName }}">
+    <meta name="application-name" content="{{ $siteName }}">
+    <meta name="msapplication-TileColor" content="#6366f1">
+    <meta name="msapplication-config" content="{{ asset('browserconfig.xml') }}">
+
+    {{-- Geographic Tags --}}
+    <meta name="geo.region" content="ID-JI">
+    <meta name="geo.placename" content="Lumajang, Jawa Timur">
+    <meta name="geo.position" content="-8.133056;113.224444">
+    <meta name="ICBM" content="-8.133056, 113.224444">
+
 
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/smkn1logo.png') }}">
