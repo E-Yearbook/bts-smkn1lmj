@@ -15,27 +15,27 @@ return new class extends Migration
             return;
         }
 
-        if (Schema::hasColumn('year_covers', 'title_video_sambutan')) {
+        if (!Schema::hasColumn('year_covers', 'title_video_sambutan')) {
             Schema::table('year_covers', function (Blueprint $table) {
-                $table->string('title_video_sambutan')->nullable()->change();
+                $table->string('title_video_sambutan')->nullable();
             });
         }
 
-        if (Schema::hasColumn('year_covers', 'youtube_link_sambutan')) {
+        if (!Schema::hasColumn('year_covers', 'youtube_link_sambutan')) {
             Schema::table('year_covers', function (Blueprint $table) {
-                $table->text('youtube_link_sambutan')->nullable()->change();
+                $table->text('youtube_link_sambutan')->nullable();
             });
         }
 
-        if (Schema::hasColumn('year_covers', 'title_video_angkatan')) {
+        if (!Schema::hasColumn('year_covers', 'title_video_angkatan')) {
             Schema::table('year_covers', function (Blueprint $table) {
-                $table->string('title_video_angkatan')->nullable()->change();
+                $table->string('title_video_angkatan')->nullable();
             });
         }
 
-        if (Schema::hasColumn('year_covers', 'youtube_link_angkatan')) {
+        if (!Schema::hasColumn('year_covers', 'youtube_link_angkatan')) {
             Schema::table('year_covers', function (Blueprint $table) {
-                $table->text('youtube_link_angkatan')->nullable()->change();
+                $table->text('youtube_link_angkatan')->nullable();
             });
         }
     }
@@ -51,25 +51,25 @@ return new class extends Migration
 
         if (Schema::hasColumn('year_covers', 'title_video_sambutan')) {
             Schema::table('year_covers', function (Blueprint $table) {
-                $table->string('title_video_sambutan')->nullable(false)->change();
+                $table->dropColumn('title_video_sambutan');
             });
         }
 
         if (Schema::hasColumn('year_covers', 'youtube_link_sambutan')) {
             Schema::table('year_covers', function (Blueprint $table) {
-                $table->text('youtube_link_sambutan')->nullable(false)->change();
+                $table->dropColumn('youtube_link_sambutan');
             });
         }
 
         if (Schema::hasColumn('year_covers', 'title_video_angkatan')) {
             Schema::table('year_covers', function (Blueprint $table) {
-                $table->string('title_video_angkatan')->nullable(false)->change();
+                $table->dropColumn('title_video_angkatan');
             });
         }
 
         if (Schema::hasColumn('year_covers', 'youtube_link_angkatan')) {
             Schema::table('year_covers', function (Blueprint $table) {
-                $table->text('youtube_link_angkatan')->nullable(false)->change();
+                $table->dropColumn('youtube_link_angkatan');
             });
         }
     }

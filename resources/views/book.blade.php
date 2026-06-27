@@ -110,7 +110,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M8 5v14l11-7z"/>
                     </svg>
-                    Video Sambutan
+                     {{ $titleVideoSambutan }}
                     @if (count($youtubeEmbedIds) > 1)
                     <span class="ml-1 text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full">{{ count($youtubeEmbedIds) }}</span>
                     @endif
@@ -127,7 +127,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M8 5v14l11-7z"/>
                     </svg>
-                    Video Angkatan
+                     {{ $titleVideoAngkatan }}
                     @if (count($youtubeEmbedIdsAngkatan) > 1)
                     <span class="ml-1 text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full">{{ count($youtubeEmbedIdsAngkatan) }}</span>
                     @endif

@@ -63,6 +63,8 @@ class ViewBookController extends Controller
             'categories'          => $categoriesData,
             'youtubeLink'         => $yearCover->youtube_link_sambutan ?? null,
             'youtubeLinkAngkatan' => $yearCover->youtube_link_angkatan ?? null,
+            'titleVideoSambutan'      => $yearCover->title_video_sambutan ?? 'Video Sambutan',
+            'titleVideoAngkatan'      => $yearCover->title_video_angkatan ?? 'Video Angkatan',
         ]);
     }
 }
