@@ -35,14 +35,14 @@ class BookController extends Controller
             'year_cover_id'    => 'nullable|exists:year_covers,id',
             'user_id'          => 'nullable|exists:users,id',
             'book_cover'       => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
-            'book_path'        => 'nullable|file|mimes:pdf|max:20480',
+            'book_path'        => 'nullable|file|mimes:pdf|max:25600',
         ], [
             'name.required'      => 'Book name is required.',
             'publisher.required' => 'Publisher is required.',
             'book_cover.mimes'   => 'Cover must be JPG or PNG.',
             'book_cover.max'     => 'Cover must not exceed 5MB.',
             'book_path.mimes'    => 'Book file must be PDF.',
-            'book_path.max'      => 'Book file must not exceed 20MB.',
+            'book_path.max'      => 'Book file must not exceed 25MB.',
         ]);
 
         $data = $request->only(['name', 'publisher', 'book_category_id', 'year_cover_id']);
@@ -85,7 +85,7 @@ class BookController extends Controller
             'year_cover_id'    => 'nullable|exists:year_covers,id',
             'user_id'          => 'nullable|exists:users,id',
             'book_cover'       => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
-            'book_path'        => 'nullable|file|mimes:pdf|max:20480',
+            'book_path'        => 'nullable|file|mimes:pdf|max:25600',
         ]);
 
         $data = $request->only(['name', 'publisher', 'book_category_id', 'year_cover_id']);
