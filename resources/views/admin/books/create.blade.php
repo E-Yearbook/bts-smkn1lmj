@@ -161,7 +161,7 @@ const coverDz = new Dropzone('#coverDropzone', {
 });
 
 const pdfDz = new Dropzone('#pdfDropzone', {
-    url: '/', autoProcessQueue: false, maxFiles: 1, maxFilesize: 20,
+    url: '/', autoProcessQueue: false, maxFiles: 1, maxFilesize: 25,
     acceptedFiles: 'application/pdf', addRemoveLinks: false,
     dictDefaultMessage: '', previewTemplate: pdfTemplate,
     init: function () {
