@@ -26,6 +26,9 @@ jobs:
             # Install/Update Composer Dependencies
             composer install --no-dev --optimize-autoloader
 
+            # Force
+            php artisan migrate --force
+
             # Build Tailwind Assets
             npm install
             npm run build
